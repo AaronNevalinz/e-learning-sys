@@ -11,7 +11,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="users")
@@ -23,7 +25,7 @@ public class User implements UserDetails{
     private Long id;
 
     @Column(name = "first_name")
-    @NotEmpty(message = "*Please provide your name")
+    @NotEmpty(message = "*Please provide your first name")
     private String firstName;
 
     @Column(name = "last_name")
@@ -32,7 +34,7 @@ public class User implements UserDetails{
 
     @Column(name = "username", nullable = false, unique = true)
     @Length(min = 5, message = "*Your username must have at least 5 characters")
-    @NotEmpty(message = "*Please provide your name")
+    @NotEmpty(message = "*Please provide your username")
     private String username;
 
     @Column(name = "email", unique = true, nullable = false)
@@ -184,4 +186,5 @@ public class User implements UserDetails{
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
 }

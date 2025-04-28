@@ -8,6 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,15 +34,9 @@ public class AuthService {
         this.responseService = responseService;
     }
 
-    public User register(User userDetail) {
-        // Check if username already exists
-        if (userRepository.existsByUsername(userDetail.getUsername())) {
-            throw new IllegalArgumentException("Username is already taken");
-        }
-        // Check if email already exists
-        if (userRepository.existsByEmail(userDetail.getEmail())) {
-            throw new IllegalArgumentException("Email is already in use");
-        }
+    public ResponseEntity<Map<String, Object>> register(User userDetail) {
+        validateNewUser(userDetail.getUsername(), userDetail.getEmail());
+
         User user = new User();
         user.setFirstName(userDetail.getFirstName());
         user.setLastName(userDetail.getLastName());
@@ -50,23 +45,59 @@ public class AuthService {
         user.setRole(Role.USER);
         user.setActive(1);
         user.setPassword(passwordEncoder.encode(userDetail.getPassword()));
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        Map<String, String> tokenMap = Map.of("success", "User registered successfully");
+        return responseService.createSuccessResponse(200, tokenMap, HttpStatus.OK);
+    }
+
+    /**
+     * Validate if username or email already exists.
+     */
+    private void validateNewUser(String username, String email) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username must not be empty");
+        }
+        if (email == null || email.trim().isEmpty()) {
+            throw new IllegalArgumentException("Email must not be empty");
+        }
+        if (userRepository.existsByUsername(username)) {
+            throw new IllegalArgumentException("Username is already taken");
+        }
+        if (userRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("Email is already in use");
+        }
     }
 
     public ResponseEntity<Map<String, Object>> login(User userDetail) {
-        // Will throw BadCredentialsException if invalid
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        userDetail.getUsername(),
-                        userDetail.getPassword()
-                )
-        );
-        var user = userRepository.findByUsername(userDetail.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid Username or Password."));
+        try {
+            // Will throw BadCredentialsException if invalid credentials
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            userDetail.getUsername(),
+                            userDetail.getPassword()
+                    )
+            );
 
-        var jwt = jwtUtil.generateToken(user);
-        Map<String, String> tokenMap = Map.of("token", jwt);
-        return responseService.createResponse(200, tokenMap, HttpStatus.OK);
+            var user = userRepository.findByUsername(userDetail.getUsername())
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid Username or Password."));
+
+            var jwt = jwtUtil.generateToken(user);
+
+            Map<String, String> tokenMap = Map.of("token", jwt);
+            return responseService.createSuccessResponse(200, tokenMap, HttpStatus.OK);
+
+        } catch (BadCredentialsException ex) {
+            Map<String, String[]> errors = Map.of(
+                    "authentication", new String[]{"Invalid username or password"}
+            );
+            return responseService.createErrorResponse(400, errors, HttpStatus.BAD_REQUEST);
+
+        } catch (IllegalArgumentException ex) {
+            Map<String, String[]> errors = Map.of(
+                    "authentication", new String[]{ex.getMessage()}
+            );
+            return responseService.createErrorResponse(400, errors, HttpStatus.BAD_REQUEST);
+        }
     }
-
 }
