@@ -6,6 +6,7 @@ import Home from "./pages/home/Home";
 import LayOut from "./pages/LayOut";
 import CourseList from "./pages/courses/CourseList";
 import CourseDetail from "./pages/courses/CourseDetail";
+import Topic from "./pages/courses/Topic";
 
 function App() {
   return (
@@ -14,10 +15,14 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route
+            path="/course/:courseTitle/topic/:topicId"
+            element={<Topic />}
+          />
           <Route path="/" element={<LayOut />}>
             <Route index element={<Home />} />
             <Route path="/courses" element={<CourseList />} />
-            <Route path="/course/:name" element={<CourseDetail />} />
+            <Route path="/course/:courseTitle" element={<CourseDetail />} />
           </Route>
         </Routes>
       </BrowserRouter>

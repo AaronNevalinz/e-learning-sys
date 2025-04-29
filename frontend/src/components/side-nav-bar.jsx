@@ -1,20 +1,36 @@
-import { Link } from "react-router-dom";
 import { FaBrain } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
+import { SidebarTrigger } from "./ui/sidebar";
 
-export default function Navbar() {
+export default function SideNavbar() {
   return (
-    <div className="shadow h-18 fixed w-full bg-white">
-      <nav className="flex justify-between items-center py-4 max-w-7xl mx-auto">
+    <div>
+      <nav className="flex justify-between bg-white items-center mx-auto py-3 px-4 shadow">
         <ul className="flex gap-x-10 items-center uppercase text-slate-600 text-sm font-bold">
           <li>
-            <Link to={"/"}>Tags</Link>
+            <SidebarTrigger className={"flex cursor-pointer"} />
           </li>
           <li>
-            <Link to={"/courses"}>Courses</Link>
+            <Link to={"/"} className="hover:text-slate-900 transition-all">
+              Tags
+            </Link>
           </li>
           <li>
-            <Link to={"/search"}>Search</Link>
+            <Link
+              to={"/courses"}
+              className="hover:text-slate-900 transition-all"
+            >
+              Courses
+            </Link>
+          </li>
+          <li>
+            <Link
+              to={"/search"}
+              className="hover:text-slate-900 transition-all"
+            >
+              Search
+            </Link>
           </li>
         </ul>
         <Link
@@ -29,6 +45,16 @@ export default function Navbar() {
           </div>
         </Link>
         <div className="flex gap-x-2">
+          <Link to={"/login"}>
+            <Button
+              variant={"outline"}
+              className={
+                "border-[#3E7B27] outline cursor-pointer rounded-none uppercase"
+              }
+            >
+              My learning
+            </Button>
+          </Link>
           <Link to={"/login"}>
             <Button
               variant={"outline"}
