@@ -48,7 +48,7 @@ public class AuthService {
         userRepository.save(user);
 
         Map<String, String> tokenMap = Map.of("success", "User registered successfully");
-        return responseService.createSuccessResponse(200, tokenMap, HttpStatus.OK);
+        return responseService.createSuccessResponse(201, tokenMap, HttpStatus.OK);
     }
 
     /**

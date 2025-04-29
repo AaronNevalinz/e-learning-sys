@@ -24,14 +24,19 @@ public class Topic {
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Subtopic> subtopics = new ArrayList<>();
+
+
     public Topic() {
     }
 
-    public Topic(Long id, String title, String description, Course course) {
+    public Topic(Long id, String title, String description, Course course, List<Subtopic> subtopics) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.course = course;
+        this.subtopics = subtopics;
     }
 
     public Long getId() {
@@ -66,5 +71,12 @@ public class Topic {
         this.course = course;
     }
 
+    public List<Subtopic> getSubtopics() {
+        return subtopics;
+    }
+
+    public void setSubtopics(List<Subtopic> subtopics) {
+        this.subtopics = subtopics;
+    }
 }
 
