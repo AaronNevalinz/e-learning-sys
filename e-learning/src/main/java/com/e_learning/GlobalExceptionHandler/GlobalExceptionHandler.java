@@ -1,5 +1,7 @@
 package com.e_learning.GlobalExceptionHandler;
 
+import com.e_learning.exception.ResourceNotFoundException;
+import com.e_learning.service.ResponseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,6 +15,12 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private final ResponseService responseService;
+
+    public GlobalExceptionHandler(ResponseService responseService) {
+        this.responseService = responseService;
+    }
 
     //Handle validation errors (e.g., @NotEmpty, @Length)
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -44,6 +52,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(Map.of("error", "The account you're trying to access does not exist or has been deleted."), HttpStatus.UNAUTHORIZED);
     }
 
-
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleResourceNotFound(ResourceNotFoundException ex) {
+        Map<String, String[]> errorMap = new HashMap<>();
+        errorMap.put("error", new String[]{ex.getMessage()});
+        return responseService.createErrorResponse(404, errorMap, HttpStatus.NOT_FOUND);
+    }
 }
 

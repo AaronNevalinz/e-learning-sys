@@ -1,5 +1,6 @@
 package com.e_learning.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
@@ -12,9 +13,11 @@ public class Enrollment {
     @Column(name = "enrollment_id")
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     private User user;
 
+    @JsonIgnore
     @ManyToOne
     private Course course;
 

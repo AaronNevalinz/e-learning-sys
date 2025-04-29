@@ -1,5 +1,6 @@
 package com.e_learning.service;
 
+import com.e_learning.exception.ResourceNotFoundException;
 import com.e_learning.model.Course;
 import com.e_learning.repository.CourseRepository;
 import org.springframework.stereotype.Service;
@@ -27,5 +28,24 @@ public class CourseService {
     public Optional<Course> getCourseById(Long id) {
         return courseRepository.findById(id);
     }
+
+    public Course updateCourse(Long id, Course updatedCourse) {
+        Course existing = courseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + id));
+
+        existing.setTitle(updatedCourse.getTitle());
+        existing.setDescription(updatedCourse.getDescription());
+        // Add more fields if needed
+
+        return courseRepository.save(existing);
+    }
+
+    public void deleteCourse(Long id) {
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + id));
+        courseRepository.delete(course);
+    }
+
+
 
 }

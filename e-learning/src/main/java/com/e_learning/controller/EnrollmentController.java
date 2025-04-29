@@ -1,17 +1,18 @@
 package com.e_learning.controller;
 
+import com.e_learning.dto.EnrolledUserDTO;
+import com.e_learning.dto.EnrollmentDTO;
+import com.e_learning.model.Course;
 import com.e_learning.model.Enrollment;
 import com.e_learning.service.EnrollmentService;
 import com.e_learning.service.ResponseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,11 +31,24 @@ public class EnrollmentController {
     public ResponseEntity<Map<String, Object>> enrollUser(@PathVariable Long userId, @PathVariable Long courseId) {
         try {
             Enrollment enrollment = enrollmentService.enrollUser(userId, courseId);
-            return responseService.createSuccessResponse(0, enrollment, HttpStatus.CREATED);
+            return responseService.createSuccessResponse(200, enrollment, HttpStatus.CREATED);
         } catch (RuntimeException ex) {
             Map<String, String[]> errors = new HashMap<>();
             errors.put("enrollmentError", new String[]{ex.getMessage()});
-            return responseService.createErrorResponse(1, errors, HttpStatus.BAD_REQUEST);
+            return responseService.createErrorResponse(400, errors, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getAllEnrollments() {
+        List<EnrollmentDTO> enrollments = enrollmentService.getAllEnrollments();
+        return responseService.createSuccessResponse(200, enrollments, HttpStatus.OK);
+    }
+
+    @GetMapping("/course/{courseId}/users")
+    public ResponseEntity<Map<String, Object>> getUserEnrolledCourse(@PathVariable Long courseId) {
+        List<EnrolledUserDTO> users = enrollmentService.getUsersByCourseId(courseId);
+        return responseService.createSuccessResponse(200, users, HttpStatus.OK);
+    }
+
 }

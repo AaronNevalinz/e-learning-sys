@@ -1,6 +1,7 @@
 package com.e_learning.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -21,9 +22,11 @@ public class Course {
 
     private String description;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "courses")
     private Set<User> users = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private Set<Enrollment> enrollments = new HashSet<>();
 
