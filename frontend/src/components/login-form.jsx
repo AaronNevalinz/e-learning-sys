@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 // import { AppContext } from "@/context/AppContext";
-import { useContext, useState } from "react";
+import {  useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -20,34 +20,31 @@ export function LoginForm() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
+    let url = "http://localhost:8000/api/v1/auth/login";
+
+    let options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData)
+    };
+
     try {
-      const res = await fetch("http://127.0.0.1:8080/v1/blog/auth/login", {
-        method: "post",
-        body: JSON.stringify(formData),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      console.log(formData);
+      const res = await fetch(url, options);
 
       const data = await res.json();
-      console.log(data);
-      if (data.status) {
-        // setUser(data.user);
-        // console.log(data.user);
-
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        // setToken(data.token);
-        navigate("/feed");
+      
+      if(data.returnCode == 200){
+        localStorage.setItem("token", data.ReturnObject.token);
+        navigate("/");
         toast.success("Login successful!");
-      } else {
-        toast.error(`${data.message}: Please try again : (`);
-      }
+      }        
     } catch (error) {
-      console.log(error);
+      console.log(error.message)
     }
-  };
+  }
+  
   return (
     <form className={cn("flex flex-col gap-6")} onSubmit={handleLogin}>
       <div className="flex flex-col items-center gap-2 text-center">

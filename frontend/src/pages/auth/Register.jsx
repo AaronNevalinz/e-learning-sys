@@ -10,11 +10,15 @@ import loginImg from "/student.jpg";
 export default function Register() {
   const [formData, setFormData] = useState({
     username: "",
+    firstName:"",
+    lastName:"",
+    email:"",
     password: "",
   });
+  const [errors, setErrors] = useState(null)
   const navigate = useNavigate();
 
-  const url = '';
+  const url = "http://localhost:8000/api/v1/auth/register";
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -28,10 +32,16 @@ export default function Register() {
     });
 
     const data = await res.json();
-    if (data.status) {
+    if(data.status == 200){
+      console.log(data);
       toast.success("You have successfull register. Login now :)");
       navigate("/login");
+    }else{
+      setErrors(data.errors)
+      console.log(data.errors);
+      
     }
+    toast.error("error: ", data.errors.general[0])
   };
   return (
     <>
@@ -48,14 +58,15 @@ export default function Register() {
                 <div className="flex items-center gap-x-2">
                   {/* <img src={logo} alt="" className="w-8" /> */}
                   <span>
-                    E-LearningSYS<span className="italic font-black text-2xl">!</span>
+                    E-LearningSYS
+                    <span className="italic font-black text-2xl">!</span>
                   </span>
                 </div>
               </Link>
             </h1>
           </div>
           <div className="flex flex-1 items-center justify-center">
-            <div className="w-full max-w-xs">
+            <div className="w-full max-w-sm">
               <form className="flex flex-col gap-6" onSubmit={handleRegister}>
                 <div className="flex flex-col items-center gap-2 text-center">
                   <h1 className="text-2xl font-bold">Register an account</h1>
@@ -64,16 +75,54 @@ export default function Register() {
                   </p>
                 </div>
                 <div className="grid gap-6">
+                  <div className="flex gap-x-4">
+                    <div className="grid gap-3">
+                      <Label htmlFor="">Username:</Label>
+                      <Input
+                        id="text"
+                        value={formData.username}
+                        onChange={(e) =>
+                          setFormData({ ...formData, username: e.target.value })
+                        }
+                        type="text"
+                        placeholder="Enter a username"
+                      />
+                      {errors && (
+                        <p className="text-red-500">{errors.username[0]}</p>
+                      )}
+                    </div>
+                    <div className="grid gap-3">
+                      <Label htmlFor="">First Name:</Label>
+                      <Input
+                        id="text"
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            firstName: e.target.value,
+                          })
+                        }
+                        type="text"
+                        placeholder="Enter a username"
+                      />
+                      {errors && (
+                        <p className="text-red-500">{errors.firstName[0]}</p>
+                      )}
+                    </div>
+                  </div>
                   <div className="grid gap-3">
-                    <Label htmlFor="">Username:</Label>
+                    <Label htmlFor="">LastName:</Label>
                     <Input
                       id="text"
+                      value={formData.lastName}
                       onChange={(e) =>
-                        setFormData({ ...formData, username: e.target.value })
+                        setFormData({ ...formData, lastName: e.target.value })
                       }
                       type="text"
                       placeholder="Enter a username"
                     />
+                    {errors && (
+                      <p className="text-red-500">{errors.lastName[0]}</p>
+                    )}
                   </div>
                   <div className="grid gap-3">
                     <Label htmlFor="email">Email:</Label>
@@ -85,30 +134,41 @@ export default function Register() {
                       type="email"
                       placeholder="Enter your email"
                     />
+                    {errors && (
+                      <p className="text-red-500">{errors.email[0]}</p>
+                    )}
                   </div>
-                  <div className="grid gap-3">
-                    <div className="flex items-center">
-                      <Label htmlFor="password">Password:</Label>
+                  <div className="flex  gap-x-3">
+                    <div className="grid gap-3">
+                      <div className="flex items-center">
+                        <Label htmlFor="password">Password:</Label>
+                      </div>
+                      <Input
+                        id="password"
+                        onChange={(e) =>
+                          setFormData({ ...formData, password: e.target.value })
+                        }
+                        type="password"
+                      />
+                      {errors && (
+                        <p className="text-red-500">{errors.password[0]}</p>
+                      )}
                     </div>
-                    <Input
-                      id="password"
-                      onChange={(e) =>
-                        setFormData({ ...formData, password: e.target.value })
-                      }
-                      type="password"
-                    />
-                  </div>
-                  <div className="grid gap-3">
-                    <div className="flex items-center">
-                      <Label htmlFor="password">Password Confirmation:</Label>
+                    <div className="grid gap-3">
+                      <div className="flex items-center">
+                        <Label htmlFor="password">Password Confirmation:</Label>
+                      </div>
+                      <Input
+                        id="password"
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            password_confirmation: e.target.value,
+                          })
+                        }
+                        type="password"
+                      />
                     </div>
-                    <Input
-                      id="password"
-                      onChange={(e) =>
-                        setFormData({ ...formData, password: e.target.value })
-                      }
-                      type="password"
-                    />
                   </div>
                   <p className="text-sm text-right">
                     Already have an account?{" "}
