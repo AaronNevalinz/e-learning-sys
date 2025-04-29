@@ -55,12 +55,24 @@ public class User implements UserDetails{
     @Column(name = "active", nullable = false)
     private int active;
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_courses",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private Set<Course> courses = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Enrollment> enrollments = new HashSet<>();
+
+
     private LocalDateTime createdAt = LocalDateTime.now();
 
     public User() {
     }
 
-    public User(Long id, String firstName, String lastName, String username, String email, String profilePicture, String password, Role role, int active, LocalDateTime createdAt) {
+    public User(Long id, String firstName, String lastName, String username, String email, String profilePicture, String password, Role role, int active, Set<Course> courses, Set<Enrollment> enrollments, LocalDateTime createdAt) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -70,6 +82,8 @@ public class User implements UserDetails{
         this.password = password;
         this.role = role;
         this.active = active;
+        this.courses = courses;
+        this.enrollments = enrollments;
         this.createdAt = createdAt;
     }
 
@@ -187,4 +201,19 @@ public class User implements UserDetails{
         this.createdAt = createdAt;
     }
 
+    public Set<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(Set<Course> courses) {
+        this.courses = courses;
+    }
+
+    public Set<Enrollment> getEnrollments() {
+        return enrollments;
+    }
+
+    public void setEnrollments(Set<Enrollment> enrollments) {
+        this.enrollments = enrollments;
+    }
 }
