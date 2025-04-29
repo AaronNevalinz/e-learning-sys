@@ -88,16 +88,17 @@ public class AuthService {
             return responseService.createSuccessResponse(200, tokenMap, HttpStatus.OK);
 
         } catch (BadCredentialsException ex) {
-            Map<String, String[]> errors = Map.of(
-                    "authentication", new String[]{"Invalid username or password"}
+            Map<String, String> errors = Map.of(
+                    "authentication", "Invalid username or password"
             );
             return responseService.createErrorResponse(400, errors, HttpStatus.BAD_REQUEST);
 
         } catch (IllegalArgumentException ex) {
-            Map<String, String[]> errors = Map.of(
-                    "authentication", new String[]{ex.getMessage()}
+            Map<String, String> errors = Map.of(
+                    "authentication", ex.getMessage()
             );
             return responseService.createErrorResponse(400, errors, HttpStatus.BAD_REQUEST);
         }
     }
+
 }

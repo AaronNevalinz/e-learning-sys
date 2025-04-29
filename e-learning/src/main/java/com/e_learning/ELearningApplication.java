@@ -21,9 +21,9 @@ public class ELearningApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ELearningApplication.class, args);
-		SecretKey key = Keys.secretKeyFor(io.jsonwebtoken.SignatureAlgorithm.HS256);
-		String base64Key = Base64.getEncoder().encodeToString(key.getEncoded());
-		System.out.println("Generated Secret Key: " + base64Key);
+//		SecretKey key = Keys.secretKeyFor(io.jsonwebtoken.SignatureAlgorithm.HS256);
+//		String base64Key = Base64.getEncoder().encodeToString(key.getEncoded());
+//		System.out.println("Generated Secret Key: " + base64Key);
 	}
 
 	public void run(String... args){

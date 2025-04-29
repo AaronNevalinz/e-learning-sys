@@ -34,20 +34,22 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult bindingResult) {
 
-        //model error
+        // Model validation errors
         if (bindingResult.hasErrors()) {
-            Map<String, String[]> errors = new LinkedHashMap<>();
+            Map<String, String> errors = new LinkedHashMap<>();
 
             bindingResult.getFieldErrors().forEach(error -> {
-                errors.computeIfAbsent(error.getField(), key -> new String[1])[0] = error.getDefaultMessage();
+                errors.put(error.getField(), error.getDefaultMessage()); // ✅ Store as String, not String[]
             });
+
             return responseService.createErrorResponse(400, errors, HttpStatus.BAD_REQUEST);
         }
-        // response error
+
+        // Response error
         try {
             return authService.register(user);
         } catch (IllegalArgumentException e) {
-            Map<String, String[]> errors = Map.of("general", new String[]{e.getMessage()});
+            Map<String, String> errors = Map.of("general", e.getMessage()); // ✅ Store as String, not String[]
             return responseService.createErrorResponse(400, errors, HttpStatus.BAD_REQUEST);
         }
     }
