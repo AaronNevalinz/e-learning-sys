@@ -33,9 +33,12 @@ public class CourseService {
         Course existing = courseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + id));
 
-        existing.setTitle(updatedCourse.getTitle());
-        existing.setDescription(updatedCourse.getDescription());
-        // Add more fields if needed
+        if (updatedCourse.getTitle() != null) {
+            existing.setTitle(updatedCourse.getTitle());
+        }
+        if (updatedCourse.getDescription() != null) {
+            existing.setDescription(updatedCourse.getDescription());
+        }
 
         return courseRepository.save(existing);
     }

@@ -33,11 +33,12 @@ public class EnrollmentController {
             Enrollment enrollment = enrollmentService.enrollUser(userId, courseId);
             return responseService.createSuccessResponse(200, enrollment, HttpStatus.CREATED);
         } catch (RuntimeException ex) {
-            Map<String, String[]> errors = new HashMap<>();
-            errors.put("enrollmentError", new String[]{ex.getMessage()});
+            Map<String, String> errors = new HashMap<>();
+            errors.put("enrollmentError", ex.getMessage());
             return responseService.createErrorResponse(400, errors, HttpStatus.BAD_REQUEST);
         }
     }
+
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllEnrollments() {

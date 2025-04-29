@@ -3,6 +3,7 @@ package com.e_learning.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,8 +19,10 @@ public class Course {
     @Column(name = "course_id")
     private Long id;
 
+    @NotBlank(message = "Title is required")
     private String title;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @JsonIgnore
@@ -30,8 +33,20 @@ public class Course {
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private Set<Enrollment> enrollments = new HashSet<>();
 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Topic> topics = new ArrayList<>();
+
     // Constructors
     public Course() {}
+
+    public Course(Long id, String title, String description, Set<User> users, Set<Enrollment> enrollments, List<Topic> topics) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.users = users;
+        this.enrollments = enrollments;
+        this.topics = topics;
+    }
 
     public Course(Long id, String title, String description, Set<User> users, Set<Enrollment> enrollments) {
         this.id = id;
@@ -82,5 +97,12 @@ public class Course {
         this.enrollments = enrollments;
     }
 
+    public List<Topic> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(List<Topic> topics) {
+        this.topics = topics;
+    }
 }
 

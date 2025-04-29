@@ -2,6 +2,7 @@ package com.e_learning.GlobalExceptionHandler;
 
 import com.e_learning.exception.ResourceNotFoundException;
 import com.e_learning.service.ResponseService;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -23,16 +25,23 @@ public class GlobalExceptionHandler {
     }
 
     //Handle validation errors (e.g., @NotEmpty, @Length)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleConstraintViolationException(ConstraintViolationException ex) {
         Map<String, String> errors = new HashMap<>();
 
-        ex.getBindingResult().getFieldErrors().forEach(error -> {
-            errors.put(error.getField(), error.getDefaultMessage());
+        ex.getConstraintViolations().forEach(violation -> {
+            String field = violation.getPropertyPath().toString();
+            String message = violation.getMessage();
+            errors.put(field, message);  // Just store the string, not a list
         });
 
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("status", 400);
+        response.put("errors", errors);
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
 
     // Handle login failures (invalid username/password)
     @ExceptionHandler(BadCredentialsException.class)
@@ -54,9 +63,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleResourceNotFound(ResourceNotFoundException ex) {
-        Map<String, String[]> errorMap = new HashMap<>();
-        errorMap.put("error", new String[]{ex.getMessage()});
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("error", ex.getMessage()); // ✅ Use String, not String[]
         return responseService.createErrorResponse(404, errorMap, HttpStatus.NOT_FOUND);
     }
+
 }
 
