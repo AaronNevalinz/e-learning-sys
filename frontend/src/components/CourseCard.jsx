@@ -12,11 +12,11 @@ export default function CourseCard() {
         </div>
         <div className="col-span-2 space-y-4">
           <Link to={"/course/Object-Oriented Principles in PHP"}>
-            <h1 className="uppercase text-4xl font-bold">
+            <h1 className="uppercase text-4xl font-bold font-montserrat">
               Object-Oriented Principles in PHP
             </h1>
           </Link>
-          <p>
+          <p className="text-slate-600 leading-7">
             The typical beginner, whether they realize it or not, first learns
             procedural programming. But, before too long, they level up.
             Suddenly, an entirely different paradigm is introduced:

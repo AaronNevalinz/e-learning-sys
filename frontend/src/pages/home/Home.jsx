@@ -9,10 +9,10 @@ export default function Home() {
     <>
         <main>
           <div>
-            <h1 className="text-5xl text-slate-800 font-bold">
+            <h1 className="text-5xl text-slate-800 font-bold font-montserrat">
               Explore By Tags
             </h1>
-            <div className="max-w-xl  mt-2 text-slate-600">
+            <div className="max-w-2xl  mt-2 text-slate-600">
               All course series are categorized into various //tags. This should
               provide you with an alternate way to decide what to learn next,
               whether it be a particular framework, language, or tool.

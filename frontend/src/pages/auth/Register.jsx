@@ -41,7 +41,7 @@ export default function Register() {
       console.log(data.errors);
       
     }
-    toast.error("error: ", data.errors.general[0])
+    toast.error("error: ", data.errors.general)
   };
   return (
     <>
@@ -88,7 +88,7 @@ export default function Register() {
                         placeholder="Enter a username"
                       />
                       {errors && (
-                        <p className="text-red-500">{errors.username[0]}</p>
+                        <p className="text-red-500">{errors.username}</p>
                       )}
                     </div>
                     <div className="grid gap-3">
@@ -105,7 +105,7 @@ export default function Register() {
                         placeholder="Enter a username"
                       />
                       {errors && (
-                        <p className="text-red-500">{errors.firstName[0]}</p>
+                        <p className="text-red-500">{errors.firstName}</p>
                       )}
                     </div>
                   </div>
@@ -121,7 +121,7 @@ export default function Register() {
                       placeholder="Enter a username"
                     />
                     {errors && (
-                      <p className="text-red-500">{errors.lastName[0]}</p>
+                      <p className="text-red-500">{errors.lastName}</p>
                     )}
                   </div>
                   <div className="grid gap-3">
@@ -135,7 +135,7 @@ export default function Register() {
                       placeholder="Enter your email"
                     />
                     {errors && (
-                      <p className="text-red-500">{errors.email[0]}</p>
+                      <p className="text-red-500">{errors.email}</p>
                     )}
                   </div>
                   <div className="flex  gap-x-3">
@@ -151,7 +151,7 @@ export default function Register() {
                         type="password"
                       />
                       {errors && (
-                        <p className="text-red-500">{errors.password[0]}</p>
+                        <p className="text-red-500">{errors.password}</p>
                       )}
                     </div>
                     <div className="grid gap-3">
