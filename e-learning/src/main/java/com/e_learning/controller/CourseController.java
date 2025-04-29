@@ -25,7 +25,7 @@ public class CourseController {
     @PostMapping
     public ResponseEntity<Map<String, Object>> createCourse(@RequestBody Course course) {
         Course createdCourse = courseService.createCourse(course);
-        return responseService.createSuccessResponse(200, createdCourse, HttpStatus.CREATED);
+        return responseService.createSuccessResponse(201, createdCourse, HttpStatus.CREATED);
     }
 
     @GetMapping

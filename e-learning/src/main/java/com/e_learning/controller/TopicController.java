@@ -26,11 +26,11 @@ public class TopicController {
     @PostMapping("/course/{courseId}")
     public ResponseEntity<Map<String, Object>> createTopic(@PathVariable Long courseId, @RequestBody Topic topic) {
         Topic saved = topicService.createTopic(courseId, topic);
-        return responseService.createSuccessResponse(200, saved, HttpStatus.CREATED);
+        return responseService.createSuccessResponse(201, saved, HttpStatus.CREATED);
     }
 
     @GetMapping("/course/{courseId}")
-    public ResponseEntity<Map<String, Object>> getTopicsByCourse(@Valid @PathVariable Long courseId) {
+    public ResponseEntity<Map<String, Object>> getTopicsByCourse(@PathVariable Long courseId) {
         List<Topic> topics = topicService.getTopicsByCourse(courseId);
         return responseService.createSuccessResponse(200, topics, HttpStatus.OK);
     }
