@@ -8,6 +8,7 @@ import com.e_learning.repository.TopicRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TopicService {
@@ -25,6 +26,10 @@ public class TopicService {
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + courseId));
         topic.setCourse(course);
         return topicRepository.save(topic);
+    }
+
+    public Optional<Topic> getTopicById(Long id) {
+        return topicRepository.findById(id);
     }
 
     public List<Topic> getTopicsByCourse(Long courseId) {
