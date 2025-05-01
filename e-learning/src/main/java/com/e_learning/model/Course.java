@@ -36,24 +36,28 @@ public class Course {
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Topic> topics = new ArrayList<>();
 
+    // ✅ ADD THIS: Link to course votes
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CourseVote> votes = new ArrayList<>();
+
+    // Add this to link comments with the course
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CourseComment> comments = new ArrayList<>();
+
+
     // Constructors
     public Course() {}
 
-    public Course(Long id, String title, String description, Set<User> users, Set<Enrollment> enrollments, List<Topic> topics) {
+
+    public Course(Long id, String title, String description, Set<User> users, Set<Enrollment> enrollments, List<Topic> topics, List<CourseVote> votes, List<CourseComment> comments) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.users = users;
         this.enrollments = enrollments;
         this.topics = topics;
-    }
-
-    public Course(Long id, String title, String description, Set<User> users, Set<Enrollment> enrollments) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.users = users;
-        this.enrollments = enrollments;
+        this.votes = votes;
+        this.comments = comments;
     }
 
     // Getters and Setters
@@ -103,6 +107,22 @@ public class Course {
 
     public void setTopics(List<Topic> topics) {
         this.topics = topics;
+    }
+
+    public List<CourseVote> getVotes() {
+        return votes;
+    }
+
+    public void setVotes(List<CourseVote> votes) {
+        this.votes = votes;
+    }
+
+    public List<CourseComment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CourseComment> comments) {
+        this.comments = comments;
     }
 }
 

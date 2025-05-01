@@ -1,5 +1,6 @@
 package com.e_learning.controller;
 
+import com.e_learning.dto.CourseResponseDTO;
 import com.e_learning.model.Course;
 import com.e_learning.service.CourseService;
 import com.e_learning.service.ResponseService;
@@ -29,11 +30,18 @@ public class CourseController {
         return responseService.createSuccessResponse(201, createdCourse, HttpStatus.CREATED);
     }
 
+//    @GetMapping
+//    public ResponseEntity<Map<String, Object>> getAllCourses() {
+//        List<Course> courses = courseService.getAllCourses();
+//        return responseService.createSuccessResponse(200, courses, HttpStatus.OK);
+//    }
+
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllCourses() {
-        List<Course> courses = courseService.getAllCourses();
-        return responseService.createSuccessResponse(200, courses, HttpStatus.OK);
+        List<CourseResponseDTO> courseStats = courseService.getAllCoursesWithStats();
+        return responseService.createSuccessResponse(200, courseStats, HttpStatus.OK);
     }
+
 
     @GetMapping("/{courseId}")
     public ResponseEntity<Map<String, Object>> getCourseById(@PathVariable Long courseId) {
