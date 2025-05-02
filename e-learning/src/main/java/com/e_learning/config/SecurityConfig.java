@@ -48,7 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll() // /** is to allow all requests that match any subpath under /api/v1/auth/
                         .requestMatchers("/api/v1/admin/**", "/api/v1/enrollments/**",
                                 "/api/v1/topics/**", "/api/v1/subtopics/**").hasAnyAuthority(Role.ADMIN.name())
-                        .requestMatchers("/api/v1/users/**").hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())
+                        .requestMatchers("/api/v1/users/**", "/api/v1/vote/**", "/api/v1/comment/**").hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())
                         .requestMatchers("/api/v1/courses/**").hasAnyAuthority(Role.ADMIN.name())
                         .anyRequest().authenticated()
                 )

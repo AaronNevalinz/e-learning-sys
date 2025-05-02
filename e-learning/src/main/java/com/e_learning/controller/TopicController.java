@@ -1,5 +1,6 @@
 package com.e_learning.controller;
 
+import com.e_learning.model.Course;
 import com.e_learning.model.Topic;
 import com.e_learning.service.ResponseService;
 import com.e_learning.service.TopicService;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/topics")
@@ -27,6 +29,12 @@ public class TopicController {
     public ResponseEntity<Map<String, Object>> createTopic(@PathVariable Long courseId, @RequestBody Topic topic) {
         Topic saved = topicService.createTopic(courseId, topic);
         return responseService.createSuccessResponse(201, saved, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{topicId}")
+    public ResponseEntity<Map<String, Object>> getTopicById(@PathVariable Long topicId) {
+        Optional<Topic> topic = topicService.getTopicById(topicId);
+        return responseService.createSuccessResponse(200, topic, HttpStatus.OK);
     }
 
     @GetMapping("/course/{courseId}")
