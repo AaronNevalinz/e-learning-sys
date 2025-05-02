@@ -47,5 +47,20 @@ public class CourseCommentService {
     public List<CourseComment> getCommentsByCourseId(Long courseId) {
         return commentRepository.findByCourseId(courseId);
     }
+
+
+    public CourseComment updateComment(Long commentId, String updatedText) {
+        CourseComment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment not found with id: " + commentId));
+        comment.setContent(updatedText);
+        return commentRepository.save(comment);
+    }
+
+    public void deleteComment(Long commentId) {
+        CourseComment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment not found with id: " + commentId));
+        commentRepository.delete(comment);
+    }
+
 }
 

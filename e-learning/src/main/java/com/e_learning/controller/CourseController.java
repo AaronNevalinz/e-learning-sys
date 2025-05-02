@@ -1,6 +1,7 @@
 package com.e_learning.controller;
 
 import com.e_learning.dto.CourseResponseDTO;
+import com.e_learning.exception.ResourceNotFoundException;
 import com.e_learning.model.Course;
 import com.e_learning.service.CourseService;
 import com.e_learning.service.ResponseService;
@@ -24,11 +25,29 @@ public class CourseController {
         this.responseService = responseService;
     }
 
+//    @PostMapping
+//    public ResponseEntity<Map<String, Object>> createCourse(@RequestBody Course course) {
+//        Course createdCourse = courseService.createCourse(course);
+//        return responseService.createSuccessResponse(201, createdCourse, HttpStatus.CREATED);
+//    }
+
     @PostMapping
     public ResponseEntity<Map<String, Object>> createCourse(@RequestBody Course course) {
-        Course createdCourse = courseService.createCourse(course);
-        return responseService.createSuccessResponse(201, createdCourse, HttpStatus.CREATED);
+        try {
+            Course createdCourse = courseService.createCourse(course);
+            return responseService.createSuccessResponse(201, createdCourse, HttpStatus.CREATED);
+        } catch (IllegalArgumentException | ResourceNotFoundException ex) {
+            Map<String, String> error = Map.of("category", ex.getMessage());
+            return responseService.createErrorResponse(400, error, HttpStatus.BAD_REQUEST);
+        }
     }
+
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<Map<String, Object>> getCoursesByCategory(@PathVariable Long categoryId) {
+        List<Course> courses = courseService.getCoursesByCategoryId(categoryId);
+        return responseService.createSuccessResponse(200, courses, HttpStatus.OK);
+    }
+
 
 //    @GetMapping
 //    public ResponseEntity<Map<String, Object>> getAllCourses() {

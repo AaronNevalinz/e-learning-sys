@@ -44,12 +44,17 @@ public class Course {
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseComment> comments = new ArrayList<>();
 
+    //@JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+
 
     // Constructors
     public Course() {}
 
-
-    public Course(Long id, String title, String description, Set<User> users, Set<Enrollment> enrollments, List<Topic> topics, List<CourseVote> votes, List<CourseComment> comments) {
+    public Course(Long id, String title, String description, Set<User> users, Set<Enrollment> enrollments, List<Topic> topics, List<CourseVote> votes, List<CourseComment> comments, Category category) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -58,6 +63,7 @@ public class Course {
         this.topics = topics;
         this.votes = votes;
         this.comments = comments;
+        this.category = category;
     }
 
     // Getters and Setters
@@ -123,6 +129,14 @@ public class Course {
 
     public void setComments(List<CourseComment> comments) {
         this.comments = comments;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }
 
