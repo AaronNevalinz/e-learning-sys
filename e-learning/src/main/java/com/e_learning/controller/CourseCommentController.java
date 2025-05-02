@@ -43,5 +43,22 @@ public class CourseCommentController {
         List<CourseComment> comments = commentService.getCommentsByCourseId(courseId);
         return responseService.createSuccessResponse(200, comments, HttpStatus.OK);
     }
+
+    @PutMapping("/update/{commentId}")
+    public ResponseEntity<Map<String, Object>> updateComment(
+            @PathVariable Long commentId,
+            @RequestBody Map<String, String> requestBody) {
+
+        String updatedText = requestBody.get("content");
+        CourseComment updated = commentService.updateComment(commentId, updatedText);
+        return responseService.createSuccessResponse(200, updated, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{commentId}")
+    public ResponseEntity<Map<String, Object>> deleteComment(@PathVariable Long commentId) {
+        commentService.deleteComment(commentId);
+        return responseService.createSuccessResponse(200, "Comment deleted successfully", HttpStatus.OK);
+    }
+
 }
 
