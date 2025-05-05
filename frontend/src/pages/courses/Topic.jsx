@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { AppSidebar } from "@/components/app-sidebar";
 import SideNavbar from "@/components/side-nav-bar";
 import { SidebarProvider } from "@/components/ui/sidebar";

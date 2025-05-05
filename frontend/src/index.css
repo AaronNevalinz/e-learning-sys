@@ -4,6 +4,31 @@
 
 @custom-variant dark (&:is(.dark *));
 
+.editor-wrapper h1 {
+  @apply text-4xl font-extrabold;
+}
+
+.editor-wrapper h2 {
+  @apply text-3xl font-bold;
+}
+
+.editor-wrapper h3 {
+  @apply text-2xl font-semibold;
+}
+
+.editor-wrapper h4 {
+  @apply text-xl font-medium;
+}
+
+.editor-wrapper h5 {
+  @apply text-base font-normal;
+}
+
+.editor-wrapper h6 {
+  @apply text-sm font-light;
+}
+
+
 @theme inline {
   --font-montserrat: "Montserrat", "sans-serif";
   --font-hanken: "Poppins", "sans-serif";
