@@ -7,6 +7,11 @@ import LayOut from "./pages/LayOut";
 import CourseList from "./pages/courses/CourseList";
 import CourseDetail from "./pages/courses/CourseDetail";
 import Topic from "./pages/courses/Topic";
+import Dashboard from "./pages/admin/Dashboard";
+import LayOut2 from "./pages/LayOut2";
+import CreateCourse from "./pages/admin/CreateCourse";
+import CreateCourseContent from "./pages/admin/CreateCourseContent";
+import TopicQuestions from "./pages/admin/TopicQuestions";
 
 function App() {
   return (
@@ -19,10 +24,19 @@ function App() {
             path="/course/:courseTitle/topic/:topicId"
             element={<Topic />}
           />
+
+
+          <Route path="/dashboard" element={<LayOut2 />}>
+            <Route index element={<Dashboard />} />
+            <Route path="create-course" element={<CreateCourse />} />
+            <Route path="create-course/:topic_id" element={<CreateCourseContent/>}/>
+            <Route path="create-course/topic/:topic_id" element={<TopicQuestions/>} />
+          </Route>
+
           <Route path="/" element={<LayOut />}>
             <Route index element={<Home />} />
-            <Route path="/courses" element={<CourseList />} />
-            <Route path="/course/:courseTitle" element={<CourseDetail />} />
+            <Route path="courses" element={<CourseList />} />
+            <Route path="course/:courseTitle" element={<CourseDetail />} />
           </Route>
         </Routes>
       </BrowserRouter>
