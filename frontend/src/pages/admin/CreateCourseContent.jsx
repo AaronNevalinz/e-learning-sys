@@ -18,6 +18,7 @@ export default function CreateCourseContent() {
     
     try {
       const data = await editorInstanceRef.current.save();
+      
       const payload = {
         title: title,
         content: data,

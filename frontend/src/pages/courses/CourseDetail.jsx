@@ -3,9 +3,34 @@ import oopPhp from "../../assets/images/oop-in-php.jpg";
 import { FaPlay } from "react-icons/fa";
 import { FaBookBookmark } from "react-icons/fa6";
 import { IoNewspaperOutline } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ViewAllCourses from "@/components/view-all-courses";
+import { useContext, useEffect, useState } from "react";
+import { AppContext } from "@/context/AppContext";
+import { API_URL } from "@/config";
 export default function CourseDetail() {
+  const {id} = useParams()
+  const {token} = useContext(AppContext)
+  const [course, setCourse] = useState({})
+  const fetchCourseDetails = async()=>{
+    const res = await fetch(`${API_URL}/courses/${id}`, {
+      headers:{
+        Authorization:`Bearer ${token}`,
+        "Content-Type":"application/json"
+      }
+    });
+    const data = await res.json()
+
+    if(data.status === 200){
+      setCourse(data.result)      
+    }
+  }
+
+  useEffect(() => {
+    fetchCourseDetails();
+  }, []);
+
+  
   return (
     <>
       <div className="grid grid-cols-6 gap-x-6">
@@ -15,20 +40,10 @@ export default function CourseDetail() {
         <div className="col-span-4">
           <ViewAllCourses />
           <h1 className="uppercase text-6xl font-black text-slate-800 font-montserrat">
-            Object-Oriented Principles in PHP
+            {course.title}
           </h1>
           <p className="text-slate-600 my-2 leading-7">
-            Core OOP concepts: for most people; like encapsulation, inheritance,
-            and polymorphism can be confusing at first, especially for those
-            used to procedural code where data and logic are not grouped
-            together. Beginners often find it challenging to determine which
-            parts of their application should be modeled as classes, what
-            responsibilities each class should have, and how objects should
-            interact. In this course, you will be introduced to the core
-            principles of object-oriented programming through the lens of PHP.
-            We will begin with the basic constructs and work our way up. The
-            only prerequisite is an elementary understanding of the PHP language
-            and syntax. Now, walk with me…
+            {course.description}
           </p>
           <div className="flex gap-x-5 mt-4">
             <Button
@@ -40,7 +55,7 @@ export default function CourseDetail() {
               <FaBookBookmark />
               Add to watchlist
             </Button>
-            <Link to={"/course/Object-Oriented Principles in PHP/topic/1"}>
+            <Link to={`/course/${course.title}/topic/${course.id}`}>
               <Button
                 variant={"outline"}
                 className={
@@ -58,23 +73,21 @@ export default function CourseDetail() {
               Topics
             </div>
             <div className="space-y-4 mt-4">
-              {[1, 1, 1, 1, 1, 1].map((index) => (
+              {
+              (course.topics || []).map((topic, index) => (
                 <div
                   className="bg-gray-100 shadow-sm grid grid-cols-12 items-center gap-x-1 p-2"
-                  key={index}
+                  key={topic.id}
                 >
                   <div className="col-span-1 w-full justify-center">
                     <p className="text-4xl font-black bg-slate-400 w-10 flex justify-center  rounded-full">
-                      1
+                      {index+1}
                     </p>
                   </div>
                   <div className="col-span-11">
-                    <h1 className="text-xl font-medium">Classes</h1>
+                    <h1 className="text-xl font-medium">{topic.title}</h1>
                     <p className="text-gray-600 text-sm">
-                      Lets begin with an introduction to classes in PHP. I like
-                      to think of a class as a blueprint or template that
-                      defines the overall structure and behavior for an concept
-                      in your codebase.
+                      {topic.description}
                     </p>
                     <div className="flex justify-end">
                       <p className="flex items-center px-2 py-0.5 gap-x-1 text-sm bg-orange-600 text-gray-100">

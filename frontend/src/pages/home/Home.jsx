@@ -1,7 +1,6 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import apiLogo from "../../assets/images/api-logo.svg"
-import CourseCard from "@/components/CourseCard";
 
 
 export default function Home() {
@@ -88,7 +87,7 @@ export default function Home() {
             </TabsContent>
           </Tabs>
 
-          <CourseCard />
+          {/* <CourseCard /> */}
         </main>
     </>
   );
