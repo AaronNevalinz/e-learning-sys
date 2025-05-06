@@ -51,8 +51,8 @@ public class SubtopicController {
 
 
     @GetMapping("/{subTopicId}")
-    public ResponseEntity<Map<String, Object>> getTopicById(@PathVariable Long topicId) {
-        Optional<Subtopic> subtopic = subtopicService.getSubTopicById(topicId);
+    public ResponseEntity<Map<String, Object>> getTopicById(@PathVariable Long subTopicId) {
+        Optional<Subtopic> subtopic = subtopicService.getSubTopicById(subTopicId);
         return responseService.createSuccessResponse(200, subtopic, HttpStatus.OK);
     }
 
