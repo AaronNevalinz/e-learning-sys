@@ -8,6 +8,7 @@ import com.e_learning.repository.TopicRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SubtopicService {
@@ -26,6 +27,10 @@ public class SubtopicService {
 
         subtopic.setTopic(topic);
         return subtopicRepository.save(subtopic);
+    }
+
+    public Optional<Subtopic> getSubTopicById(Long id) {
+        return subtopicRepository.findById(id);
     }
 
     public List<Subtopic> getSubtopicsByTopicId(Long topicId) {
