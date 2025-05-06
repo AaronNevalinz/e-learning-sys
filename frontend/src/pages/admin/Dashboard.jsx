@@ -17,15 +17,57 @@ import {
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-// import { GoLog } from "react-icons/go";
+import { useContext, useState } from "react";
+import { AppContext } from "@/context/AppContext";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { API_URL } from "@/config";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+  const { token } = useContext(AppContext);
   const getGreeting = () => {
     const currentHour = new Date().getHours();
     if (currentHour < 12) return "Good Morning";
     if (currentHour < 18) return "Good Afternoon";
     return "Good Evening";
   };
+
+  console.log(API_URL);
+
+  // this part is for tags all all that database related
+  const [newTag, setNewTag] = useState({
+    name: "",
+  });
+
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(newTag),
+  };
+  const handleAddTag = async (e) => {
+    e.preventDefault();
+    console.log(API_URL);
+    
+
+    try {
+      const res = await fetch(`${API_URL}/categories`, options);
+      const data = await res.json();
+      if (data.status == 201) {
+        toast.success("Tag added Successfully");
+        navigate(0);
+      } else {
+        toast.error("Error Occurred creating Tag");
+      }
+    } catch (err) {
+      toast.error(err.message);
+      // navigate(0)
+    }
+  };
+
 
   return (
     <>
@@ -45,7 +87,7 @@ export default function Dashboard() {
           />
           <Separator orientation="vertical" />
           <Dialog>
-            <DialogTrigger className='cursor-pointer'>
+            <DialogTrigger className="cursor-pointer">
               <DashboardCardAction
                 className="cursor-pointer"
                 color="#dc4838"
@@ -56,13 +98,21 @@ export default function Dashboard() {
             <DialogContent>
               <div className="mt-6 space-y-4">
                 <h1 className="uppercase font-medium">Add Tag</h1>
-                <form action="" className="flex items-center gap-x-6">
+                <form
+                  action=""
+                  className="flex items-center gap-x-6"
+                  onSubmit={handleAddTag}
+                >
                   <Input
                     type={"text"}
                     className={"rounded-none"}
                     placeholder="Add Tag"
+                    onChange={(e) => setNewTag({ name: e.target.value })}
                   />
-                  <Button className={"cursor-pointer rounded-none"}>
+                  <Button
+                    type="submit"
+                    className={"cursor-pointer rounded-none"}
+                  >
                     Submit
                   </Button>
                 </form>

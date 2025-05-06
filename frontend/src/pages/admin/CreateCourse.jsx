@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import oopPhp from "../../assets/images/oop-in-php.jpg";
 import { FaBookBookmark } from "react-icons/fa6";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { IoNewspaperOutline } from "react-icons/io5";
 import { IoMdAddCircle } from "react-icons/io";
 import {
@@ -20,26 +20,122 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
+import { AppContext } from "@/context/AppContext";
+import { API_URL } from "@/config";
+import { toast } from "sonner";
 
+/**
+ * The `CreateCourse` component is a React functional component that allows administrators
+ * to create and manage course topics. It provides functionality to fetch existing topics,
+ * add new topics, and manage multiple-choice questions for each topic. The component
+ * integrates with an API to handle course-related data and uses various UI elements
+ * for user interaction.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered `CreateCourse` component.
+ *
+ * @example
+ * // Usage in a React application
+ * import CreateCourse from './CreateCourse';
+ *
+ * function App() {
+ *   return <CreateCourse />;
+ * }
+ *
+ * @remarks
+ * - Requires `AppContext` to provide authentication token.
+ * - Expects `useLocation` to pass course data via `location.state`.
+ * - Uses `API_URL` for API endpoint configuration.
+ *
+ * @dependencies
+ * - React hooks: `useState`, `useEffect`, `useContext`.
+ * - Third-party libraries: `react-router-dom`, `react-toastify`.
+ * - UI components: `Dialog`, `Button`, `Accordion`, `Input`, `Textarea`, `Checkbox`.
+ *
+ * @todo
+ * - Improve error handling for API calls.
+ * - Add validation for topic and question inputs.
+ * - Optimize state management for better performance.
+ */
 export default function CreateCourse() {
-  const [topics, setTopics] = useState([1]);
-  const [newTopic, setNewTopic] = useState({ title: "", desc: "" });
+  const { token } = useContext(AppContext);
+  const location = useLocation();
+  const newCourse = location.state?.course;
+  // console.log(newCourse);
+  
+  const [topics, setTopics] = useState([]);
+  const [newTopic, setNewTopic] = useState({ title: "", description: "" });
   const [choices, setChoices] = useState([]);
 
-  const handleAddTopic = (e) => {
+  /**
+   * Fetches all topics associated with a specific course and updates the state with the retrieved topics.
+   * Makes an API call to fetch topics for the course identified by `newCourse.id`.
+   * If the request is successful and the response status is 200, the topics are set in the state.
+   * Displays an error toast notification if the request fails.
+   *
+   * @async
+   * @function fetchAllTopics
+   * @throws Will display an error toast if the API call fails.
+   */
+  const fetchAllTopics = async () => {
+    try {
+      const res = await fetch(`${API_URL}/topics/course/${newCourse.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (data.status === 200) {
+        setTopics(data.result);
+        console.log(data);
+                
+      }
+      // eslint-disable-next-line no-unused-vars
+    } catch (err) {
+      toast.error("Oh... Error fetching posts, that's on us...");
+    }
+  };
+  //
+  /**
+   * Handles the addition of a new topic to the course.
+   * Sends a POST request to the server to create a new topic associated with the specified course.
+   * Updates the local state with the newly added topic if the operation is successful.
+   *
+   * @param {Object} e - The event object from the form submission.
+   * @returns {Promise<void>} - A promise that resolves when the operation is complete.
+   */
+  const handleAddTopic = async (e) => {
     e.preventDefault();
+    const res = await fetch(`${API_URL}/topics/course/${newCourse.id}`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(newTopic),
+    });
+
+    const data = await res.json();
+
+    console.log(data);
+
     if (!newTopic.title.trim()) return;
     setTopics((prev) => [...prev, newTopic]);
-    setNewTopic({ title: "", desc: "" });
-    console.log(topics);
+    setNewTopic({ title: "", description: "" });
   };
+
+
 
   const handleAddQuestionChoice = () => {
     setChoices([...choices, {}]);
   };
+
+  useEffect(() => {
+    fetchAllTopics();
+  }, []);
 
   return (
     <div className="">
@@ -83,7 +179,10 @@ export default function CreateCourse() {
                       <Textarea
                         id="username"
                         onChange={(e) =>
-                          setNewTopic({ ...newTopic, desc: e.target.value })
+                          setNewTopic({
+                            ...newTopic,
+                            description: e.target.value,
+                          })
                         }
                         className="col-span-3"
                       />
@@ -109,20 +208,10 @@ export default function CreateCourse() {
         </div>
         <div className="col-span-4">
           <h1 className="uppercase text-3xl font-black text-slate-800 font-montserrat">
-            Object-Oriented Principles in PHP
+            {newCourse.title}
           </h1>
           <p className="text-slate-600 my-2 font-medium text-sm">
-            Core OOP concepts: for most people; like encapsulation, inheritance,
-            and polymorphism can be confusing at first, especially for those
-            used to procedural code where data and logic are not grouped
-            together. Beginners often find it challenging to determine which
-            parts of their application should be modeled as classes, what
-            responsibilities each class should have, and how objects should
-            interact. In this course, you will be introduced to the core
-            principles of object-oriented programming through the lens of PHP.
-            We will begin with the basic constructs and work our way up. The
-            only prerequisite is an elementary understanding of the PHP language
-            and syntax. Now, walk with me…
+            {newCourse.description}
           </p>
           <div className="space-y-6">
             {topics.map((topic, index) => (
@@ -140,16 +229,30 @@ export default function CreateCourse() {
                         </div>
                         <div className="flex flex-col">
                           <h1 className="text-xl font-medium">{topic.title}</h1>
-                          <p className="text-gray-600 text-sm">{topic.desc}</p>
+                          <p className="text-gray-600 text-sm">
+                            {topic.description}
+                          </p>
                         </div>
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className={"mt-3"}>
+                    <div className="text-center mb-3">
+                      <h1 className="font-bold">Subtopics(click to preview)</h1>
+                      {
+                        (topic?.subtopics || []).map(subtopic=>{
+                          return (
+                            <div className="py-2 underline text-green-700 font-medium" key={subtopic.id}>
+                              {subtopic.title}
+                            </div>
+                          )
+                        })
+                      }
+                    </div>
                       <div className="flex justify-end">
                         <div className="flex  items-center w-[90%] ">
                           <Separator className={"flex-1 bg-blue-700"} />
                           <Link
-                            to={`${topic.title}`}
+                            to={`${topic.id}`}
                             className="text-blue-700 text-center flex-1 font-bold border border-blue-700 px-3 py-1 rounded-full"
                           >
                             Add subtopic

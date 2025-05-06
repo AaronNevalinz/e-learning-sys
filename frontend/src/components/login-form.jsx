@@ -2,13 +2,13 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-// import { AppContext } from "@/context/AppContext";
-import {  useState } from "react";
+import {  useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { AppContext } from "@/context/AppContext";
 
 export function LoginForm() {
-  // const { setUser, setToken } = useContext(AppContext);
+  const { setToken } = useContext(AppContext);
 
   const navigate = useNavigate();
 
@@ -35,8 +35,9 @@ export function LoginForm() {
 
       const data = await res.json();
       
-      if(data.returnCode == 200){
-        localStorage.setItem("token", data.ReturnObject.token);
+      if(data.status == 200){
+        localStorage.setItem("token", data.result.token);
+        setToken(data.result.token)
         navigate("/");
         toast.success("Login successful!");
       }        
@@ -78,7 +79,7 @@ export function LoginForm() {
           />
         </div>
         <p className="text-sm text-right">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link to={"/register"} className="underline font-bold">
             Register
           </Link>

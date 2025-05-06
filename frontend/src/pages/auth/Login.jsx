@@ -1,7 +1,7 @@
-
 import { LoginForm } from "@/components/login-form";
 import loginImg from "/student.jpg";
 import { Link } from "react-router-dom";
+import { FaBrain } from "react-icons/fa";
 
 export default function Login() {
   return (
@@ -11,16 +11,13 @@ export default function Login() {
           <h1>
             <Link
               className={
-                "bg-gradient-to-r font-bold font-montserrat from-blue-900 to-red-500 inline-block text-transparent bg-clip-text text-xl "
+                "bg-gradient-to-r font-black font-montserrat from-purple-500 to-red-500 inline-block text-transparent bg-clip-text text-xl"
               }
               to="/"
             >
               <div className="flex items-center gap-x-2">
-                {/* <img src={logo} alt="" className="w-8" /> */}
-                <span>
-                  E-LearningSYS
-                  <span className="italic font-black text-2xl">!</span>
-                </span>
+                <FaBrain size={38} className="fill-yellow-600" />
+                <p>99Exceptions</p>
               </div>
             </Link>
           </h1>

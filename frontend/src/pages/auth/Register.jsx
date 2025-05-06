@@ -5,17 +5,17 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import loginImg from "/student.jpg";
-
+import { FaBrain } from "react-icons/fa";
 
 export default function Register() {
   const [formData, setFormData] = useState({
     username: "",
-    firstName:"",
-    lastName:"",
-    email:"",
+    firstName: "",
+    lastName: "",
+    email: "",
     password: "",
   });
-  const [errors, setErrors] = useState(null)
+  const [errors, setErrors] = useState(null);
   const navigate = useNavigate();
 
   const url = "http://localhost:8000/api/v1/auth/register";
@@ -32,16 +32,15 @@ export default function Register() {
     });
 
     const data = await res.json();
-    if(data.status == 200){
+    if (data.status == 200) {
       console.log(data);
       toast.success("You have successfull register. Login now :)");
       navigate("/login");
-    }else{
-      setErrors(data.errors)
+    } else {
+      setErrors(data.errors);
       console.log(data.errors);
-      
     }
-    toast.error("error: ", data.errors.general)
+    toast.error("error: ", data.errors.general);
   };
   return (
     <>
@@ -51,16 +50,13 @@ export default function Register() {
             <h1>
               <Link
                 className={
-                  "bg-gradient-to-r font-bold font-montserrat from-blue-900 to-red-500 inline-block text-transparent bg-clip-text text-xl "
+                  "bg-gradient-to-r font-black font-montserrat from-purple-500 to-red-500 inline-block text-transparent bg-clip-text text-xl"
                 }
                 to="/"
               >
                 <div className="flex items-center gap-x-2">
-                  {/* <img src={logo} alt="" className="w-8" /> */}
-                  <span>
-                    E-LearningSYS
-                    <span className="italic font-black text-2xl">!</span>
-                  </span>
+                  <FaBrain size={38} className="fill-yellow-600" />
+                  <p>99Exceptions</p>
                 </div>
               </Link>
             </h1>
@@ -134,9 +130,7 @@ export default function Register() {
                       type="email"
                       placeholder="Enter your email"
                     />
-                    {errors && (
-                      <p className="text-red-500">{errors.email}</p>
-                    )}
+                    {errors && <p className="text-red-500">{errors.email}</p>}
                   </div>
                   <div className="flex  gap-x-3">
                     <div className="grid gap-3">
