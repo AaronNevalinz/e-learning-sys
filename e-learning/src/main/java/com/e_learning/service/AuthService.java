@@ -14,6 +14,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -71,7 +73,6 @@ public class AuthService {
 
     public ResponseEntity<Map<String, Object>> login(User userDetail) {
         try {
-            // Will throw BadCredentialsException if invalid credentials
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             userDetail.getUsername(),
@@ -84,21 +85,24 @@ public class AuthService {
 
             var jwt = jwtUtil.generateToken(user);
 
-            Map<String, String> tokenMap = Map.of("token", jwt);
-            return responseService.createSuccessResponse(200, tokenMap, HttpStatus.OK);
+            Map<String, Object> response = new LinkedHashMap<>();
+            response.put("status", 200);
+            response.put("role", user.getRole().name());
+            response.put("result", Map.of("token", jwt));
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (BadCredentialsException ex) {
-            Map<String, String> errors = Map.of(
-                    "authentication", "Invalid username or password"
-            );
-            return responseService.createErrorResponse(400, errors, HttpStatus.BAD_REQUEST);
-
+            return responseService.createErrorResponse(400,
+                    Map.of("authentication", "Invalid username or password"),
+                    HttpStatus.BAD_REQUEST);
         } catch (IllegalArgumentException ex) {
-            Map<String, String> errors = Map.of(
-                    "authentication", ex.getMessage()
-            );
-            return responseService.createErrorResponse(400, errors, HttpStatus.BAD_REQUEST);
+            return responseService.createErrorResponse(400,
+                    Map.of("authentication", ex.getMessage()),
+                    HttpStatus.BAD_REQUEST);
         }
     }
+
+
 
 }

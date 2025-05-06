@@ -37,6 +37,13 @@ public class TopicController {
         return responseService.createSuccessResponse(200, topic, HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getAllTopics() {
+        List<Topic> topics = topicService.getAllTopics();
+        return responseService.createSuccessResponse(200, topics, HttpStatus.OK);
+    }
+
+
     @GetMapping("/course/{courseId}")
     public ResponseEntity<Map<String, Object>> getTopicsByCourse(@PathVariable Long courseId) {
         List<Topic> topics = topicService.getTopicsByCourse(courseId);

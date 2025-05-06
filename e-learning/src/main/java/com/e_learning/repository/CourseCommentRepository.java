@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface CourseCommentRepository extends JpaRepository<CourseComment, Long> {
     long countByCourseId(Long courseId);
-    List<CourseComment> findByCourseId(Long courseId);
+    List<CourseComment> findByCourseIdOrderByCreatedAtDesc(Long courseId);
 }
 

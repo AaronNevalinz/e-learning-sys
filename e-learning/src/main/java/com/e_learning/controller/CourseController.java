@@ -25,11 +25,6 @@ public class CourseController {
         this.responseService = responseService;
     }
 
-//    @PostMapping
-//    public ResponseEntity<Map<String, Object>> createCourse(@RequestBody Course course) {
-//        Course createdCourse = courseService.createCourse(course);
-//        return responseService.createSuccessResponse(201, createdCourse, HttpStatus.CREATED);
-//    }
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> createCourse(@RequestBody Course course) {

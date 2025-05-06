@@ -32,6 +32,11 @@ public class TopicService {
         return topicRepository.findById(id);
     }
 
+
+    public List<Topic> getAllTopics() {
+        return topicRepository.findAll();
+    }
+
     public List<Topic> getTopicsByCourse(Long courseId) {
         return topicRepository.findByCourseId(courseId);
     }
