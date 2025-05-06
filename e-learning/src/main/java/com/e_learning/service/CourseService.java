@@ -71,7 +71,7 @@ public class CourseService {
             dto.setCourseId(course.getId());
             dto.setCourseTitle(course.getTitle());
             dto.setCourseDescription(course.getDescription());
-            // dto.setCourseImg(course.getImage()); // Uncomment if applicable
+            dto.setImageUrl(course.getImageUrl());
 
             dto.setCourseTopicCount(topicCount);
             dto.setCourseSubtopicCount(subtopicCount);

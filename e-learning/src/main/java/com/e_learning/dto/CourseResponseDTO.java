@@ -2,7 +2,7 @@ package com.e_learning.dto;
 
 public class CourseResponseDTO {
     private Long courseId;
-    private String courseImg;
+    private String imageUrl;
     private String courseTitle;
     private String courseDescription;
 
@@ -18,9 +18,9 @@ public class CourseResponseDTO {
     public CourseResponseDTO() {
     }
 
-    public CourseResponseDTO(Long courseId, String courseImg, String courseTitle, String courseDescription, int courseTopicCount, int courseSubtopicCount, long courseUpvoteCount, long courseDownvoteCount, long courseCommentCount) {
+    public CourseResponseDTO(Long courseId, String imageUrl, String courseTitle, String courseDescription, int courseTopicCount, int courseSubtopicCount, long courseUpvoteCount, long courseDownvoteCount, long courseCommentCount) {
         this.courseId = courseId;
-        this.courseImg = courseImg;
+        this.imageUrl = imageUrl;
         this.courseTitle = courseTitle;
         this.courseDescription = courseDescription;
         this.courseTopicCount = courseTopicCount;
@@ -54,12 +54,12 @@ public class CourseResponseDTO {
         this.courseDescription = courseDescription;
     }
 
-    public String getCourseImg() {
-        return courseImg;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setCourseImg(String courseImg) {
-        this.courseImg = courseImg;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public int getCourseTopicCount() {

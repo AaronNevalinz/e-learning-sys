@@ -15,7 +15,7 @@ public class TestSubmission {
     private User user;
 
     @ManyToOne(optional = false)
-    private Test test;
+    private Question question;
 
     private double score;
 
@@ -24,10 +24,10 @@ public class TestSubmission {
     public TestSubmission() {
     }
 
-    public TestSubmission(Long id, User user, Test test, double score, LocalDateTime submittedAt) {
+    public TestSubmission(Long id, User user, Question question, double score, LocalDateTime submittedAt) {
         this.id = id;
         this.user = user;
-        this.test = test;
+        this.question = question;
         this.score = score;
         this.submittedAt = submittedAt;
     }
@@ -48,16 +48,16 @@ public class TestSubmission {
         this.user = user;
     }
 
-    public Test getTest() {
-        return test;
-    }
-
-    public void setTest(Test test) {
-        this.test = test;
-    }
-
     public double getScore() {
         return score;
+    }
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     public void setScore(double score) {
