@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface TestSubmissionRepository extends JpaRepository<TestSubmission, Long> {
     List<TestSubmission> findByUserId(Long userId);
-    List<TestSubmission> findByTestId(Long testId);
+    //List<TestSubmission> findByTestId(Long testId);
 }
 

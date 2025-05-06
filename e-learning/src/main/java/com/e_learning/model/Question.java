@@ -2,6 +2,9 @@ package com.e_learning.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // === Question.java ===
 @Entity
 public class Question {
@@ -11,19 +14,23 @@ public class Question {
 
     private String content;
 
-    @ManyToOne(optional = false)
-    private Test test;
+    private boolean multipleAnswersAllowed = false;
 
-    private boolean multipleAnswersAllowed; // true = multiple correct answers allowed
+    @ManyToOne(optional = false)
+    private Topic topic;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AnswerOption> answerOptions = new ArrayList<>();
 
     public Question() {
     }
 
-    public Question(Long id, String content, Test test, boolean multipleAnswersAllowed) {
+    public Question(Long id, String content, boolean multipleAnswersAllowed, Topic topic, List<AnswerOption> answerOptions) {
         this.id = id;
         this.content = content;
-        this.test = test;
         this.multipleAnswersAllowed = multipleAnswersAllowed;
+        this.topic = topic;
+        this.answerOptions = answerOptions;
     }
 
     public Long getId() {
@@ -42,14 +49,6 @@ public class Question {
         this.content = content;
     }
 
-    public Test getTest() {
-        return test;
-    }
-
-    public void setTest(Test test) {
-        this.test = test;
-    }
-
     public boolean isMultipleAnswersAllowed() {
         return multipleAnswersAllowed;
     }
@@ -57,4 +56,21 @@ public class Question {
     public void setMultipleAnswersAllowed(boolean multipleAnswersAllowed) {
         this.multipleAnswersAllowed = multipleAnswersAllowed;
     }
+
+    public Topic getTopic() {
+        return topic;
+    }
+
+    public void setTopic(Topic topic) {
+        this.topic = topic;
+    }
+
+    public List<AnswerOption> getAnswerOptions() {
+        return answerOptions;
+    }
+
+    public void setAnswerOptions(List<AnswerOption> answerOptions) {
+        this.answerOptions = answerOptions;
+    }
 }
+
