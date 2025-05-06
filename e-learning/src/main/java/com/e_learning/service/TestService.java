@@ -43,6 +43,12 @@ public class TestService {
         return testRepository.save(test);
     }
 
+    public Test getTestByTopic(Long topicId) {
+        return testRepository.findByTopicId(topicId)
+                .orElseThrow(() -> new RuntimeException("No test found for topic with ID: " + topicId));
+    }
+
+
     public Question addQuestion(Long testId, String content, Boolean multiAnswer) {
         Test test = testRepository.findById(testId)
                 .orElseThrow(() -> new ResourceNotFoundException("Test not found"));

@@ -1,6 +1,7 @@
 package com.e_learning.controller;
 
 import com.e_learning.model.Subtopic;
+import com.e_learning.model.Topic;
 import com.e_learning.service.ResponseService;
 import com.e_learning.service.SubtopicService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -49,6 +50,11 @@ public class SubtopicController {
     }
 
 
+    @GetMapping("/{subTopicId}")
+    public ResponseEntity<Map<String, Object>> getTopicById(@PathVariable Long topicId) {
+        Optional<Subtopic> subtopic = subtopicService.getSubTopicById(topicId);
+        return responseService.createSuccessResponse(200, subtopic, HttpStatus.OK);
+    }
 
 
 //    @GetMapping("/topic/{topicId}")

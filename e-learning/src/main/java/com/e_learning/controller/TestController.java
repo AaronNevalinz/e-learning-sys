@@ -42,6 +42,17 @@ public class TestController {
         }
     }
 
+    @GetMapping("/by-topic/{topicId}")
+    public ResponseEntity<Map<String, Object>> getTestByTopic(@PathVariable Long topicId) {
+        try {
+            Test test = testService.getTestByTopic(topicId);
+            return responseService.createSuccessResponse(200, test, HttpStatus.OK);
+        } catch (RuntimeException ex) {
+            Map<String, String> errors = Map.of("testFetchError", ex.getMessage());
+            return responseService.createErrorResponse(404, errors, HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PostMapping("/{testId}/questions")
     public ResponseEntity<Map<String, Object>> addQuestion(@PathVariable Long testId, @RequestBody QuestionDTO dto) {
         try {
