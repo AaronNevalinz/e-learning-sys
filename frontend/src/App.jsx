@@ -21,7 +21,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route
-            path="/course/:courseTitle/topic/:topicId"
+            path="/course/:courseTitle/topic/:course_id"
             element={<Topic />}
           />
 
@@ -36,7 +36,7 @@ function App() {
           <Route path="/" element={<LayOut />}>
             <Route index element={<Home />} />
             <Route path="courses" element={<CourseList />} />
-            <Route path="course/:courseTitle" element={<CourseDetail />} />
+            <Route path="course/:id" element={<CourseDetail />} />
           </Route>
         </Routes>
       </BrowserRouter>
