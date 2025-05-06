@@ -9,6 +9,7 @@ import com.e_learning.service.ResponseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -50,6 +51,14 @@ public class EnrollmentController {
     public ResponseEntity<Map<String, Object>> getUserEnrolledCourse(@PathVariable Long courseId) {
         List<EnrolledUserDTO> users = enrollmentService.getUsersByCourseId(courseId);
         return responseService.createSuccessResponse(200, users, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/me")
+    public ResponseEntity<Map<String, Object>> getMyEnrollments(Authentication authentication) {
+        String username = authentication.getName();
+        List<Course> enrolledCourses = enrollmentService.getCoursesByUsername(username);
+        return responseService.createSuccessResponse(200, enrolledCourses, HttpStatus.OK);
     }
 
 }
