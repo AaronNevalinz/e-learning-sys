@@ -3,6 +3,7 @@ package com.e_learning.controller;
 import com.e_learning.dto.AnswerOptionDTO;
 import com.e_learning.dto.CreateTestRequest;
 import com.e_learning.dto.QuestionDTO;
+import com.e_learning.dto.QuestionResponseDTO;
 import com.e_learning.model.AnswerOption;
 import com.e_learning.model.Question;
 import com.e_learning.model.TestSubmission;
@@ -54,6 +55,19 @@ public class TestController {
             return responseService.createErrorResponse(400, errors, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/topics/{topicId}/questions")
+    public ResponseEntity<Map<String, Object>> getQuestionsByTopic(@PathVariable Long topicId) {
+        try {
+            List<QuestionResponseDTO> questions = testService.getQuestionsByTopicId(topicId);
+            return responseService.createSuccessResponse(200, questions, HttpStatus.OK);
+        } catch (RuntimeException ex) {
+            Map<String, String> errors = Map.of("fetchError", ex.getMessage());
+            return responseService.createErrorResponse(400, errors, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
 
 
 //    @GetMapping("/by-topic/{topicId}")
