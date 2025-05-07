@@ -1,7 +1,9 @@
 package com.e_learning.service;
 
 import com.e_learning.dto.AnswerOptionDTO;
+import com.e_learning.dto.AnswerOptionResponseDTO;
 import com.e_learning.dto.QuestionDTO;
+import com.e_learning.dto.QuestionResponseDTO;
 import com.e_learning.exception.ResourceNotFoundException;
 import com.e_learning.model.*;
 import com.e_learning.repository.*;
@@ -71,6 +73,32 @@ public class TestService {
 
         return savedQuestion;
     }
+
+
+    public List<QuestionResponseDTO> getQuestionsByTopicId(Long topicId) {
+        List<Question> questions = questionRepository.findByTopicIdWithAnswers(topicId);
+
+        return questions.stream().map(question -> {
+            QuestionResponseDTO dto = new QuestionResponseDTO();
+            dto.setId(question.getId());
+            dto.setContent(question.getContent());
+            dto.setMultipleAnswersAllowed(question.isMultipleAnswersAllowed());
+
+            List<AnswerOptionResponseDTO> options = question.getAnswerOptions().stream().map(opt -> {
+                AnswerOptionResponseDTO optionDTO = new AnswerOptionResponseDTO();
+                optionDTO.setId(opt.getId());
+                optionDTO.setAnswerText(opt.getAnswerText());
+                optionDTO.setCorrect(opt.isCorrect());
+                return optionDTO;
+            }).collect(Collectors.toList());
+
+            dto.setAnswerOptions(options);
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+
+
 
 
 //    public Question getTestByTopic(Long topicId) {

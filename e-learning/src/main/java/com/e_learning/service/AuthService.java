@@ -88,6 +88,8 @@ public class AuthService {
             Map<String, Object> response = new LinkedHashMap<>();
             response.put("status", 200);
             response.put("role", user.getRole().name());
+            response.put("id", user.getId());
+            response.put("username", user.getUsername());
             response.put("result", Map.of("token", jwt));
 
             return new ResponseEntity<>(response, HttpStatus.OK);

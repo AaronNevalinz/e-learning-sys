@@ -1,5 +1,6 @@
 package com.e_learning.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -16,9 +17,11 @@ public class Question {
 
     private boolean multipleAnswersAllowed = false;
 
+    @JsonIgnore
     @ManyToOne(optional = false)
     private Topic topic;
 
+    //@JsonIgnore
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnswerOption> answerOptions = new ArrayList<>();
 

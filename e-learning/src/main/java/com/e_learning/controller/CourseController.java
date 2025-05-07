@@ -1,5 +1,6 @@
 package com.e_learning.controller;
 
+import com.e_learning.dto.CourseFormData;
 import com.e_learning.dto.CourseResponseDTO;
 import com.e_learning.exception.ResourceNotFoundException;
 import com.e_learning.model.Category;
@@ -51,34 +52,67 @@ public class CourseController {
 //    }
 
 
+//    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<Map<String, Object>> createCourse(
+//            @RequestParam("title") String title,
+//            @RequestParam("description") String description,
+//            @RequestParam("categoryId") Long categoryId,
+//            @RequestParam(value = "image", required = false) MultipartFile image
+//    ) throws IOException {
+//        try {
+//            Course course = new Course();
+//            course.setTitle(title);
+//            course.setDescription(description);
+//
+//            // If image is provided, upload and set the URL
+//            if (image != null && !image.isEmpty()) {
+//                String imageUrl = storageService.uploadFile(image); // make sure this returns a valid URL
+//                course.setImageUrl(imageUrl); // ensure this field exists in your Course entity
+//            }
+//
+//            Category category = categoryService.getCategoryById(categoryId);
+//            course.setCategory(category);
+//
+//            Course createdCourse = courseService.createCourse(course);
+//            return responseService.createSuccessResponse(201, createdCourse, HttpStatus.CREATED);
+//        } catch (IllegalArgumentException | ResourceNotFoundException ex) {
+//            Map<String, String> error = Map.of("error", ex.getMessage());
+//            return responseService.createErrorResponse(400, error, HttpStatus.BAD_REQUEST);
+//        }
+//    }
+
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, Object>> createCourse(
-            @RequestParam("title") String title,
-            @RequestParam("description") String description,
-            @RequestParam("categoryId") Long categoryId,
-            @RequestParam(value = "image", required = false) MultipartFile image
+            @RequestPart("course") CourseFormData courseData,
+            @RequestPart(value = "image", required = false) MultipartFile image
     ) throws IOException {
         try {
             Course course = new Course();
-            course.setTitle(title);
-            course.setDescription(description);
+            course.setTitle(courseData.getTitle());
+            course.setDescription(courseData.getDescription());
 
-            // If image is provided, upload and set the URL
+            // Upload image if present
             if (image != null && !image.isEmpty()) {
-                String imageUrl = storageService.uploadFile(image); // make sure this returns a valid URL
-                course.setImageUrl(imageUrl); // ensure this field exists in your Course entity
+                String imageUrl = storageService.uploadFile(image);
+                course.setImageUrl(imageUrl);
             }
 
-            Category category = categoryService.getCategoryById(categoryId);
+            // Set category
+            Category category = categoryService.getCategoryById(courseData.getCategoryId());
             course.setCategory(category);
 
             Course createdCourse = courseService.createCourse(course);
             return responseService.createSuccessResponse(201, createdCourse, HttpStatus.CREATED);
+
         } catch (IllegalArgumentException | ResourceNotFoundException ex) {
             Map<String, String> error = Map.of("error", ex.getMessage());
             return responseService.createErrorResponse(400, error, HttpStatus.BAD_REQUEST);
         }
     }
+
+
+
 
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<Map<String, Object>> getCoursesByCategory(@PathVariable Long categoryId) {

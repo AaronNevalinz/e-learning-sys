@@ -28,22 +28,22 @@ public class CourseService {
         this.categoryRepository = categoryRepository;
     }
 
-//    public Course createCourse(Course course) {
-//        return courseRepository.save(course);
-//    }
-
     public Course createCourse(Course course) {
-        // Ensure the category exists and attach the full entity
-        if (course.getCategory() != null && course.getCategory().getId() != null) {
-            Category category = categoryRepository.findById(course.getCategory().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + course.getCategory().getId()));
-            course.setCategory(category);
-        } else {
-            throw new IllegalArgumentException("Category is required when creating a course.");
-        }
-
         return courseRepository.save(course);
     }
+
+//    public Course createCourse(Course course) {
+//        // Ensure the category exists and attach the full entity
+//        if (course.getCategory() != null && course.getCategory().getId() != null) {
+//            Category category = categoryRepository.findById(course.getCategory().getId())
+//                    .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + course.getCategory().getId()));
+//            course.setCategory(category);
+//        } else {
+//            throw new IllegalArgumentException("Category is required when creating a course.");
+//        }
+//
+//        return courseRepository.save(course);
+//    }
 
     public List<Course> getCoursesByCategoryId(Long categoryId) {
         return courseRepository.findByCategoryId(categoryId);
