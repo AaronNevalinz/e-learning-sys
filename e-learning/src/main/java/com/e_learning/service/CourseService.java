@@ -78,12 +78,20 @@ public class CourseService {
             dto.setCourseUpvoteCount(upvoteCount);
             dto.setCourseDownvoteCount(downvoteCount);
             dto.setCourseCommentCount(commentCount);  // ← Newly added line
+            dto.setPublished(course.isPublished());
+
 
             return dto;
         }).collect(Collectors.toList());
     }
 
+    public Course publishCourse(Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found with ID: " + courseId));
 
+        course.setPublished(true);
+        return courseRepository.save(course);
+    }
 
     public Optional<Course> getCourseById(Long id) {
         return courseRepository.findById(id);

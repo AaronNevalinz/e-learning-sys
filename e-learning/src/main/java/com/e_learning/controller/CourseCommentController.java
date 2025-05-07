@@ -46,7 +46,7 @@ public class CourseCommentController {
 //        return responseService.createSuccessResponse(200, comments, HttpStatus.OK);
 //    }
 
-    @GetMapping("/{courseId}/comments")
+    @GetMapping("/on/course/{courseId}")
     public ResponseEntity<Map<String, Object>> getComments(@PathVariable Long courseId) {
         List<CourseCommentResponse> comments = commentService.getCommentsByCourseId(courseId);
         return responseService.createSuccessResponse(200, comments, HttpStatus.OK);

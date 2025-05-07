@@ -4,6 +4,7 @@ public class CourseFormData {
     private String title;
     private String description;
     private Long categoryId;
+    private Boolean published = false;
 
     // Getters and setters
 
@@ -30,5 +31,14 @@ public class CourseFormData {
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
     }
+
+    public Boolean getPublished() {
+        return published;
+    }
+
+    public void setPublished(Boolean published) {
+        this.published = published;
+    }
+
 }
 
