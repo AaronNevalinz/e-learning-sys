@@ -1,9 +1,6 @@
 package com.e_learning.service;
 
-import com.e_learning.dto.AnswerOptionDTO;
-import com.e_learning.dto.AnswerOptionResponseDTO;
-import com.e_learning.dto.QuestionDTO;
-import com.e_learning.dto.QuestionResponseDTO;
+import com.e_learning.dto.*;
 import com.e_learning.exception.ResourceNotFoundException;
 import com.e_learning.model.*;
 import com.e_learning.repository.*;
@@ -11,10 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,8 +20,12 @@ public class TestService {
     private final UserAnswerRepository userAnswerRepository;
     private final TestSubmissionRepository testSubmissionRepository;
     private final UserRepository userRepository;
+    private final TestAttemptRepository testAttemptRepository;
 
-    public TestService(TopicRepository topicRepository, QuestionRepository questionRepository, AnswerOptionRepository answerOptionRepository, UserAnswerRepository userAnswerRepository, TestSubmissionRepository testSubmissionRepository, UserRepository userRepository) {
+    public TestService(TopicRepository topicRepository, QuestionRepository questionRepository,
+                       AnswerOptionRepository answerOptionRepository, UserAnswerRepository userAnswerRepository,
+                       TestSubmissionRepository testSubmissionRepository,
+                       UserRepository userRepository, TestAttemptRepository testAttemptRepository) {
 
         this.topicRepository = topicRepository;
         this.questionRepository = questionRepository;
@@ -35,6 +33,7 @@ public class TestService {
         this.userAnswerRepository = userAnswerRepository;
         this.testSubmissionRepository = testSubmissionRepository;
         this.userRepository = userRepository;
+        this.testAttemptRepository = testAttemptRepository;
     }
 
 //    public Test createTest(Long topicId, String testTitle) {
@@ -96,6 +95,56 @@ public class TestService {
             return dto;
         }).collect(Collectors.toList());
     }
+
+
+
+    public double submitTestAnswers(BulkTestSubmissionDTO bulkDto) {
+        User user = userRepository.findById(bulkDto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        TestAttempt attempt = new TestAttempt();
+        attempt.setUser(user);
+        attempt.setSubmittedAt(LocalDateTime.now());
+
+        List<TestSubmission> submissions = new ArrayList<>();
+        double totalScore = 0;
+
+        for (TestSubmissionDTO dto : bulkDto.getSubmissions()) {
+            Question question = questionRepository.findById(dto.getQuestionId())
+                    .orElseThrow(() -> new RuntimeException("Question not found"));
+
+            List<Long> selectedIds = dto.getSelectedAnswerIds();
+            List<Long> correctAnswerIds = question.getAnswerOptions().stream()
+                    .filter(AnswerOption::isCorrect)
+                    .map(AnswerOption::getId)
+                    .toList();
+
+            boolean isCorrect = new HashSet<>(selectedIds).equals(new HashSet<>(correctAnswerIds));
+            double score = isCorrect ? 1.0 : 0.0;
+
+            TestSubmission submission = new TestSubmission();
+            submission.setTestAttempt(attempt);
+            submission.setQuestion(question);
+            submission.setSelectedAnswer(
+                    selectedIds.stream().map(String::valueOf).collect(Collectors.joining(","))
+            );
+            submission.setCorrect(isCorrect);
+            submission.setScore(score);
+
+            submissions.add(submission);
+            totalScore += score;
+        }
+
+        attempt.setSubmissions(submissions);
+        testAttemptRepository.save(attempt); // Cascade saves submissions if mapped correctly
+
+        return totalScore;
+    }
+
+
+
+
+
 
 
 

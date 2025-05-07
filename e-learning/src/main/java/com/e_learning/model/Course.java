@@ -25,6 +25,11 @@ public class Course {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "published", nullable = false)
+    private boolean published = false;
+
+
+
     @JsonIgnore
     @ManyToMany(mappedBy = "courses")
     private Set<User> users = new HashSet<>();
@@ -55,18 +60,7 @@ public class Course {
     // Constructors
     public Course() {}
 
-    public Course(Long id, String title, String description, Set<User> users, Set<Enrollment> enrollments, List<Topic> topics, List<CourseVote> votes, List<CourseComment> comments, String imageUrl, Category category) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.users = users;
-        this.enrollments = enrollments;
-        this.topics = topics;
-        this.votes = votes;
-        this.comments = comments;
-        this.imageUrl = imageUrl;
-        this.category = category;
-    }
+
 
     // Getters and Setters
     public Long getId() {
@@ -83,6 +77,20 @@ public class Course {
 
     public String getDescription() {
         return description;
+    }
+
+    public Course(Long id, String title, String description, boolean published, Set<User> users, Set<Enrollment> enrollments, List<Topic> topics, List<CourseVote> votes, List<CourseComment> comments, String imageUrl, Category category) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.published = published;
+        this.users = users;
+        this.enrollments = enrollments;
+        this.topics = topics;
+        this.votes = votes;
+        this.comments = comments;
+        this.imageUrl = imageUrl;
+        this.category = category;
     }
 
     public void setDescription(String description) {
@@ -147,6 +155,14 @@ public class Course {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public boolean isPublished() {
+        return published;
+    }
+
+    public void setPublished(boolean published) {
+        this.published = published;
     }
 }
 

@@ -12,23 +12,10 @@ public class CourseResponseDTO {
     private long courseUpvoteCount;
     private long courseDownvoteCount;
     private long courseCommentCount;
+    private boolean published;
 
 
 
-    public CourseResponseDTO() {
-    }
-
-    public CourseResponseDTO(Long courseId, String imageUrl, String courseTitle, String courseDescription, int courseTopicCount, int courseSubtopicCount, long courseUpvoteCount, long courseDownvoteCount, long courseCommentCount) {
-        this.courseId = courseId;
-        this.imageUrl = imageUrl;
-        this.courseTitle = courseTitle;
-        this.courseDescription = courseDescription;
-        this.courseTopicCount = courseTopicCount;
-        this.courseSubtopicCount = courseSubtopicCount;
-        this.courseUpvoteCount = courseUpvoteCount;
-        this.courseDownvoteCount = courseDownvoteCount;
-        this.courseCommentCount = courseCommentCount;
-    }
 
     public Long getCourseId() {
         return courseId;
@@ -101,6 +88,15 @@ public class CourseResponseDTO {
     public void setCourseCommentCount(long courseCommentCount) {
         this.courseCommentCount = courseCommentCount;
     }
+
+    public boolean isPublished() {
+        return published;
+    }
+
+    public void setPublished(boolean published) {
+        this.published = published;
+    }
+
 }
 
 

@@ -1,11 +1,9 @@
 package com.e_learning.controller;
 
-import com.e_learning.dto.AnswerOptionDTO;
-import com.e_learning.dto.CreateTestRequest;
-import com.e_learning.dto.QuestionDTO;
-import com.e_learning.dto.QuestionResponseDTO;
+import com.e_learning.dto.*;
 import com.e_learning.model.AnswerOption;
 import com.e_learning.model.Question;
+import com.e_learning.model.TestAttempt;
 import com.e_learning.model.TestSubmission;
 import com.e_learning.service.ResponseService;
 import com.e_learning.service.TestService;
@@ -66,6 +64,44 @@ public class TestController {
             return responseService.createErrorResponse(400, errors, HttpStatus.BAD_REQUEST);
         }
     }
+
+
+//    @PostMapping("/submit-tests")
+//    public ResponseEntity<Map<String, Object>> submitTests(
+//            @RequestBody BulkTestSubmissionDTO bulkDto
+//    ) {
+//        try {
+//            double totalScore = testService.submitTestAnswers(bulkDto);
+//            Map<String, Object> result = Map.of("totalScore", totalScore);
+//            return responseService.createSuccessResponse(200, result, HttpStatus.OK);
+//        } catch (RuntimeException ex) {
+//            Map<String, String> errors = Map.of("submissionError", ex.getMessage());
+//            return responseService.createErrorResponse(400, errors, HttpStatus.BAD_REQUEST);
+//        }
+//    }
+
+    @PostMapping("/submit")
+    public ResponseEntity<Map<String, Object>> submitTestAnswers(@RequestBody BulkTestSubmissionDTO bulkDto) {
+        if (bulkDto.getUserId() == null || bulkDto.getSubmissions() == null || bulkDto.getSubmissions().isEmpty()) {
+            Map<String, String> errors = Map.of("submissionError", "User ID and submissions must not be null or empty");
+            return responseService.createErrorResponse(400, errors, HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            double totalScore = testService.submitTestAnswers(bulkDto);
+            Map<String, Object> responseData = Map.of(
+                    "message", "Test submitted successfully",
+                    "score", totalScore
+            );
+            return responseService.createSuccessResponse(200, responseData, HttpStatus.OK);
+        } catch (RuntimeException ex) {
+            Map<String, String> errors = Map.of("submissionFailure", ex.getMessage());
+            return responseService.createErrorResponse(500, errors, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
 
 
 

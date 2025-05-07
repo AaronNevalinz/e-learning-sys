@@ -61,11 +61,10 @@ public class CourseCommentService {
                         comment.getId(),
                         comment.getContent(),
                         comment.getCreatedAt(),
-                        comment.getUser().getUsername()))
+                        comment.getUser().getUsername(),
+                        comment.getUser().getProfilePicture()))
                 .collect(Collectors.toList());
     }
-
-
 
     public CourseComment updateComment(Long commentId, String updatedText, String username) {
         CourseComment comment = commentRepository.findById(commentId)

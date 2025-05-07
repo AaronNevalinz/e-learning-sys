@@ -13,6 +13,7 @@ import com.e_learning.service.ResponseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -88,9 +89,12 @@ public class CourseController {
             @RequestPart(value = "image", required = false) MultipartFile image
     ) throws IOException {
         try {
+
             Course course = new Course();
             course.setTitle(courseData.getTitle());
             course.setDescription(courseData.getDescription());
+            course.setPublished(courseData.getPublished() != null ? courseData.getPublished() : false);
+
 
             // Upload image if present
             if (image != null && !image.isEmpty()) {
@@ -111,8 +115,16 @@ public class CourseController {
         }
     }
 
-
-
+    @PutMapping("/{id}/publish")
+    public ResponseEntity<Map<String, Object>> publishCourse(@PathVariable("id") Long courseId) {
+        try {
+            Course publishedCourse = courseService.publishCourse(courseId);
+            return responseService.createSuccessResponse(200, publishedCourse, HttpStatus.OK);
+        } catch (ResourceNotFoundException ex) {
+            Map<String, String> error = Map.of("error", ex.getMessage());
+            return responseService.createErrorResponse(404, error, HttpStatus.NOT_FOUND);
+        }
+    }
 
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<Map<String, Object>> getCoursesByCategory(@PathVariable Long categoryId) {
