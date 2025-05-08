@@ -1,13 +1,12 @@
 package com.e_learning.service;
 
+import com.e_learning.dto.CourseResponseDTO;
 import com.e_learning.dto.EnrolledUserDTO;
 import com.e_learning.dto.EnrollmentDTO;
 import com.e_learning.model.Course;
 import com.e_learning.model.Enrollment;
 import com.e_learning.model.User;
-import com.e_learning.repository.CourseRepository;
-import com.e_learning.repository.EnrollmentRepository;
-import com.e_learning.repository.UserRepository;
+import com.e_learning.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +24,16 @@ public class EnrollmentService {
     private final EnrollmentRepository enrollmentRepo;
     private final  UserRepository userRepo;
     private final CourseRepository courseRepo;
+    private final CourseVoteRepository voteRepository;
+    private final CourseCommentService commentService;;
 
-    private EnrollmentService(EnrollmentRepository enrollmentRepo, UserRepository userRepo, CourseRepository courseRepo){
-        this.enrollmentRepo =enrollmentRepo;
-        this.userRepo =userRepo;
+
+    public EnrollmentService(EnrollmentRepository enrollmentRepo, UserRepository userRepo, CourseRepository courseRepo, CourseVoteRepository voteRepository, CourseCommentService commentService) {
+        this.enrollmentRepo = enrollmentRepo;
+        this.userRepo = userRepo;
         this.courseRepo = courseRepo;
+        this.voteRepository = voteRepository;
+        this.commentService = commentService;
     }
 
     public Enrollment enrollUser(Long userId, Long courseId) {
@@ -60,13 +64,49 @@ public class EnrollmentService {
         return enrollmentRepo.findUsersByCourseId(courseId);
     }
 
-    public List<Course> getCoursesByUsername(String username) {
+//    public List<Course> getCoursesByUsername(String username) {
+//        User user = userRepo.findByUsername(username)
+//                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+//
+//        return enrollmentRepo.findByUser(user).stream()
+//                .map(Enrollment::getCourse)
+//                .collect(Collectors.toList());
+//    }
+
+    public List<CourseResponseDTO> getCoursesByUsernameWithStats(String username) {
         User user = userRepo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        return enrollmentRepo.findByUser(user).stream()
+        List<Course> enrolledCourses = enrollmentRepo.findByUser(user).stream()
                 .map(Enrollment::getCourse)
                 .collect(Collectors.toList());
+
+        return enrolledCourses.stream().map(course -> {
+            int topicCount = course.getTopics().size();
+            int subtopicCount = course.getTopics().stream()
+                    .mapToInt(topic -> topic.getSubtopics().size())
+                    .sum();
+
+            long upvoteCount = voteRepository.countUpvotesByCourseId(course.getId());
+            long downvoteCount = voteRepository.countDownvotesByCourseId(course.getId());
+            long commentCount = commentService.getCommentCountByCourseId(course.getId());
+
+            CourseResponseDTO dto = new CourseResponseDTO();
+            dto.setCourseId(course.getId());
+            dto.setCourseTitle(course.getTitle());
+            dto.setCourseDescription(course.getDescription());
+            dto.setImageUrl(course.getImageUrl());
+
+            dto.setCourseTopicCount(topicCount);
+            dto.setCourseSubtopicCount(subtopicCount);
+            dto.setCourseUpvoteCount(upvoteCount);
+            dto.setCourseDownvoteCount(downvoteCount);
+            dto.setCourseCommentCount(commentCount);
+            dto.setPublished(course.isPublished());
+
+            return dto;
+        }).collect(Collectors.toList());
     }
+
 }
 
