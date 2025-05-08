@@ -21,18 +21,23 @@ public class Question {
     @ManyToOne(optional = false)
     private Topic topic;
 
-    //@JsonIgnore
+    @JsonIgnore
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TestSubmission> testSubmissions = new ArrayList<>();
+
+    @JsonIgnore
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnswerOption> answerOptions = new ArrayList<>();
 
     public Question() {
     }
 
-    public Question(Long id, String content, boolean multipleAnswersAllowed, Topic topic, List<AnswerOption> answerOptions) {
+    public Question(Long id, String content, boolean multipleAnswersAllowed, Topic topic, List<TestSubmission> testSubmissions, List<AnswerOption> answerOptions) {
         this.id = id;
         this.content = content;
         this.multipleAnswersAllowed = multipleAnswersAllowed;
         this.topic = topic;
+        this.testSubmissions = testSubmissions;
         this.answerOptions = answerOptions;
     }
 
@@ -74,6 +79,14 @@ public class Question {
 
     public void setAnswerOptions(List<AnswerOption> answerOptions) {
         this.answerOptions = answerOptions;
+    }
+
+    public List<TestSubmission> getTestSubmissions() {
+        return testSubmissions;
+    }
+
+    public void setTestSubmissions(List<TestSubmission> testSubmissions) {
+        this.testSubmissions = testSubmissions;
     }
 }
 
