@@ -9,7 +9,9 @@ import com.e_learning.repository.CourseRepository;
 import com.e_learning.repository.CourseVoteRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -85,13 +87,18 @@ public class CourseService {
         }).collect(Collectors.toList());
     }
 
-    public Course publishCourse(Long courseId) {
+
+    public Course togglePublishStatus(Long courseId) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found with ID: " + courseId));
 
-        course.setPublished(true);
+        // Toggle the current published status
+        course.setPublished(!course.isPublished());
+
         return courseRepository.save(course);
     }
+
+
 
     public Optional<Course> getCourseById(Long id) {
         return courseRepository.findById(id);

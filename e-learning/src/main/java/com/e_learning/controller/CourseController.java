@@ -116,15 +116,16 @@ public class CourseController {
     }
 
     @PutMapping("/{id}/publish")
-    public ResponseEntity<Map<String, Object>> publishCourse(@PathVariable("id") Long courseId) {
+    public ResponseEntity<Map<String, Object>> togglePublishStatus(@PathVariable("id") Long courseId) {
         try {
-            Course publishedCourse = courseService.publishCourse(courseId);
-            return responseService.createSuccessResponse(200, publishedCourse, HttpStatus.OK);
+            Course updatedCourse = courseService.togglePublishStatus(courseId);
+            return responseService.createSuccessResponse(200, updatedCourse, HttpStatus.OK);
         } catch (ResourceNotFoundException ex) {
             Map<String, String> error = Map.of("error", ex.getMessage());
             return responseService.createErrorResponse(404, error, HttpStatus.NOT_FOUND);
         }
     }
+
 
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<Map<String, Object>> getCoursesByCategory(@PathVariable Long categoryId) {
