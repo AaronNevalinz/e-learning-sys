@@ -1,5 +1,6 @@
 package com.e_learning.controller;
 
+import com.e_learning.dto.CourseResponseDTO;
 import com.e_learning.dto.EnrolledUserDTO;
 import com.e_learning.dto.EnrollmentDTO;
 import com.e_learning.model.Course;
@@ -54,11 +55,19 @@ public class EnrollmentController {
     }
 
 
+//    @GetMapping("/me")
+//    public ResponseEntity<Map<String, Object>> getMyEnrollments(Authentication authentication) {
+//        String username = authentication.getName();
+//        List<Course> enrolledCourses = enrollmentService.getCoursesByUsername(username);
+//        return responseService.createSuccessResponse(200, enrolledCourses, HttpStatus.OK);
+//    }
+
     @GetMapping("/me")
     public ResponseEntity<Map<String, Object>> getMyEnrollments(Authentication authentication) {
         String username = authentication.getName();
-        List<Course> enrolledCourses = enrollmentService.getCoursesByUsername(username);
-        return responseService.createSuccessResponse(200, enrolledCourses, HttpStatus.OK);
+        List<CourseResponseDTO> enrolledCourseStats = enrollmentService.getCoursesByUsernameWithStats(username);
+        return responseService.createSuccessResponse(200, enrolledCourseStats, HttpStatus.OK);
     }
+
 
 }

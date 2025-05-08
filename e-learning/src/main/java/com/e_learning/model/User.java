@@ -63,6 +63,7 @@ public class User implements UserDetails{
     )
     private Set<Course> courses = new HashSet<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Enrollment> enrollments = new HashSet<>();
 
