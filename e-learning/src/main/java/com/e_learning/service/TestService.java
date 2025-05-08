@@ -137,149 +137,49 @@ public class TestService {
 
         attempt.setSubmissions(submissions);
         testAttemptRepository.save(attempt); // Cascade saves submissions if mapped correctly
-
         return totalScore;
     }
 
 
+    @Transactional
+    public Question updateQuestionWithAnswers(Long questionId, QuestionDTO dto) {
+        Question existing = questionRepository.findById(questionId)
+                .orElseThrow(() -> new RuntimeException("Question not found with ID: " + questionId));
+
+        // Only update non-null fields (partial update)
+        if (dto.getContent() != null) {
+            existing.setContent(dto.getContent());
+        }
+
+        if (dto.getMultipleAnswersAllowed() != null) {
+            existing.setMultipleAnswersAllowed(dto.getMultipleAnswersAllowed());
+        }
+
+        // Only replace answer options if provided
+        if (dto.getAnswerOptions() != null) {
+            answerOptionRepository.deleteAll(existing.getAnswerOptions());
+            existing.getAnswerOptions().clear();
+
+            for (AnswerOptionDTO optionDTO : dto.getAnswerOptions()) {
+                AnswerOption option = new AnswerOption();
+                option.setAnswerText(optionDTO.getAnswerText());
+                option.setCorrect(Boolean.TRUE.equals(optionDTO.getCorrect()));
+                option.setQuestion(existing);
+                existing.getAnswerOptions().add(option);
+            }
+        }
+
+        return questionRepository.save(existing);
+    }
 
 
 
+    public void deleteQuestion(Long questionId) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new RuntimeException("Question not found with ID: " + questionId));
 
-
-
-
-
-//    public Question getTestByTopic(Long topicId) {
-//        return questionRepository.findByTopicId(topicId)
-//                .orElseThrow(() -> new RuntimeException("No test found for topic with ID: " + topicId));
-//    }
-
-
-//    public Question addQuestion(Long testId, String content, Boolean multiAnswer) {
-//        Test test = testRepository.findById(testId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Test not found"));
-//
-//        Question question = new Question();
-//        question.setTest(test);
-//        question.setContent(content);
-//        question.setMultipleAnswersAllowed(multiAnswer);
-//
-//        return questionRepository.save(question);
-//    }
-
-//    public Question addQuestion(Long testId, String content, Boolean multipleAnswersAllowed) {
-//        Question question = new Question();
-//        question.setContent(content);
-//        question.setTest(testRepository.findById(testId)
-//                .orElseThrow(() -> new RuntimeException("Test not found")));
-//
-//        // Default to false if null
-//        question.setMultipleAnswersAllowed(multipleAnswersAllowed != null && multipleAnswersAllowed);
-//
-//        return questionRepository.save(question);
-//    }
-
-
-//    public AnswerOption addAnswerOption(Long questionId, String text, Boolean isCorrect) {
-//        Question question = questionRepository.findById(questionId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
-//
-//        if (!question.isMultipleAnswersAllowed() && isCorrect) {
-//            boolean alreadyHasCorrect = answerOptionRepository.existsByQuestionIdAndIsCorrectTrue(questionId);
-//            if (alreadyHasCorrect) {
-//                throw new IllegalStateException("Only one correct answer is allowed for this question.");
-//            }
-//        }
-//
-//        AnswerOption option = new AnswerOption();
-//        option.setQuestion(question);
-//        option.setAnswerText(text);
-//        option.setCorrect(isCorrect);
-//
-//        return answerOptionRepository.save(option);
-//    }
-
-//    public TestSubmission submitTest(Long testId, Long userId, Map<Long, List<Long>> questionAnswersMap) {
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-//
-//        Test test = testRepository.findById(testId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Test not found"));
-//
-//        int correctAnswers = 0;
-//        int totalQuestions = 0;
-//
-//        TestSubmission submission = new TestSubmission();
-//        submission.setTest(test);
-//        submission.setUser(user);
-//        submission.setSubmittedAt(LocalDateTime.now());
-//        submission = testSubmissionRepository.save(submission);
-//
-//        for (Map.Entry<Long, List<Long>> entry : questionAnswersMap.entrySet()) {
-//            Long questionId = entry.getKey();
-//            List<Long> selectedAnswerIds = entry.getValue();
-//
-//            Question question = questionRepository.findById(questionId)
-//                    .orElseThrow(() -> new ResourceNotFoundException("Question not found"));
-//
-//            // Fetch correct answers
-//            List<AnswerOption> correctOptions = answerOptionRepository.findByQuestionIdAndIsCorrectTrue(questionId);
-//            Set<Long> correctIds = correctOptions.stream().map(AnswerOption::getId).collect(Collectors.toSet());
-//
-//            // Enforce: multiple-answer questions must have at least 2 correct options
-//            if (question.isMultipleAnswersAllowed() && correctIds.size() < 2) {
-//                throw new IllegalStateException("Question marked as allowing multiple correct answers must have at least 2 correct options.");
-//            }
-//
-//            // Compare selected vs correct
-//            Set<Long> selectedIds = new HashSet<>(selectedAnswerIds);
-//            if (correctIds.equals(selectedIds)) {
-//                correctAnswers++;
-//            }
-//
-//            // Fetch selected AnswerOption entities
-//            List<AnswerOption> selectedOptions = selectedAnswerIds.stream()
-//                    .map(id -> answerOptionRepository.findById(id)
-//                            .orElseThrow(() -> new ResourceNotFoundException("Answer not found")))
-//                    .collect(Collectors.toList());
-//
-//            // Save UserAnswer
-//            UserAnswer userAnswer = new UserAnswer();
-//            userAnswer.setUser(user);
-//            userAnswer.setSubmission(submission);
-//            userAnswer.setQuestion(question);
-//            userAnswer.setSelectedOptions(selectedOptions);
-//            userAnswerRepository.save(userAnswer);
-//
-//            totalQuestions++;
-//        }
-//
-//
-//        submission.setScore((double) correctAnswers / totalQuestions * 100);
-//        return testSubmissionRepository.save(submission);
-//    }
-
-//    public List<TestSubmission> getUserSubmissions(Long userId) {
-//        return testSubmissionRepository.findByUserId(userId);
-//    }
-//
-//    public List<TestSubmission> getSubmissionsByTest(Long testId) {
-//        return testSubmissionRepository.findByTestId(testId);
-//    }
-//
-//    public TestSubmission getSubmissionDetails(Long submissionId) {
-//        return testSubmissionRepository.findById(submissionId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Submission not found"));
-//    }
-//
-//    public List<Question> getQuestionsByTest(Long testId) {
-//        return questionRepository.findByTestId(testId);
-//    }
-//
-//    public List<AnswerOption> getAnswersByQuestion(Long questionId) {
-//        return answerOptionRepository.findByQuestionId(questionId);
-//    }
+        questionRepository.delete(question);
+    }
 }
 
 
