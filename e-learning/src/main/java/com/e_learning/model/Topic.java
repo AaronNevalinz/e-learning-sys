@@ -27,16 +27,20 @@ public class Topic {
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Subtopic> subtopics = new ArrayList<>();
 
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Question> questions = new ArrayList<>();
+
 
     public Topic() {
     }
 
-    public Topic(Long id, String title, String description, Course course, List<Subtopic> subtopics) {
+    public Topic(Long id, String title, String description, Course course, List<Subtopic> subtopics, List<Question> questions) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.course = course;
         this.subtopics = subtopics;
+        this.questions = questions;
     }
 
     public Long getId() {
@@ -77,6 +81,14 @@ public class Topic {
 
     public void setSubtopics(List<Subtopic> subtopics) {
         this.subtopics = subtopics;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
     }
 }
 
