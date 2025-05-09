@@ -1,5 +1,6 @@
 package com.e_learning.controller;
 
+import com.e_learning.dto.TopicAccessDTO;
 import com.e_learning.model.Course;
 import com.e_learning.model.Topic;
 import com.e_learning.service.ResponseService;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,11 +46,21 @@ public class TopicController {
     }
 
 
+//    @GetMapping("/course/{courseId}")
+//    public ResponseEntity<Map<String, Object>> getTopicsByCourse(@PathVariable Long courseId) {
+//        List<Topic> topics = topicService.getTopicsByCourse(courseId);
+//        return responseService.createSuccessResponse(200, topics, HttpStatus.OK);
+//    }
     @GetMapping("/course/{courseId}")
-    public ResponseEntity<Map<String, Object>> getTopicsByCourse(@PathVariable Long courseId) {
-        List<Topic> topics = topicService.getTopicsByCourse(courseId);
+    public ResponseEntity<Map<String, Object>> getTopicsByCourse(
+            @PathVariable Long courseId,
+            Principal principal) {
+
+        String username = principal.getName(); // email or username based on your config
+        List<TopicAccessDTO> topics = topicService.getTopicsByCourse(courseId, username);
         return responseService.createSuccessResponse(200, topics, HttpStatus.OK);
     }
+
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Map<String, Object>> updateTopic(@Valid @PathVariable Long id, @RequestBody Topic topic) {
