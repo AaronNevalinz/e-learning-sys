@@ -98,6 +98,48 @@ public class TestService {
 
 
 
+//    public double submitTestAnswers(BulkTestSubmissionDTO bulkDto) {
+//        User user = userRepository.findById(bulkDto.getUserId())
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        TestAttempt attempt = new TestAttempt();
+//        attempt.setUser(user);
+//        attempt.setSubmittedAt(LocalDateTime.now());
+//
+//        List<TestSubmission> submissions = new ArrayList<>();
+//        double totalScore = 0;
+//
+//        for (TestSubmissionDTO dto : bulkDto.getSubmissions()) {
+//            Question question = questionRepository.findById(dto.getQuestionId())
+//                    .orElseThrow(() -> new RuntimeException("Question not found"));
+//
+//            List<Long> selectedIds = dto.getSelectedAnswerIds();
+//            List<Long> correctAnswerIds = question.getAnswerOptions().stream()
+//                    .filter(AnswerOption::isCorrect)
+//                    .map(AnswerOption::getId)
+//                    .toList();
+//
+//            boolean isCorrect = new HashSet<>(selectedIds).equals(new HashSet<>(correctAnswerIds));
+//            double score = isCorrect ? 1.0 : 0.0;
+//
+//            TestSubmission submission = new TestSubmission();
+//            submission.setTestAttempt(attempt);
+//            submission.setQuestion(question);
+//            submission.setSelectedAnswer(
+//                    selectedIds.stream().map(String::valueOf).collect(Collectors.joining(","))
+//            );
+//            submission.setCorrect(isCorrect);
+//            submission.setScore(score);
+//
+//            submissions.add(submission);
+//            totalScore += score;
+//        }
+//
+//        attempt.setSubmissions(submissions);
+//        testAttemptRepository.save(attempt); // Cascade saves submissions if mapped correctly
+//        return totalScore;
+//    }
+
     public double submitTestAnswers(BulkTestSubmissionDTO bulkDto) {
         User user = userRepository.findById(bulkDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -113,21 +155,19 @@ public class TestService {
             Question question = questionRepository.findById(dto.getQuestionId())
                     .orElseThrow(() -> new RuntimeException("Question not found"));
 
-            List<Long> selectedIds = dto.getSelectedAnswerIds();
+            Long selectedId = dto.getSelectedAnswerId();
             List<Long> correctAnswerIds = question.getAnswerOptions().stream()
                     .filter(AnswerOption::isCorrect)
                     .map(AnswerOption::getId)
                     .toList();
 
-            boolean isCorrect = new HashSet<>(selectedIds).equals(new HashSet<>(correctAnswerIds));
+            boolean isCorrect = correctAnswerIds.size() == 1 && correctAnswerIds.contains(selectedId);
             double score = isCorrect ? 1.0 : 0.0;
 
             TestSubmission submission = new TestSubmission();
             submission.setTestAttempt(attempt);
             submission.setQuestion(question);
-            submission.setSelectedAnswer(
-                    selectedIds.stream().map(String::valueOf).collect(Collectors.joining(","))
-            );
+            submission.setSelectedAnswerId(selectedId);
             submission.setCorrect(isCorrect);
             submission.setScore(score);
 
@@ -136,9 +176,10 @@ public class TestService {
         }
 
         attempt.setSubmissions(submissions);
-        testAttemptRepository.save(attempt); // Cascade saves submissions if mapped correctly
+        testAttemptRepository.save(attempt);
         return totalScore;
     }
+
 
 
     @Transactional
