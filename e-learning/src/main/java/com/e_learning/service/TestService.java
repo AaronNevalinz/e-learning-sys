@@ -236,6 +236,30 @@ public class TestService {
 
 
 
+    public TestAttemptDTO getTestResultById(Long userId, Long resultId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        TestAttempt attempt = testAttemptRepository.findById(resultId)
+                .orElseThrow(() -> new ResourceNotFoundException("Test result not found with id: " + resultId));
+
+        // Ensure the result belongs to the authenticated user
+        if (!attempt.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Access denied: Test result does not belong to the authenticated user.");
+        }
+
+        return new TestAttemptDTO(
+                attempt.getId(),
+                attempt.getTopic().getTitle(),
+                attempt.getScore(),
+                attempt.isPassed(),
+                attempt.getSubmittedAt()
+        );
+    }
+
+
+
+
 
     @Transactional
     public Question updateQuestionWithAnswers(Long questionId, QuestionDTO dto) {
