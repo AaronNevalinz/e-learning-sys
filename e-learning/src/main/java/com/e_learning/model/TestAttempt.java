@@ -24,7 +24,7 @@ public class TestAttempt {
 
     private LocalDateTime submittedAt;
 
-    @OneToMany(mappedBy = "testAttempt", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "testAttempt", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TestSubmission> submissions = new ArrayList<>();
 
     public TestAttempt() {

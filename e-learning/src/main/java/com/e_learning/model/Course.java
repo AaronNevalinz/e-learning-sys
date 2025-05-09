@@ -4,7 +4,9 @@ package com.e_learning.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,7 +30,9 @@ public class Course {
     @Column(name = "published", nullable = false)
     private boolean published = false;
 
-
+//    @CreationTimestamp
+//    @Column(updatable = false, nullable = false)
+//    private LocalDateTime createdAt;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "courses")
@@ -79,11 +83,12 @@ public class Course {
         return description;
     }
 
-    public Course(Long id, String title, String description, boolean published, Set<User> users, Set<Enrollment> enrollments, List<Topic> topics, List<CourseVote> votes, List<CourseComment> comments, String imageUrl, Category category) {
+    public Course(Long id, String title, String description, boolean published, LocalDateTime createdAt, Set<User> users, Set<Enrollment> enrollments, List<Topic> topics, List<CourseVote> votes, List<CourseComment> comments, String imageUrl, Category category) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.published = published;
+        //this.createdAt = createdAt;
         this.users = users;
         this.enrollments = enrollments;
         this.topics = topics;
@@ -164,5 +169,13 @@ public class Course {
     public void setPublished(boolean published) {
         this.published = published;
     }
+
+//    public LocalDateTime getCreatedAt() {
+//        return createdAt;
+//    }
+//
+//    public void setCreatedAt(LocalDateTime createdAt) {
+//        this.createdAt = createdAt;
+//    }
 }
 

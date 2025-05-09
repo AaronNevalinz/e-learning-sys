@@ -39,17 +39,6 @@ public class TestService {
         this.userTopicProgressRepository = userTopicProgressRepository;
     }
 
-//    public Test createTest(Long topicId, String testTitle) {
-//        Topic topic = topicRepository.findById(topicId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Topic not found"));
-//
-//        Test test = new Test();
-//        test.setTitle(testTitle);
-//        test.setTopic(topic);
-//        return questionRepository.save(test);
-//    }
-
-
     @Transactional
     public Question addQuestionWithAnswers(Long topicId, QuestionDTO dto) {
         Topic topic = topicRepository.findById(topicId)
@@ -100,69 +89,43 @@ public class TestService {
     }
 
 
-//    public double submitTestAnswers(BulkTestSubmissionDTO bulkDto) {
-//        User user = userRepository.findById(bulkDto.getUserId())
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        TestAttempt attempt = new TestAttempt();
-//        attempt.setUser(user);
-//        attempt.setSubmittedAt(LocalDateTime.now());
-//
-//        List<TestSubmission> submissions = new ArrayList<>();
-//        double totalScore = 0;
-//
-//        for (TestSubmissionDTO dto : bulkDto.getSubmissions()) {
-//            Question question = questionRepository.findById(dto.getQuestionId())
-//                    .orElseThrow(() -> new RuntimeException("Question not found"));
-//
-//            Long selectedId = dto.getSelectedAnswerId();
-//            List<Long> correctAnswerIds = question.getAnswerOptions().stream()
-//                    .filter(AnswerOption::isCorrect)
-//                    .map(AnswerOption::getId)
-//                    .toList();
-//
-//            boolean isCorrect = correctAnswerIds.size() == 1 && correctAnswerIds.contains(selectedId);
-//            double score = isCorrect ? 1.0 : 0.0;
-//
-//            TestSubmission submission = new TestSubmission();
-//            submission.setTestAttempt(attempt);
-//            submission.setQuestion(question);
-//            submission.setSelectedAnswerId(selectedId);
-//            submission.setCorrect(isCorrect);
-//            submission.setScore(score);
-//
-//            submissions.add(submission);
-//            totalScore += score;
-//        }
-//
-//        attempt.setSubmissions(submissions);
-//        testAttemptRepository.save(attempt);
-//        return totalScore;
-//    }
-
-
-
+    @Transactional  // annotation ensures that all the operations inside the method are treated as a single database transaction.
     public double submitTestAnswers(BulkTestSubmissionDTO bulkDto) {
         User user = userRepository.findById(bulkDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        TestAttempt attempt = new TestAttempt();
-        attempt.setUser(user);
+        if (bulkDto.getSubmissions().isEmpty()) {
+            throw new IllegalArgumentException("No submissions found.");
+        }
+
+        // Get topic from first question
+        Question firstQuestion = questionRepository.findById(bulkDto.getSubmissions().get(0).getQuestionId())
+                .orElseThrow(() -> new RuntimeException("First question not found"));
+        Topic topic = firstQuestion.getTopic();
+
+        // Get or create attempt
+        TestAttempt attempt = testAttemptRepository.findByUserAndTopic(user, topic)
+                .orElseGet(() -> {
+                    TestAttempt newAttempt = new TestAttempt();
+                    newAttempt.setUser(user);
+                    newAttempt.setTopic(topic);
+                    return newAttempt;
+                });
+
         attempt.setSubmittedAt(LocalDateTime.now());
 
-        List<TestSubmission> submissions = new ArrayList<>();
-        double totalScore = 0;
+        // Clear old submissions safely
+        if (attempt.getSubmissions() != null) {
+            attempt.getSubmissions().clear(); // triggers orphanRemoval
+        } else {
+            attempt.setSubmissions(new ArrayList<>());
+        }
 
-        Topic topic = null;
-        int totalQuestions = bulkDto.getSubmissions().size();
+        double totalScore = 0;
 
         for (TestSubmissionDTO dto : bulkDto.getSubmissions()) {
             Question question = questionRepository.findById(dto.getQuestionId())
                     .orElseThrow(() -> new RuntimeException("Question not found"));
-
-            if (topic == null) {
-                topic = question.getTopic(); // Assume all questions are for the same topic
-            }
 
             Long selectedId = dto.getSelectedAnswerId();
             List<Long> correctAnswerIds = question.getAnswerOptions().stream()
@@ -180,34 +143,28 @@ public class TestService {
             submission.setCorrect(isCorrect);
             submission.setScore(score);
 
-            submissions.add(submission);
+            attempt.getSubmissions().add(submission); // Hibernate manages cascade save
             totalScore += score;
         }
 
-        // Set topic, score, and pass status
-        attempt.setTopic(topic);
-        attempt.setScore(totalScore);
-
-        double percentage = (totalQuestions == 0) ? 0 : (totalScore / totalQuestions) * 100;
+        double percentage = (bulkDto.getSubmissions().size() == 0) ? 0 : (totalScore / bulkDto.getSubmissions().size()) * 100;
         boolean passed = percentage >= 70.0;
+
+        attempt.setScore(totalScore);
         attempt.setPassed(passed);
 
-        attempt.setSubmissions(submissions);
-        testAttemptRepository.save(attempt);
+        testAttemptRepository.save(attempt); // Save all in one go
 
-        // Save user topic progress if passed
-        if (passed && topic != null) {
-            final Topic finalTopic = topic; // Java lambdas require that variables used inside them be final or effectively final.
-
-            Optional<UserTopicProgress> optionalProgress = userTopicProgressRepository
-                    .findByUserAndTopic(user, finalTopic);
-
-            UserTopicProgress progress = optionalProgress.orElseGet(() -> {
-                UserTopicProgress newProgress = new UserTopicProgress();
-                newProgress.setUser(user);
-                newProgress.setTopic(finalTopic);
-                return newProgress;
-            });
+        // Save progress if passed
+        if (passed) {
+            UserTopicProgress progress = userTopicProgressRepository
+                    .findByUserAndTopic(user, topic)
+                    .orElseGet(() -> {
+                        UserTopicProgress newProgress = new UserTopicProgress();
+                        newProgress.setUser(user);
+                        newProgress.setTopic(topic);
+                        return newProgress;
+                    });
 
             progress.setCompleted(true);
             progress.setCompletedAt(LocalDateTime.now());
@@ -256,10 +213,6 @@ public class TestService {
                 attempt.getSubmittedAt()
         );
     }
-
-
-
-
 
     @Transactional
     public Question updateQuestionWithAnswers(Long questionId, QuestionDTO dto) {
