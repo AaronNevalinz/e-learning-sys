@@ -21,11 +21,13 @@ public class TestService {
     private final TestSubmissionRepository testSubmissionRepository;
     private final UserRepository userRepository;
     private final TestAttemptRepository testAttemptRepository;
+    private final UserTopicProgressRepository userTopicProgressRepository;
 
     public TestService(TopicRepository topicRepository, QuestionRepository questionRepository,
                        AnswerOptionRepository answerOptionRepository, UserAnswerRepository userAnswerRepository,
                        TestSubmissionRepository testSubmissionRepository,
-                       UserRepository userRepository, TestAttemptRepository testAttemptRepository) {
+                       UserRepository userRepository, TestAttemptRepository testAttemptRepository,
+                       UserTopicProgressRepository userTopicProgressRepository) {
 
         this.topicRepository = topicRepository;
         this.questionRepository = questionRepository;
@@ -34,6 +36,7 @@ public class TestService {
         this.testSubmissionRepository = testSubmissionRepository;
         this.userRepository = userRepository;
         this.testAttemptRepository = testAttemptRepository;
+        this.userTopicProgressRepository = userTopicProgressRepository;
     }
 
 //    public Test createTest(Long topicId, String testTitle) {
@@ -97,7 +100,6 @@ public class TestService {
     }
 
 
-
 //    public double submitTestAnswers(BulkTestSubmissionDTO bulkDto) {
 //        User user = userRepository.findById(bulkDto.getUserId())
 //                .orElseThrow(() -> new RuntimeException("User not found"));
@@ -113,21 +115,19 @@ public class TestService {
 //            Question question = questionRepository.findById(dto.getQuestionId())
 //                    .orElseThrow(() -> new RuntimeException("Question not found"));
 //
-//            List<Long> selectedIds = dto.getSelectedAnswerIds();
+//            Long selectedId = dto.getSelectedAnswerId();
 //            List<Long> correctAnswerIds = question.getAnswerOptions().stream()
 //                    .filter(AnswerOption::isCorrect)
 //                    .map(AnswerOption::getId)
 //                    .toList();
 //
-//            boolean isCorrect = new HashSet<>(selectedIds).equals(new HashSet<>(correctAnswerIds));
+//            boolean isCorrect = correctAnswerIds.size() == 1 && correctAnswerIds.contains(selectedId);
 //            double score = isCorrect ? 1.0 : 0.0;
 //
 //            TestSubmission submission = new TestSubmission();
 //            submission.setTestAttempt(attempt);
 //            submission.setQuestion(question);
-//            submission.setSelectedAnswer(
-//                    selectedIds.stream().map(String::valueOf).collect(Collectors.joining(","))
-//            );
+//            submission.setSelectedAnswerId(selectedId);
 //            submission.setCorrect(isCorrect);
 //            submission.setScore(score);
 //
@@ -136,9 +136,11 @@ public class TestService {
 //        }
 //
 //        attempt.setSubmissions(submissions);
-//        testAttemptRepository.save(attempt); // Cascade saves submissions if mapped correctly
+//        testAttemptRepository.save(attempt);
 //        return totalScore;
 //    }
+
+
 
     public double submitTestAnswers(BulkTestSubmissionDTO bulkDto) {
         User user = userRepository.findById(bulkDto.getUserId())
@@ -151,9 +153,16 @@ public class TestService {
         List<TestSubmission> submissions = new ArrayList<>();
         double totalScore = 0;
 
+        Topic topic = null;
+        int totalQuestions = bulkDto.getSubmissions().size();
+
         for (TestSubmissionDTO dto : bulkDto.getSubmissions()) {
             Question question = questionRepository.findById(dto.getQuestionId())
                     .orElseThrow(() -> new RuntimeException("Question not found"));
+
+            if (topic == null) {
+                topic = question.getTopic(); // Assume all questions are for the same topic
+            }
 
             Long selectedId = dto.getSelectedAnswerId();
             List<Long> correctAnswerIds = question.getAnswerOptions().stream()
@@ -175,10 +184,56 @@ public class TestService {
             totalScore += score;
         }
 
+        // Set topic, score, and pass status
+        attempt.setTopic(topic);
+        attempt.setScore(totalScore);
+
+        double percentage = (totalQuestions == 0) ? 0 : (totalScore / totalQuestions) * 100;
+        boolean passed = percentage >= 70.0;
+        attempt.setPassed(passed);
+
         attempt.setSubmissions(submissions);
         testAttemptRepository.save(attempt);
+
+        // Save user topic progress if passed
+        if (passed && topic != null) {
+            final Topic finalTopic = topic; // Java lambdas require that variables used inside them be final or effectively final.
+
+            Optional<UserTopicProgress> optionalProgress = userTopicProgressRepository
+                    .findByUserAndTopic(user, finalTopic);
+
+            UserTopicProgress progress = optionalProgress.orElseGet(() -> {
+                UserTopicProgress newProgress = new UserTopicProgress();
+                newProgress.setUser(user);
+                newProgress.setTopic(finalTopic);
+                return newProgress;
+            });
+
+            progress.setCompleted(true);
+            progress.setCompletedAt(LocalDateTime.now());
+            userTopicProgressRepository.save(progress);
+        }
+
         return totalScore;
     }
+
+    public List<TestAttemptDTO> getTestResultsForUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        List<TestAttempt> attempts = testAttemptRepository.findByUser(user);
+
+        return attempts.stream()
+                .map(attempt -> new TestAttemptDTO(
+                        attempt.getId(),
+                        attempt.getTopic().getTitle(),
+                        attempt.getScore(),
+                        attempt.isPassed(),
+                        attempt.getSubmittedAt()
+                ))
+                .toList();
+    }
+
 
 
 

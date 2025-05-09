@@ -19,6 +19,8 @@ public class Topic {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    private int orderInCourse;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", nullable = false)
@@ -35,10 +37,11 @@ public class Topic {
     public Topic() {
     }
 
-    public Topic(Long id, String title, String description, Course course, List<Subtopic> subtopics, List<Question> questions) {
+    public Topic(Long id, String title, String description, int orderInCourse, Course course, List<Subtopic> subtopics, List<Question> questions) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.orderInCourse = orderInCourse;
         this.course = course;
         this.subtopics = subtopics;
         this.questions = questions;
@@ -90,6 +93,14 @@ public class Topic {
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
+    }
+
+    public int getOrderInCourse() {
+        return orderInCourse;
+    }
+
+    public void setOrderInCourse(int orderInCourse) {
+        this.orderInCourse = orderInCourse;
     }
 }
 

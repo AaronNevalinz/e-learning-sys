@@ -15,6 +15,13 @@ public class TestAttempt {
     @ManyToOne(optional = false)
     private User user;
 
+    @ManyToOne(optional = false)
+    private Topic topic;
+
+    private double score;
+
+    private boolean passed;
+
     private LocalDateTime submittedAt;
 
     @OneToMany(mappedBy = "testAttempt", cascade = CascadeType.ALL)
@@ -23,19 +30,10 @@ public class TestAttempt {
     public TestAttempt() {
     }
 
-    public TestAttempt(Long id, User user, LocalDateTime submittedAt, List<TestSubmission> submissions) {
-        this.id = id;
-        this.user = user;
-        this.submittedAt = submittedAt;
-        this.submissions = submissions;
-    }
+    // Getters and Setters
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public User getUser() {
@@ -44,6 +42,30 @@ public class TestAttempt {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Topic getTopic() {
+        return topic;
+    }
+
+    public void setTopic(Topic topic) {
+        this.topic = topic;
+    }
+
+    public double getScore() {
+        return score;
+    }
+
+    public void setScore(double score) {
+        this.score = score;
+    }
+
+    public boolean isPassed() {
+        return passed;
+    }
+
+    public void setPassed(boolean passed) {
+        this.passed = passed;
     }
 
     public LocalDateTime getSubmittedAt() {
@@ -62,4 +84,3 @@ public class TestAttempt {
         this.submissions = submissions;
     }
 }
-

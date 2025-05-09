@@ -52,7 +52,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/admin/**", "/api/v1/categories/**").hasAnyAuthority(Role.ADMIN.name())
 
                         .requestMatchers("/api/v1/users/**", "/api/v1/courses/**", "/api/v1/topics/**", "/api/v1/subtopics/**",
-                                "/api/v1/tests/**", "/api/v1/enrollments/**", "/api/v1/vote/**", "/api/v1/comment/**").hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())
+                                "/api/v1/tests/**", "/api/v1/progress/**", "/api/v1/enrollments/**", "/api/v1/vote/**", "/api/v1/comment/**").hasAnyAuthority(Role.USER.name(), Role.ADMIN.name())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

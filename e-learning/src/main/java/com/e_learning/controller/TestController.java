@@ -1,14 +1,12 @@
 package com.e_learning.controller;
 
 import com.e_learning.dto.*;
-import com.e_learning.model.AnswerOption;
-import com.e_learning.model.Question;
-import com.e_learning.model.TestAttempt;
-import com.e_learning.model.TestSubmission;
+import com.e_learning.model.*;
 import com.e_learning.service.ResponseService;
 import com.e_learning.service.TestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -72,6 +70,18 @@ public class TestController {
         }
     }
 
+
+    @GetMapping("/results")
+    public ResponseEntity<Map<String, Object>> getTestResults(Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal(); // Ensure your `User` implements UserDetails
+            List<TestAttemptDTO> results = testService.getTestResultsForUser(user.getId());
+            return responseService.createSuccessResponse(200, results, HttpStatus.OK);
+        } catch (RuntimeException ex) {
+            Map<String, String> errors = Map.of("resultFetchError", ex.getMessage());
+            return responseService.createErrorResponse(400, errors, HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @PutMapping("/update/{questionId}")
     public ResponseEntity<Map<String, Object>> updateQuestion(
