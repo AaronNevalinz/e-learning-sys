@@ -4,14 +4,15 @@ import java.util.List;
 
 public class TestSubmissionDTO {
     private Long questionId;
-    private List<Long> selectedAnswerIds;
+    //private List<Long> selectedAnswerIds;
+    private Long selectedAnswerId;
     private Long userId; // <-- Add this to carry the user reference
 
     public TestSubmissionDTO() {}
 
-    public TestSubmissionDTO(Long questionId, List<Long> selectedAnswerIds, Long userId) {
+    public TestSubmissionDTO(Long questionId, Long selectedAnswerId, Long userId) {
         this.questionId = questionId;
-        this.selectedAnswerIds = selectedAnswerIds;
+        this.selectedAnswerId = selectedAnswerId;
         this.userId = userId;
     }
 
@@ -23,12 +24,12 @@ public class TestSubmissionDTO {
         this.questionId = questionId;
     }
 
-    public List<Long> getSelectedAnswerIds() {
-        return selectedAnswerIds;
+    public Long getSelectedAnswerId() {
+        return selectedAnswerId;
     }
 
-    public void setSelectedAnswerIds(List<Long> selectedAnswerIds) {
-        this.selectedAnswerIds = selectedAnswerIds;
+    public void setSelectedAnswerId(Long selectedAnswerId) {
+        this.selectedAnswerId = selectedAnswerId;
     }
 
     public Long getUserId() {
