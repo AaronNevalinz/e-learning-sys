@@ -83,6 +83,21 @@ public class TestController {
         }
     }
 
+    @GetMapping("/results/{resultId}")
+    public ResponseEntity<Map<String, Object>> getTestResultById(
+            @PathVariable Long resultId,
+            Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal(); // Must implement UserDetails
+            TestAttemptDTO result = testService.getTestResultById(user.getId(), resultId);
+            return responseService.createSuccessResponse(200, result, HttpStatus.OK);
+        } catch (RuntimeException ex) {
+            Map<String, String> errors = Map.of("resultFetchError", ex.getMessage());
+            return responseService.createErrorResponse(400, errors, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
     @PutMapping("/update/{questionId}")
     public ResponseEntity<Map<String, Object>> updateQuestion(
             @PathVariable Long questionId,

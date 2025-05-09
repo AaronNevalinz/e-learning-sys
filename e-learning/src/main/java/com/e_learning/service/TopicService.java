@@ -1,5 +1,6 @@
 package com.e_learning.service;
 
+import com.e_learning.dto.SubtopicDTO;
 import com.e_learning.dto.TopicAccessDTO;
 import com.e_learning.exception.ResourceNotFoundException;
 import com.e_learning.model.Course;
@@ -82,12 +83,22 @@ public class TopicService {
 
             boolean locked = !canAccess;
 
+            // Convert subtopics to SubtopicDTO
+            List<SubtopicDTO> subtopicDTOs = topic.getSubtopics().stream()
+                    .map(subtopic -> new SubtopicDTO(
+                            subtopic.getId(),
+                            subtopic.getTitle(),
+                            subtopic.getContent()
+                    ))
+                    .toList();
+
             result.add(new TopicAccessDTO(
                     topic.getId(),
                     topic.getTitle(),
                     topic.getDescription(),
                     topic.getOrderInCourse(),
-                    locked
+                    locked,
+                    subtopicDTOs // ✅ pass subtopics
             ));
 
             canAccess = isCompleted;
@@ -95,6 +106,7 @@ public class TopicService {
 
         return result;
     }
+
 
     public Topic updateTopic(Long id, Topic updatedTopic) {
         Topic existing = topicRepository.findById(id)

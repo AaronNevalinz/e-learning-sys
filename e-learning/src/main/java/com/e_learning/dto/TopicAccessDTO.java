@@ -1,23 +1,27 @@
 package com.e_learning.dto;
 
+import java.util.List;
+
 public class TopicAccessDTO {
     private Long id;
     private String title;
     private String description;
-
     private int orderInCourse;
     private boolean locked;
+    private List<SubtopicDTO> subtopics;
 
-    // Constructors
-    public TopicAccessDTO(Long id, String title, String description, int orderInCourse, boolean locked) {
+    // Updated constructor with subtopics
+    public TopicAccessDTO(Long id, String title, String description, int orderInCourse, boolean locked, List<SubtopicDTO> subtopics) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.orderInCourse = orderInCourse;
         this.locked = locked;
+        this.subtopics = subtopics;
     }
 
     // Getters and setters
+
 
     public Long getId() {
         return id;
@@ -33,6 +37,14 @@ public class TopicAccessDTO {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public int getOrderInCourse() {
@@ -51,12 +63,13 @@ public class TopicAccessDTO {
         this.locked = locked;
     }
 
-    public String getDescription() {
-        return description;
+    public List<SubtopicDTO> getSubtopics() {
+        return subtopics;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setSubtopics(List<SubtopicDTO> subtopics) {
+        this.subtopics = subtopics;
     }
 }
+
 
