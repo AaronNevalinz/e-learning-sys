@@ -15,42 +15,39 @@ export default function AdminSidebar() {
   return (
     <>
       <Sidebar className={""}>
-        <SidebarContent className={"bg-gray-50 "}>
+        <SidebarContent className={"bg-slate-900 text-white "}>
           <SidebarHeader>
-            <h1 className="">Learning Content</h1>
+            <h1 className="mt-4">Learning Content</h1>
           </SidebarHeader>
           <SidebarGroup>
             <SidebarGroupContent
-              className={"font-montserrat text-sm font-medium"}
+              className={"font-montserrat text-sm mt-6 pl-2 font-medium"}
             >
-              <div className="space-y-4">
-                <Link
-                  to={"/dashboard"}
-                  className="flex items-center gap-x-2 text-sm"
-                >
-                  <MdSpaceDashboard />
-                  <p>Dashboard</p>
+              <div className="space-y-8">
+                <Link to={"/dashboard"} className="flex items-center gap-x-2">
+                  <MdSpaceDashboard size={26} />
+                  <p className="text-lg">Dashboard</p>
                 </Link>
                 <Link
-                  to={"/admin/courses"}
+                  to={"/dashboard/courses"}
                   className="flex items-center gap-x-2 text-sm"
                 >
-                  <IoSchool />
-                  <p>All Courses</p>
+                  <IoSchool size={26} />
+                  <p className="text-lg">All Courses</p>
                 </Link>
                 <Link
-                  to={"/archieved-courses"}
+                  to={"/dashboard/archieved-courses"}
                   className="flex items-center gap-x-2 text-sm"
                 >
-                  <FaBoxArchive />
-                  <p>Archived courses</p>
+                  <FaBoxArchive size={26} />
+                  <p className="text-lg">Archived courses</p>
                 </Link>
                 <Link
-                  to={"/account"}
+                  to={"/dashboard/account"}
                   className="flex items-center gap-x-2 text-sm"
                 >
-                  <MdManageAccounts />
-                  <p>Account Management</p>
+                  <MdManageAccounts size={26} />
+                  <p className="text-lg">Accounts</p>
                 </Link>
               </div>
             </SidebarGroupContent>

@@ -5,6 +5,8 @@ import AlignmentTune from "editor-js-alignment-tune";
 import Paragraph from "@editorjs/paragraph";
 import Header from "@editorjs/header";
 import CodeTool from "@rxpm/editor-js-code";
+import EditorjsList from "@editorjs/list";
+import Quote from "@editorjs/quote";
 
 export const EditorContext = createContext();
 
@@ -20,6 +22,14 @@ export const EditorContextProvider = ({ children }) => {
           class: Paragraph,
           tunes: ["alignmentTune"],
         },
+        list: {
+          class: EditorjsList,
+          inlineToolbar: true,
+          config: {
+            defaultStyle: "unordered",
+          },
+        },
+        quote: Quote,
         header: {
           class: Header,
           tunes: ["alignmentTune"],
@@ -47,14 +57,13 @@ export const EditorContextProvider = ({ children }) => {
           class: CodeTool,
           config: {
             modes: {
+              php: "php",
               js: "JavaScript",
               py: "Python",
-              go: "Go",
               cpp: "C++",
-              cs: "C#",
               md: "Markdown",
             },
-            defaultMode: "js",
+            defaultMode: "php",
           },
         },
       },

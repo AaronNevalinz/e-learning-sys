@@ -1,9 +1,20 @@
 import { FaBrain } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { SidebarTrigger } from "./ui/sidebar";
+import { useContext } from "react";
+import { AppContext } from "@/context/AppContext";
+import { IoLogOutSharp } from "react-icons/io5";
 
 export default function SideNavbar() {
+  const navigate = useNavigate();
+  const { token, setToken } = useContext(AppContext);
+  const handleLogOut = (e) => {
+    e.preventDefault();
+    setToken(null);
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
   return (
     <div>
       <nav className="flex justify-between bg-white items-center mx-auto py-3 px-4 shadow">
@@ -45,29 +56,50 @@ export default function SideNavbar() {
           </div>
         </Link>
         <div className="flex gap-x-2">
-          <Link to={"/login"}>
-            <Button
-              variant={"outline"}
-              className={
-                "border-[#3E7B27] outline cursor-pointer rounded-none uppercase"
-              }
-            >
-              My learning
-            </Button>
-          </Link>
-          <Link to={"/login"}>
-            <Button
-              variant={"outline"}
-              className={"border-[#3E7B27] outline cursor-pointer rounded-none"}
-            >
-              SIGN IN
-            </Button>
-          </Link>
-          <Link to={"/register"}>
-            <Button className={"bg-[#3E7B27] cursor-pointer rounded-none"}>
-              Get Started for Free
-            </Button>
-          </Link>
+          {token ? (
+            <div className="flex gap-x-2">
+              <Link to={"/profile"}>
+                <Button
+                  variant={"outline"}
+                  className={
+                    "border-[#3E7B27] outline cursor-pointer rounded-none uppercase"
+                  }
+                >
+                  My learning
+                </Button>
+              </Link>
+              <div>
+                <form action="" onSubmit={handleLogOut}>
+                  <Button
+                    variant={"outline"}
+                    type="sumbit"
+                    className={"flex justify-between cursor-pointer border"}
+                  >
+                    Logout
+                    <IoLogOutSharp className="size-5 fill-black" />
+                  </Button>
+                </form>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <Link to={"/login"}>
+                <Button
+                  variant={"outline"}
+                  className={
+                    "border-[#3E7B27] outline cursor-pointer rounded-none"
+                  }
+                >
+                  SIGN IN
+                </Button>
+              </Link>
+              <Link to={"/register"}>
+                <Button className={"bg-[#3E7B27] cursor-pointer rounded-none"}>
+                  Get Started for Free
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </nav>
     </div>
