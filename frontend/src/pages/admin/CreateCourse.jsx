@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import oopPhp from "../../assets/images/oop-in-php.jpg";
 import { FaBookBookmark } from "react-icons/fa6";
 import { useContext, useEffect, useState } from "react";
 import { IoNewspaperOutline } from "react-icons/io5";
@@ -20,12 +19,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
-import { Checkbox } from "@/components/ui/checkbox";
 import { AppContext } from "@/context/AppContext";
 import { API_URL } from "@/config";
 import { toast } from "sonner";
+import * as RadioGroup from "@radix-ui/react-radio-group";
+import axios from "axios";
 
 /**
  * The `CreateCourse` component is a React functional component that allows administrators
@@ -64,11 +64,13 @@ export default function CreateCourse() {
   const { token } = useContext(AppContext);
   const location = useLocation();
   const newCourse = location.state?.course;
-  // console.log(newCourse);
-  
+  const navigate = useNavigate();
+
   const [topics, setTopics] = useState([]);
   const [newTopic, setNewTopic] = useState({ title: "", description: "" });
   const [choices, setChoices] = useState([]);
+  const [question, setQuestion] = useState("");
+  const [open, setOpen] = useState(false);
 
   /**
    * Fetches all topics associated with a specific course and updates the state with the retrieved topics.
@@ -77,21 +79,28 @@ export default function CreateCourse() {
    * Displays an error toast notification if the request fails.
    *
    * @async
-   * @function fetchAllTopics
+   * @function fetchAllCourseTopics
    * @throws Will display an error toast if the API call fails.
    */
-  const fetchAllTopics = async () => {
+  const fetchAllCourseTopics = async () => {
     try {
-      const res = await fetch(`${API_URL}/topics/course/${newCourse.id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        `${API_URL}/topics/course/${newCourse.id || newCourse.courseId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       const data = await res.json();
       if (data.status === 200) {
-        setTopics(data.result);
-        console.log(data);
-                
+        setTopics(
+          data.result.map((topic) => ({
+            ...topic,
+            id: topic.id || null, // Ensure `id` is set, fallback to `_id` or null
+          }))
+        );
+        // console.log(data);
       }
       // eslint-disable-next-line no-unused-vars
     } catch (err) {
@@ -109,14 +118,17 @@ export default function CreateCourse() {
    */
   const handleAddTopic = async (e) => {
     e.preventDefault();
-    const res = await fetch(`${API_URL}/topics/course/${newCourse.id}`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(newTopic),
-    });
+    const res = await fetch(
+      `${API_URL}/topics/course/${newCourse.id || newCourse.courseId}`,
+      {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newTopic),
+      }
+    );
 
     const data = await res.json();
 
@@ -127,22 +139,88 @@ export default function CreateCourse() {
     setNewTopic({ title: "", description: "" });
   };
 
-
-
   const handleAddQuestionChoice = () => {
     setChoices([...choices, {}]);
+    console.log(choices);
+  };
+
+  const submitQuestions = (e, id) => {
+    e.preventDefault();
+    console.log(id);
+    
+
+    const options = {
+      method: "POST",
+      url: `${API_URL}/tests/topics/${id}/questions`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: {
+        content: question,
+        answerOptions: choices,
+      },
+    };    
+
+    console.log(id);
+    
+
+    axios
+      .request(options)
+      .then(function (response) {
+        const data = response.data;
+        if (data.status == 200) {
+          toast("Question test added successfully...");
+          setOpen(false);          
+        }
+        console.log(data);
+        
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+
+    setChoices([]);
+    setQuestion("");
+  };
+
+  const publishCourse = (e) => {
+    e.preventDefault();
+    var options = {
+      method: "PUT",
+      url: `${API_URL}/courses/${newCourse.id || newCourse.courseId}/publish`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    axios
+      .request(options)
+      .then(function (response) {
+        const data = response.data;
+        if (data.status == 200) {
+          toast.success("Course published successfully..");
+          navigate("/dashboard/courses");
+        }
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
   };
 
   useEffect(() => {
-    fetchAllTopics();
-  }, []);
+    fetchAllCourseTopics();
+  }, [newTopic]);
 
   return (
     <div className="">
       <div className="grid grid-cols-6 gap-x-6">
         <div className="col-span-2">
           <div className=" w-full h-48">
-            <img src={oopPhp} alt="" className="w-full h-full object-cover" />
+            <img
+              src={newCourse && newCourse.imageUrl}
+              alt=""
+              className="w-full h-full object-cover"
+            />
           </div>
           <div className="flex items-start flex-col">
             <Dialog>
@@ -196,22 +274,23 @@ export default function CreateCourse() {
                 </form>
               </DialogContent>
             </Dialog>
-            <Button className={" rounded-none cursor-pointer  mt-3"}>
-              <FaBookBookmark />
-              Save Draft
-            </Button>
-            <Button className={" rounded-none cursor-pointer  mt-3"}>
-              <FaBookBookmark />
-              Upload Course
-            </Button>
+            <form action="" onSubmit={publishCourse}>
+              <Button
+                type="submit"
+                className={" rounded-none cursor-pointer  mt-3"}
+              >
+                <FaBookBookmark />
+                Upload Course
+              </Button>
+            </form>
           </div>
         </div>
         <div className="col-span-4">
           <h1 className="uppercase text-3xl font-black text-slate-800 font-montserrat">
-            {newCourse.title}
+            {newCourse.title || newCourse.courseTitle}
           </h1>
           <p className="text-slate-600 my-2 font-medium text-sm">
-            {newCourse.description}
+            {newCourse.description || newCourse.courseDescription}
           </p>
           <div className="space-y-6">
             {topics.map((topic, index) => (
@@ -236,18 +315,21 @@ export default function CreateCourse() {
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className={"mt-3"}>
-                    <div className="text-center mb-3">
-                      <h1 className="font-bold">Subtopics(click to preview)</h1>
-                      {
-                        (topic?.subtopics || []).map(subtopic=>{
+                      <div className="text-center mb-3">
+                        <h1 className="font-bold">
+                          Subtopics(click to preview)
+                        </h1>
+                        {(topic?.subtopics || []).map((subtopic) => {
                           return (
-                            <div className="py-2 underline text-green-700 font-medium" key={subtopic.id}>
+                            <div
+                              className="py-2 underline text-green-700 font-medium"
+                              key={subtopic.id}
+                            >
                               {subtopic.title}
                             </div>
-                          )
-                        })
-                      }
-                    </div>
+                          );
+                        })}
+                      </div>
                       <div className="flex justify-end">
                         <div className="flex  items-center w-[90%] ">
                           <Separator className={"flex-1 bg-blue-700"} />
@@ -272,13 +354,20 @@ export default function CreateCourse() {
                       </p>
                     </DialogTrigger>
                     <DialogContent className={""}>
-                      <form action="" className="mt-4 space-x-4">
+                      <form
+                        action=""
+                        className="mt-4 space-x-4"
+                        onSubmit={(e) => submitQuestions(e, topic.id)}
+                      >
                         <h1 className="uppercase font-medium mb-2">
                           Add Multi-Choice Question
                         </h1>
                         <div className="space-y-2">
                           <Label>Question</Label>
-                          <Input />
+                          <Input
+                            type={"text"}
+                            onChange={(e) => setQuestion(e.target.value)}
+                          />
                         </div>
                         <div className="my-4 flex justify-between">
                           <Label>Question Choices(Check the correct one)</Label>
@@ -290,45 +379,59 @@ export default function CreateCourse() {
                         </div>
 
                         <div className="space-y-2">
-                          {choices.map((choice, index) => (
-                            <div
-                              className="flex items-center gap-x-6"
-                              key={index}
-                            >
-                              <Input
-                                value={choice.text || ""}
-                                onChange={(e) => {
-                                  const updatedChoices = [...choices];
-                                  updatedChoices[index] = {
-                                    ...choice,
-                                    text: e.target.value,
-                                  };
-                                  setChoices(updatedChoices);
-                                }}
-                              />
-                              <Checkbox
-                                checked={choice.isCorrect || false}
-                                onCheckedChange={(checked) => {
-                                  const updatedChoices = [...choices];
-                                  updatedChoices[index] = {
-                                    ...choice,
-                                    isCorrect: checked,
-                                  };
-                                  setChoices(updatedChoices);
-                                }}
-                                className={"size-8"}
-                              />
-                            </div>
-                          ))}
+                          <RadioGroup.Root
+                            className="flex flex-col gap-y-2"
+                            value={
+                              choices.findIndex((c) => c.correct)?.toString() ||
+                              ""
+                            }
+                            onValueChange={(val) => {
+                              const index = Number(val);
+                              const updated = choices.map((c, i) => ({
+                                ...c,
+                                correct: i === index,
+                              }));
+                              setChoices(updated);
+                            }}
+                          >
+                            {choices.map((choice, index) => (
+                              <div
+                                className="flex items-center gap-x-6"
+                                key={index}
+                              >
+                                <Input
+                                  value={choice.answerText || ""}
+                                  onChange={(e) => {
+                                    const updatedChoices = [...choices];
+                                    updatedChoices[index] = {
+                                      ...choice,
+                                      answerText: e.target.value,
+                                    };
+                                    setChoices(updatedChoices);
+                                  }}
+                                />
+                                <RadioGroup.Item
+                                  value={index.toString()}
+                                  className="h-5 w-5 rounded-full border border-gray-600"
+                                >
+                                  <RadioGroup.Indicator className="flex items-center justify-center w-full h-full bg-gray-800 rounded-full" />
+                                </RadioGroup.Item>
+                              </div>
+                            ))}
+                          </RadioGroup.Root>
                         </div>
 
                         <div className="flex justify-center my-4">
-                          <Button className={""}>ADD</Button>
+                          <Button type="submit" className={""}>
+                            ADD
+                          </Button>
                         </div>
                       </form>
                     </DialogContent>
                   </Dialog>
-                  <Link to={`topic/${topic.title}`}>
+                  {console.log(topic)
+                  }
+                  <Link to={`topic/${topic.id}`}>
                     <p className="flex items-center px-2 py-0.5 gap-x-1 text-sm  text-black border border-gray-700">
                       <IoNewspaperOutline />
                       <span className="text-xs">View Topic Tests</span>

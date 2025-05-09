@@ -23,7 +23,8 @@ export default function CreateCourseContent() {
         title: title,
         content: data,
       };
-
+      console.log(topic_id);
+      
       const res = await fetch(`${API_URL}/subtopics/topic/${topic_id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -36,10 +37,16 @@ export default function CreateCourseContent() {
 
       const returnData = await res.json();
       console.log(returnData);
+
+      // Navigate back to the previous page
+      window.history.back();
     } catch (err) {
       console.log(err.message);
     }
   };
+
+
+  
 
   useEffect(() => {
     if (!editorRef.current) {

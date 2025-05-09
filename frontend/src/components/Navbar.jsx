@@ -26,7 +26,7 @@ export default function Navbar() {
     navigate('/');
   }
   return (
-    <div className="shadow h-18 fixed w-full bg-white">
+    <div className="shadow h-18 fixed z-50 w-full bg-white">
       <nav className="flex justify-between items-center py-4 max-w-7xl mx-auto">
         <ul className="flex gap-x-10 items-center uppercase text-slate-600 text-sm font-bold">
           <li>
@@ -67,12 +67,14 @@ export default function Navbar() {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem
-                    className={"flex justify-between cursor-pointer"}
-                  >
-                    My Profile
-                    <FaUserGraduate className="size-5 fill-black" />
-                  </DropdownMenuItem>
+                  <Link to={'/profile'}>
+                    <DropdownMenuItem
+                      className={"flex justify-between cursor-pointer"}
+                    >
+                      My Profile
+                      <FaUserGraduate className="size-5 fill-black" />
+                    </DropdownMenuItem>
+                  </Link>
                   <DropdownMenuItem
                     className={"flex justify-between cursor-pointer"}
                   >

@@ -3,37 +3,27 @@ import { HiMiniClipboardDocumentList } from "react-icons/hi2";
 import DashboardCardAction from "@/components/dashboard-card-action";
 import { Separator } from "@/components/ui/separator";
 import IssuedContentCard from "@/components/IssuedContentCard";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MdGrade } from "react-icons/md";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AppContext } from "@/context/AppContext";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { API_URL } from "@/config";
+import axios from "axios";
+import CoursesTable from "@/components/CoursesTable";
 
 export default function Dashboard() {
-  const navigate = useNavigate();
   const { token } = useContext(AppContext);
+  const [courses, setCourses] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [lastFiveCourses, setLastFiveCourses] = useState([])
   const getGreeting = () => {
     const currentHour = new Date().getHours();
     if (currentHour < 12) return "Good Morning";
     if (currentHour < 18) return "Good Afternoon";
     return "Good Evening";
   };
-
-  console.log(API_URL);
 
   // this part is for tags all all that database related
   const [newTag, setNewTag] = useState({
@@ -51,39 +41,78 @@ export default function Dashboard() {
   const handleAddTag = async (e) => {
     e.preventDefault();
     console.log(API_URL);
-    
 
     try {
       const res = await fetch(`${API_URL}/categories`, options);
       const data = await res.json();
       if (data.status == 201) {
         toast.success("Tag added Successfully");
-        navigate(0);
       } else {
         toast.error("Error Occurred creating Tag");
       }
     } catch (err) {
       toast.error(err.message);
-      // navigate(0)
     }
   };
 
+  const fetchAllCourses = () => {
+    const options = {
+      method: "GET",
+      url: `${API_URL}/courses`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    axios
+      .request(options)
+      .then(function (response) {
+        const data = response.data;
+        const lastFiveCourses = data.result.slice(-5); // Get the last 5 courses
+        setLastFiveCourses(lastFiveCourses)
+        setCourses(data.result);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  };
+  
+  const fetchAllUsers = () =>{
+    var options = {
+      method: "GET",
+      url: `${API_URL}/users`,
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    };
+
+    axios
+      .request(options)
+      .then(function (response) {
+        const data = response.data
+        console.log(data);
+        
+        setUsers(data)
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  }
+
+  useEffect(() => {
+    fetchAllUsers()
+    fetchAllCourses();
+  }, []);
 
   return (
     <>
       <div>
         <h1 className="text-xl font-bold">{getGreeting()}, Aaron👋</h1>
-        <div className="flex h-6 my-4 items-center space-x-6 text-sm">
+        <div className="flex h-6 my-8 items-center text-xl space-x-6">
           <DashboardCardAction
             color="#ffe600"
             action="course"
             icon={<IoDocumentTextOutline />}
-          />
-          <Separator orientation="vertical" />
-          <DashboardCardAction
-            color="#6466e9"
-            action="quiz"
-            icon={<IoDocumentAttachSharp />}
           />
           <Separator orientation="vertical" />
           <Dialog>
@@ -122,82 +151,14 @@ export default function Dashboard() {
         </div>
 
         <div className="grid grid-cols-2 mr- gap-8">
-          <IssuedContentCard />
-          <IssuedContentCard />
-          <div className="border rounded-md px-5 py-2">
-            <h1 className="font-medium">Top Learners</h1>
-            <div>
-              <div className="flex gap-x-8 items-center my-4">
-                <p>#1</p>
-                <div className="flex items-center gap-x-2 text-sm">
-                  <Avatar>
-                    <AvatarImage
-                      src="https://github.com/shadcn.png"
-                      alt="@shadcn"
-                    />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>
-                  <p className="text-xs">Omara Daniel Obura</p>
-                </div>
-                <div>
-                  <MdGrade />
-                </div>
-              </div>
-              <Separator />
-
-              <div className="flex gap-x-8 items-center my-4">
-                <p>#1</p>
-                <div className="flex items-center gap-x-2 text-sm">
-                  <Avatar>
-                    <AvatarImage
-                      src="https://github.com/shadcn.png"
-                      alt="@shadcn"
-                    />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>
-                  <p className="text-xs">Omara Daniel Obura</p>
-                </div>
-                <div>
-                  <MdGrade />
-                </div>
-              </div>
-              <Separator />
-            </div>
-          </div>
+          <IssuedContentCard count={courses.length} title="Total Courses" link="see all course"/>
+          <IssuedContentCard count={users.length} title="Total Users" link="see all users"/>
+         
         </div>
 
-        <div className="mt-4">
-          <Table className={"border rounded-md"}>
-            <TableCaption>A list of your recent Courses.</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">SN</TableHead>
-                <TableHead>Course Name</TableHead>
-                <TableHead>Total Topics</TableHead>
-                <TableHead>Tag</TableHead>
-                <TableHead className="">Created At</TableHead>
-                <TableHead>Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium">1</TableCell>
-                <TableCell>OOP in php</TableCell>
-                <TableCell>20</TableCell>
-                <TableCell className="">API</TableCell>
-                <TableCell className="">30/04/2025</TableCell>
-                <TableCell className="">view</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">1</TableCell>
-                <TableCell>OOP in php</TableCell>
-                <TableCell>20</TableCell>
-                <TableCell className="">Published</TableCell>
-                <TableCell className="">30/04/2025</TableCell>
-                <TableCell className="">view</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+        
+        <div className="mt-5">
+          <CoursesTable courses={lastFiveCourses} />
         </div>
       </div>
     </>

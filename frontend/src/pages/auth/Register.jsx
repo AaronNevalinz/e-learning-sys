@@ -32,7 +32,7 @@ export default function Register() {
     });
 
     const data = await res.json();
-    if (data.status == 200) {
+    if (data.status == 201) {
       console.log(data);
       toast.success("You have successfull register. Login now :)");
       navigate("/login");
@@ -40,7 +40,7 @@ export default function Register() {
       setErrors(data.errors);
       console.log(data.errors);
     }
-    toast.error("error: ", data.errors.general);
+    // toast.error("error: ", data.errors.general);
   };
   return (
     <>

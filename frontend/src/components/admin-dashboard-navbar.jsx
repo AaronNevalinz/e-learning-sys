@@ -11,17 +11,20 @@ import { AppContext } from "@/context/AppContext";
 import { toast } from "sonner";
 import { API_URL } from "@/config";
 import { IoLogOutSharp } from "react-icons/io5";
+import axios from "axios";
 
 export default function AdminDashboardNavbar() {
   const navigate = useNavigate();
   const { token, setToken } = useContext(AppContext);
   const [open, setOpen] = useState(false);
+  const [image, setImage] = useState(null);
 
   const [tags, setTags] = useState([]);
   const [course, setCourse] = useState({
     title: "",
     description: "",
   });
+
   const fetchAllTags = async () => {
     const res = await fetch(`${API_URL}/categories`, {
       headers: {
@@ -34,35 +37,48 @@ export default function AdminDashboardNavbar() {
       setTags(data.result);
     }
   };
+  
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImage(file);
+  };
 
   const handleCourseSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const res = await fetch(`${API_URL}/courses`, {
-        method: "post",
+    const formData = new FormData();
+    formData.append("image", image);
+    formData.append(
+      "course",
+      new Blob([JSON.stringify(course)], {
+        type: "application/json",
+      })
+    );
+
+    axios
+      .post(`${API_URL}/courses`, formData, {
         headers: {
+          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
         },
-        body: JSON.stringify(course),
+      })
+      .then((res) => {
+        console.log(res.data);
+        const data = res.data
+        if(data.status == 201){
+          setOpen(false);
+              toast.success("Course Created Successfully...");
+              navigate("/dashboard/create-course", {
+                state: { course: data.result },
+              });
+        }else{
+          toast.error("an error occured...");
+        }
+      })
+      .catch((error) => {
+        toast.error(error.message);
+        console.log(error);
       });
-
-      const data = await res.json();
-      console.log(data);
-
-      if (data.status === 201) {
-        setOpen(false);
-        toast.success("Course Created Successfully...");
-        navigate("/dashboard/create-course", {
-          state: { course: data.result },
-        });
-      } else {
-        toast.error("an error occured...");
-      }
-    } catch (err) {
-      console.log(err.message);
-      toast.error(err.message);
-    }
   };
   const handleLogOut = (e) => {
     e.preventDefault();
@@ -128,7 +144,7 @@ export default function AdminDashboardNavbar() {
                         if (!selectedTag) return;
                         setCourse({
                           ...course,
-                          category: { id: selectedTag.id },
+                          categoryId: selectedTag.id,
                         });
                       }}
                     >
@@ -147,7 +163,7 @@ export default function AdminDashboardNavbar() {
 
                   <div>
                     <Label>Course Image</Label>
-                    <Input className={"mt-2"} type={"file"} />
+                    <Input className={"mt-2"} type={"file"} onChange={handleFileChange} />
                   </div>
                   <div>
                     <Label>Course Description</Label>

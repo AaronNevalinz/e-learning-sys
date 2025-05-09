@@ -12,8 +12,13 @@ import LayOut2 from "./pages/LayOut2";
 import CreateCourse from "./pages/admin/CreateCourse";
 import CreateCourseContent from "./pages/admin/CreateCourseContent";
 import TopicQuestions from "./pages/admin/TopicQuestions";
+import { useContext } from "react";
+import { AppContext } from "./context/AppContext";
+import Profile from "./pages/profile/Profile";
+import AdminCourseList from "./pages/admin/AdminCourseList";
 
 function App() {
+  const {token, userRole} = useContext(AppContext)
   return (
     <>
       <BrowserRouter>
@@ -25,16 +30,21 @@ function App() {
             element={<Topic />}
           />
 
-
-          <Route path="/dashboard" element={<LayOut2 />}>
-            <Route index element={<Dashboard />} />
-            <Route path="create-course" element={<CreateCourse />} />
-            <Route path="create-course/:topic_id" element={<CreateCourseContent/>}/>
-            <Route path="create-course/topic/:topic_id" element={<TopicQuestions/>} />
-          </Route>
+          {token && userRole === 'ADMIN' ? (
+            <Route path="/dashboard" element={<LayOut2 />}>
+              <Route index element={<Dashboard />} />
+              <Route path="courses" element={<AdminCourseList/>} />
+              <Route path="create-course" element={<CreateCourse />} />
+              <Route path="create-course/:topic_id" element={<CreateCourseContent />} />
+              <Route path="create-course/topic/:topic_id" element={<TopicQuestions />} />
+            </Route>
+          ) : (
+            <Route path="/dashboard" element={<Login />} />
+          )}
 
           <Route path="/" element={<LayOut />}>
             <Route index element={<Home />} />
+            <Route path="profile" element={<Profile/>}/>
             <Route path="courses" element={<CourseList />} />
             <Route path="course/:id" element={<CourseDetail />} />
           </Route>
@@ -44,7 +54,6 @@ function App() {
       <Toaster
         toastOptions={{
           style: {
-            // position: "top center",
             background: "#BFECFF",
             color: "#000",
             border: "1px solid #60B5FF",
@@ -52,7 +61,6 @@ function App() {
             borderRadius: "8px",
             fontSize: "16px",
             fontWeight: "500",
-            // boxShadow: "0 2px 10px rgba(0, 0, 0, 0.7)",
           },
           success: {
             iconTheme: {
