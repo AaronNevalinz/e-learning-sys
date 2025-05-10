@@ -2,11 +2,11 @@ import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { SidebarTrigger } from "./ui/sidebar";
-import { DialogContent } from "./ui/dialog";
+import { DialogClose, DialogContent } from "./ui/dialog";
 import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { AppContext } from "@/context/AppContext";
 import { toast } from "sonner";
 import { API_URL } from "@/config";
@@ -15,29 +15,15 @@ import axios from "axios";
 
 export default function AdminDashboardNavbar() {
   const navigate = useNavigate();
-  const { token, setToken } = useContext(AppContext);
+  const { token, setToken, tags } = useContext(AppContext);
   const [open, setOpen] = useState(false);
   const [image, setImage] = useState(null);
 
-  const [tags, setTags] = useState([]);
   const [course, setCourse] = useState({
     title: "",
     description: "",
   });
 
-  const fetchAllTags = async () => {
-    const res = await fetch(`${API_URL}/categories`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await res.json();
-
-    if (data.status == 200) {
-      setTags(data.result);
-    }
-  };
-  
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -64,14 +50,14 @@ export default function AdminDashboardNavbar() {
       })
       .then((res) => {
         console.log(res.data);
-        const data = res.data
-        if(data.status == 201){
+        const data = res.data;
+        if (data.status == 201) {
           setOpen(false);
-              toast.success("Course Created Successfully...");
-              navigate("/dashboard/create-course", {
-                state: { course: data.result },
-              });
-        }else{
+          toast.success("Course Created Successfully...");
+          navigate("/dashboard/create-course", {
+            state: { course: data.result },
+          });
+        } else {
           toast.error("an error occured...");
         }
       })
@@ -86,9 +72,6 @@ export default function AdminDashboardNavbar() {
     localStorage.removeItem("token");
     navigate("/dashboard");
   };
-  useEffect(() => {
-    fetchAllTags();
-  }, []);
   return (
     <div>
       <nav className="flex justify-between gap-x-30 bg-white items-center mx-auto py-4 px-4 shadow-md">
@@ -110,7 +93,12 @@ export default function AdminDashboardNavbar() {
             </div>
             <Dialog className="" open={open} onOpenChange={setOpen}>
               <DialogTrigger>
-                <Button size={'sm'} className={"text-sm bg-blue-900 hover:bg-blue-800  rounded-lg cursor-pointer"}>
+                <Button
+                  size={"sm"}
+                  className={
+                    "text-sm bg-blue-900 hover:bg-blue-800  rounded-lg cursor-pointer"
+                  }
+                >
                   Create Course
                 </Button>
               </DialogTrigger>
@@ -148,7 +136,9 @@ export default function AdminDashboardNavbar() {
                         });
                       }}
                     >
-                      <option value="">Select a Category</option>
+                      <option value="" className="uppercase">
+                        Select a Category
+                      </option>
                       {tags.map((tag) => (
                         <option
                           key={tag.id}
@@ -163,7 +153,11 @@ export default function AdminDashboardNavbar() {
 
                   <div>
                     <Label>Course Image</Label>
-                    <Input className={"mt-2"} type={"file"} onChange={handleFileChange} />
+                    <Input
+                      className={"mt-2"}
+                      type={"file"}
+                      onChange={handleFileChange}
+                    />
                   </div>
                   <div>
                     <Label>Course Description</Label>
@@ -175,12 +169,16 @@ export default function AdminDashboardNavbar() {
                       placeholder={"Enter Course Description "}
                     />
                   </div>
-                  <Button
-                    className={"cursor-pointer rounded-none"}
-                    type="submit"
-                  >
-                    Add Course
-                  </Button>
+                  <DialogClose>
+                    <Button
+                      className={
+                        "cursor-pointer rounded-md bg-blue-900 hover:bg-blue-700"
+                      }
+                      type="submit"
+                    >
+                      Add Course
+                    </Button>
+                  </DialogClose>
                 </form>
               </DialogContent>
             </Dialog>

@@ -2,7 +2,7 @@ import { IoDocumentTextOutline, IoAdd } from "react-icons/io5";
 import DashboardCardAction from "@/components/dashboard-card-action";
 import { Separator } from "@/components/ui/separator";
 import IssuedContentCard from "@/components/IssuedContentCard";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useContext, useEffect, useState } from "react";
@@ -13,10 +13,11 @@ import axios from "axios";
 import CoursesTable from "@/components/CoursesTable";
 
 export default function Dashboard() {
-  const { token } = useContext(AppContext);
+  const { token, tags, setTags } = useContext(AppContext);
   const [courses, setCourses] = useState([]);
   const [users, setUsers] = useState([]);
   const [lastFiveCourses, setLastFiveCourses] = useState([]);
+  // const [tags, setTags] = useState([]);
   const getGreeting = () => {
     const currentHour = new Date().getHours();
     if (currentHour < 12) return "Good Morning";
@@ -46,6 +47,11 @@ export default function Dashboard() {
       const data = await res.json();
       if (data.status == 201) {
         toast.success("Tag added Successfully");
+        // Update the tags state to include the newly added tag
+        setTags((prevTags) => [...prevTags, data.result]);
+
+        // Clear the input field
+        setNewTag({ name: "" });
       } else {
         toast.error("Error Occurred creating Tag");
       }
@@ -101,18 +107,15 @@ export default function Dashboard() {
   useEffect(() => {
     fetchAllUsers();
     fetchAllCourses();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   return (
     <>
       <div>
         <h1 className="text-xl font-bold">{getGreeting()}, Aaron👋</h1>
         <div className="flex h-6 my-8 items-center text-xl space-x-6">
-          {/* <DashboardCardAction
-            color="#ffe600"
-            action="course"
-            icon={<IoDocumentTextOutline />}
-          /> */}
           <div className="flex items-center gap-2 rounded-md bg-slate-200 px-4 py-2">
             <div
               className={`bg-[#eedf2e] text-black rounded-[3px] p-0.5 -ml-1`}
@@ -149,21 +152,38 @@ export default function Dashboard() {
                     placeholder="Add Tag"
                     onChange={(e) => setNewTag({ name: e.target.value })}
                   />
-                  <Button
-                    type="submit"
-                    className={"cursor-pointer rounded-none"}
-                  >
-                    Submit
-                  </Button>
+                  <DialogClose>
+                    <Button
+                      type="submit"
+                      className={"cursor-pointer rounded-none"}
+                    >
+                      Submit
+                    </Button>
+                  </DialogClose>
                 </form>
               </div>
             </DialogContent>
           </Dialog>
-          <DashboardCardAction
-            color="#ffe600"
-            action="View Tags"
-            icon={<IoDocumentTextOutline />}
-          />
+          <Dialog>
+            <DialogTrigger>
+              <DashboardCardAction
+                color="#ffe600"
+                action="View Tags"
+                icon={<IoDocumentTextOutline />}
+              />
+            </DialogTrigger>
+            <DialogContent>
+              <div className="mt-6 space-y-4">
+                <ul>
+                  {tags?.map((tag, index) => (
+                    <li className="uppercase" key={tag.id}>
+                      {index + 1}. {tag.name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <div className="grid grid-cols-2 mr- gap-8">

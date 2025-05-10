@@ -30,13 +30,15 @@ import axios from "axios";
 import { API_URL } from "@/config";
 import { AppContext } from "@/context/AppContext";
 import CourseProgressCard from "./CourseProgressCard";
+import { toast } from "sonner";
 
-export function AppSidebar({ progress, title, topics, onSubTopicClick }) {
+export function AppSidebar({ progress, title, topics, onSubTopicClick, currentTopicId }) {
   const { token, user } = useContext(AppContext);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [open, setOpen] = useState(false);
   const [quizData, setQuizData] = useState([]);
+  
 
   const fetchAllQuiz = (e, id) => {
     e.preventDefault();
@@ -110,13 +112,39 @@ export function AppSidebar({ progress, title, topics, onSubTopicClick }) {
       // Make the API request
       const response = await axios.request(options);
       console.log("Response from server:", response.data);
+      const data = response.data;
+      let score = data.result.score;
+      const percentScore = (score / quizData.length) * 100;
+      console.log(percentScore);
+      // Check if the score is greater than 60
+      if (percentScore > 60) {
+        toast.success(
+          `Congratulations! You scored ${percentScore}%. You can proceed to the next topic.`
+        );
+        // Logic to navigate to the next topic
+        goToNextTopic();
+      } else {
+        toast.error(`Your score is ${percentScore}%. You need at least 60 to proceed.`);
+      }
 
-      // Handle success (e.g., show a success message or navigate)
-      alert("Quiz submitted successfully!");
       setOpen(false); // Close the dialog
     } catch (error) {
       console.error("Error submitting quiz:", error);
       alert("An error occurred while submitting the quiz. Please try again.");
+    }
+  };
+
+  const goToNextTopic = () => {
+    const currentTopicIndex = topics.findIndex(
+      (topic) => topic.id === currentTopicId
+    );
+    const nextTopic = topics[currentTopicIndex + 1];
+
+    if (nextTopic) {
+      // Navigate to the next topic
+      onSubTopicClick(nextTopic.id);
+    } else {
+      toast.info("You have completed all topics in this series!");
     }
   };
   return (

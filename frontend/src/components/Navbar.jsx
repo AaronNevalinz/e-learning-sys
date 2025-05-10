@@ -16,7 +16,7 @@ import {
 import { IoLogOutSharp, IoSettings, IoLibrarySharp } from "react-icons/io5";
 import { FaUserGraduate } from "react-icons/fa";
 export default function Navbar() {
-  const { token, setToken } = useContext(AppContext);
+  const { token, setToken, userRole } = useContext(AppContext);
   const navigate = useNavigate()
 
   const handleLogOut = (e)=>{
@@ -54,6 +54,9 @@ export default function Navbar() {
           </li>
           <li>
             <Link to={"#"}>Contact us</Link>
+          </li>
+          <li>
+            {token && userRole === "ADMIN" && <Link to={"/dashboard"}>Dashboard</Link>}
           </li>
         </ul>
 
