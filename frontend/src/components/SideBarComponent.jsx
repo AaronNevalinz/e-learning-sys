@@ -3,8 +3,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useContext } from "react";
+import { AppContext } from "@/context/AppContext";
 
 const SidebarComponent = () => {
+  const {tags} = useContext(AppContext)
   return (
     <Card className="w-full md:w-64">
       <CardHeader>
@@ -12,45 +15,16 @@ const SidebarComponent = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <div className="flex items-center space-x-2">
-            <Checkbox id="category-online-business" />
-            <Label htmlFor="category-online-business" className="text-sm">
-              Online Business (4)
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox id="category-graphic-design" />
-            <Label htmlFor="category-graphic-design" className="text-sm">
-              Graphic Design (2)
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox id="category-programming" />
-            <Label htmlFor="category-programming" className="text-sm">
-              Programming (3)
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox id="category-freelancing" />
-            <Label htmlFor="category-freelancing" className="text-sm">
-              Freelancing (5)
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox id="category-english" />
-            <Label htmlFor="category-english" className="text-sm">
-              English Courses (4)
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox id="category-photography" />
-            <Label htmlFor="category-photography" className="text-sm">
-              Photography (7)
-            </Label>
-          </div>
+          {tags?.map((tag) => (
+            <div key={tag.id} className="flex items-center space-x-2">
+              <Checkbox id="category-online-business" />
+              <Label htmlFor="category-online-business" className="text-sm capitalize">
+                {tag.name}
+              </Label>
+            </div>
+          ))}
+          
         </div>
-
-        
 
         <div className="pt-4 border-t border-gray-200">
           <h4 className="font-semibold mb-4">Prices</h4>

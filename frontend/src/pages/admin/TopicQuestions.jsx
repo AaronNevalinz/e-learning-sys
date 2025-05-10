@@ -22,7 +22,12 @@ import { AppContext } from "@/context/AppContext";
 import { API_URL } from "@/config";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { FaTrashArrowUp } from "react-icons/fa6";
 import { Info } from "lucide-react";
 export default function TopicQuestions() {
@@ -69,8 +74,12 @@ export default function TopicQuestions() {
         const data = response.data;
         if (data.status === 200) {
           toast.success(data.result.message);
-        }else{
-          toast.error("An error occured deleting Qn. Try Again")
+          // Update the state to remove the deleted question
+          setQuestions((prevQuestions) =>
+            prevQuestions.filter((question) => question.id !== id)
+          );
+        } else {
+          toast.error("An error occured deleting Qn. Try Again");
         }
       })
       .catch(function (error) {
@@ -80,6 +89,7 @@ export default function TopicQuestions() {
 
   useEffect(() => {
     fetchAllTopicQuestions();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div className="w-full mt-10 p-8 rounded-lg border border-gray-100 shadow-lg">
@@ -158,13 +168,15 @@ export default function TopicQuestions() {
                         action=""
                         onSubmit={(e) => handleDeleteQuestion(e, question.id)}
                       >
-                        <Button
-                          size={"sm"}
-                          variant={"destructive"}
-                          className={"bg-red-700 cursor-pointer"}
-                        >
-                          Delete
-                        </Button>
+                        <DialogClose>
+                          <Button
+                            size={"sm"}
+                            variant={"destructive"}
+                            className={"bg-red-700 cursor-pointer"}
+                          >
+                            Delete
+                          </Button>
+                        </DialogClose>
                       </form>
                     </div>
                   </DialogContent>

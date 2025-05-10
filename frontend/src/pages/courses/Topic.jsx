@@ -16,6 +16,7 @@ export default function Topic() {
   const [content, setContent] = useState(null);
   const [title, setTitle] = useState("");
   const [progress, setProgress] = useState(null);
+const [currentTopicId, setCurrentTopicId] = useState(null);
 
   const fetchCourseDetails = async () => {
     const res = await fetch(`${API_URL}/courses/${course_id}`, {
@@ -42,6 +43,15 @@ export default function Topic() {
 
     setTitle(data.result.title);
     setContent(JSON.parse(data.result.content)); // Update the content state with the fetched data
+
+    // Find the topic that contains the clicked subtopic
+    const topic = course.topics.find((topic) =>
+      topic.subtopics.some((subtopic) => subtopic.id === subtopicId)
+    );
+
+    if (topic) {
+      setCurrentTopicId(topic.id); // Set the current topic ID
+    }
   };
 
   
@@ -87,6 +97,7 @@ export default function Topic() {
           topics={course.topics}
           title={course.title}
           onSubTopicClick={handleSubtopicClick}
+          currentTopicId={currentTopicId}
         />
         <main className="w-full ">
           <div className="">
