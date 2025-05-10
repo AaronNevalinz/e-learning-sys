@@ -1,9 +1,12 @@
 package com.e_learning.dto;
 
+import java.time.LocalDateTime;
+
 public class CourseResponseDTO {
     private Long courseId;
     private String imageUrl;
     private String courseTitle;
+    //private LocalDateTime createdAt;
     private String courseDescription;
 
     private int courseTopicCount;
@@ -97,6 +100,13 @@ public class CourseResponseDTO {
         this.published = published;
     }
 
+//    public LocalDateTime getCreatedAt() {
+//        return createdAt;
+//    }
+//
+//    public void setCreatedAt(LocalDateTime createdAt) {
+//        this.createdAt = createdAt;
+//    }
 }
 
 
