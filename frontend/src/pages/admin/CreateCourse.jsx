@@ -71,6 +71,8 @@ export default function CreateCourse() {
   const [choices, setChoices] = useState([]);
   const [question, setQuestion] = useState("");
   const [open, setOpen] = useState(false);
+  console.log(newCourse);
+  
 
   /**
    * Fetches all topics associated with a specific course and updates the state with the retrieved topics.
@@ -107,6 +109,9 @@ export default function CreateCourse() {
       toast.error("Oh... Error fetching posts, that's on us...");
     }
   };
+
+  console.log(topics);
+  
   //
   /**
    * Handles the addition of a new topic to the course.

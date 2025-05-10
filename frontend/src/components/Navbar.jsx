@@ -26,30 +26,37 @@ export default function Navbar() {
     navigate('/');
   }
   return (
-    <div className="shadow h-18 fixed z-50 w-full bg-white">
+    <div className="shadow-xl h-16 fixed z-50 w-full bg-white">
       <nav className="flex justify-between items-center py-4 max-w-7xl mx-auto">
-        <ul className="flex gap-x-10 items-center uppercase text-slate-600 text-sm font-bold">
-          <li>
-            <Link to={"/"}>Tags</Link>
-          </li>
-          <li>
-            <Link to={"/courses"}>Courses</Link>
-          </li>
-          <li>
-            <Link to={"/search"}>Search</Link>
-          </li>
-        </ul>
         <Link
           className={
-            "bg-gradient-to-r font-black font-montserrat from-purple-500 to-red-500 inline-block text-transparent bg-clip-text text-xl"
+            "bg-gradient-to-r font-bold font-montserrat from-purple-500 via-red-500 to-blue-700 inline-block text-transparent bg-clip-text text-lg"
           }
           to="/"
         >
           <div className="flex items-center gap-x-2">
-            <FaBrain size={38} className="fill-yellow-600" />
-            <p>99Exceptions</p>
+            <FaBrain size={30} className="fill-purple-900" />
+            <p>99Exceptions.edu</p>
           </div>
         </Link>
+        <ul className="flex gap-x-10 items-center uppercase text-slate-600 text-sm font-medium">
+          <li>
+            <Link to={"/"}>Home</Link>
+          </li>
+          <li>
+            <Link to={"/courses"}>Knowledge Base</Link>
+          </li>
+          <li>
+            <Link to={"#"}>blog</Link>
+          </li>
+          <li>
+            <Link to={"#"}>About us</Link>
+          </li>
+          <li>
+            <Link to={"#"}>Contact us</Link>
+          </li>
+        </ul>
+
         <div className="flex gap-x-2">
           {token ? (
             <DropdownMenu>
@@ -67,7 +74,7 @@ export default function Navbar() {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <Link to={'/profile'}>
+                  <Link to={"/profile"}>
                     <DropdownMenuItem
                       className={"flex justify-between cursor-pointer"}
                     >
@@ -105,15 +112,21 @@ export default function Navbar() {
               <Link to={"/login"}>
                 <Button
                   variant={"outline"}
+                  size={"sm"}
                   className={
-                    "border-[#3E7B27] outline cursor-pointer rounded-none"
+                    "border-blue-700 rounded-2xl text-blue-700 hover:text-blue-800 hover:bg-transparent outline cursor-pointer"
                   }
                 >
                   SIGN IN
                 </Button>
               </Link>
               <Link to={"/register"}>
-                <Button className={"bg-[#3E7B27] cursor-pointer rounded-none"}>
+                <Button
+                  size={"sm"}
+                  className={
+                    "bg-blue-700 px-6 hover:bg-blue-800 cursor-pointer rounded-2xl"
+                  }
+                >
                   Get Started for Free
                 </Button>
               </Link>

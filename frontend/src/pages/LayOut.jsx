@@ -6,7 +6,7 @@ export default function LayOut() {
   return (
     <div>
       <Navbar />
-      <div className="bg-gradient-to-tr from-purple-100 to-white">
+      <div className="">
         <main className="max-w-7xl mx-auto pt-24 ">
           <Outlet />
           <Footer/>
