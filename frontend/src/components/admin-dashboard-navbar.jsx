@@ -110,7 +110,7 @@ export default function AdminDashboardNavbar() {
             </div>
             <Dialog className="" open={open} onOpenChange={setOpen}>
               <DialogTrigger>
-                <Button className={"text-sm rounded-none cursor-pointer"}>
+                <Button size={'sm'} className={"text-sm bg-blue-900 hover:bg-blue-800  rounded-lg cursor-pointer"}>
                   Create Course
                 </Button>
               </DialogTrigger>

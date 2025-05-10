@@ -7,7 +7,7 @@ export default function LayOut2() {
   return (
     <SidebarProvider
       style={{
-        "--sidebar-width": "15rem",
+        "--sidebar-width": "18rem",
         "--sidebar-width-mobile": "20rem",
       }}
     >

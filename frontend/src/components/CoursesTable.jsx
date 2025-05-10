@@ -167,27 +167,29 @@ const CoursesTable = ({ courses }) => {
                     "px-3 py-1.5 rounded-full text-xs font-semibold shadow-md", // Added shadow
                     course.published
                       ? "bg-green-500/20 text-green-400 border border-green-500/30" // Added border
-                      : "bg-orange-500/20 text-orange-400 border border-orange-500/30"
-                  )}
-                >
-                  {course.published ? "Published" : "In Progress"}
-                </Badge>
-              </TableCell>
-              <TableCell className="text-gray-700 dark:text-gray-300">
-                {new Date(course.createdAt).toLocaleDateString(undefined, {
-                  year: "numeric",
-                  month: "2-digit",
-                  day: "2-digit",
-                })}
-              </TableCell>
-              <TableCell className="flex items-center gap-x-3">
-                {course.isPublished ? (
-                  <Link to={`/courses/${course.courseId}`}>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      title="View Course"
-                      className="hover:bg-blue-500/20 text-blue-400" // Styled hover
+                        : "bg-orange-500/20 text-orange-400 border border-orange-500/30"
+                      )}
+                    >
+                      {course.published ? "Published" : "In Progress"}
+                    </Badge>
+                    </TableCell>
+                    <TableCell className="text-gray-700 dark:text-gray-300">
+                    {course.createdAt
+                      ? new Date(course.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      })
+                      : "N/A"}
+                    </TableCell>
+                    <TableCell className="flex items-center gap-x-3">
+                    {course.isPublished ? (
+                      <Link to={`/courses/${course.courseId}`}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        title="View Course"
+                        className="hover:bg-blue-500/20 text-blue-400" // Styled hover
                     >
                       <Eye className="h-5 w-5" /> {/* Increased icon size */}
                     </Button>

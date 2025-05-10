@@ -29,9 +29,10 @@ import * as RadioGroup from "@radix-ui/react-radio-group";
 import axios from "axios";
 import { API_URL } from "@/config";
 import { AppContext } from "@/context/AppContext";
+import CourseProgressCard from "./CourseProgressCard";
 
-export function AppSidebar({ title, topics, onSubTopicClick }) {
-  const { token } = useContext(AppContext);
+export function AppSidebar({ progress, title, topics, onSubTopicClick }) {
+  const { token, user } = useContext(AppContext);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [open, setOpen] = useState(false);
@@ -79,41 +80,59 @@ export function AppSidebar({ title, topics, onSubTopicClick }) {
     }));
   };
 
-  const handleSubmit = () => {
-    console.log("Selected Answers:", selectedAnswers);
-    console.log("Quiz Data:", quizData);
-    console.log("Submissions:", submissions);
-    setSelectedAnswers({})
-    
+  const handleSubmit = async () => {
+    // Prepare the submissions array
     const submissions = quizData.map((question) => ({
       questionId: question.id,
-      selectedAnswerIds: question.answerOptions
-        .filter((option) => option.answerText === selectedAnswers[question.id])
-        .map((option) => option.id),
+      selectedAnswerId: selectedAnswers[question.id], // Use the selected answer's ID
     }));
 
-    console.log("submissions:", submissions);
+    // Prepare the payload
+    const payload = {
+      userId: user.id, // user ID from context
+      submissions,
+    };
 
-    // Handle quiz submission logic here (e.g., calculate score, send data)
-    alert("Quiz submitted! (Add your submission logic here)");
-    setOpen(false); // Close dialog after submit
+    console.log("Payload to be sent:", payload);
+
+    // API request options
+    const options = {
+      method: "POST",
+      url: `${API_URL}/tests/submit`,
+      headers: {
+        Authorization: `Bearer ${token}`, // Use the token from your context
+        "Content-Type": "application/json",
+      },
+      data: payload,
+    };
+
+    try {
+      // Make the API request
+      const response = await axios.request(options);
+      console.log("Response from server:", response.data);
+
+      // Handle success (e.g., show a success message or navigate)
+      alert("Quiz submitted successfully!");
+      setOpen(false); // Close the dialog
+    } catch (error) {
+      console.error("Error submitting quiz:", error);
+      alert("An error occurred while submitting the quiz. Please try again.");
+    }
   };
   return (
     <Sidebar className={""}>
-      <SidebarContent className={"bg-gray-50"}>
+      <SidebarContent className={"bg-slate-900 text-slate-200 "}>
         <SidebarHeader>
-          <h1 className="text-lg font-black text-center">{title}</h1>
+          <CourseProgressCard progress={progress} title={title} />
         </SidebarHeader>
         <SidebarGroup>
-          <SidebarGroupLabel>
-            {/* <h1 className="text-lg font-black my-3">Object-Oriented Principles in PHP</h1> */}
-          </SidebarGroupLabel>
+          <SidebarGroupLabel></SidebarGroupLabel>
           <SidebarGroupContent className={"-mt-10"}>
             <SidebarMenu>
               <Accordion collapsible type="single" className="space-y-4">
                 {(topics || []).map((topic) => (
                   <AccordionItem value={`${topic.id}`} key={topic.id}>
-                    <AccordionTrigger className="bg-[#d6d6d6] text-left px-4 cursor-pointer w-full py-2">
+                    <AccordionTrigger className="bg-slate-800 text-left text-base px-4 cursor-pointer w-full py-4 rounded-md">
                       {topic.title}
                     </AccordionTrigger>
                     <AccordionContent className="pl-8 flex flex-col gap-y-3 my-2 text-sm">
@@ -121,10 +140,7 @@ export function AppSidebar({ title, topics, onSubTopicClick }) {
                         <p
                           key={subtopic.id}
                           onClick={() => onSubTopicClick(subtopic.id)}
-                          className={`hover:underline cursor-pointer transition-all ${
-                            selectedAnswers[subtopic.id] === subtopic.title
-                              ? "text-amber-300"
-                              : "hover:text-green-500"
+                          className={`hover:underline cursor-pointer transition-all hover:text-green-500
                           }`}
                         >
                           {subtopic.title}
@@ -137,7 +153,15 @@ export function AppSidebar({ title, topics, onSubTopicClick }) {
                             action=""
                             onSubmit={(e) => fetchAllQuiz(e, topic.id)}
                           >
-                            <Button variant="outline" size={'sm'} className={"cursor-pointer bg-green-600 hover:bg-green-700"}>Start Quiz</Button>
+                            <Button
+                              variant="outline"
+                              size={"sm"}
+                              className={
+                                "cursor-pointer bg-gradient-to-br from-purple-900 to-gray-800 border border-gray-700"
+                              }
+                            >
+                              Start Quiz
+                            </Button>
                           </form>
                         </DialogTrigger>
                         <DialogContent className="sm:max-w-[600px]">
@@ -159,7 +183,10 @@ export function AppSidebar({ title, topics, onSubTopicClick }) {
                             </div>
 
                             <RadioGroup.Root
-                              value={selectedAnswers[currentQuestion?.id] || undefined}
+                              value={
+                                selectedAnswers[currentQuestion?.id] ||
+                                undefined
+                              }
                               onValueChange={handleAnswerChange}
                               className="space-y-4"
                             >
@@ -178,7 +205,8 @@ export function AppSidebar({ title, topics, onSubTopicClick }) {
                                   <Label
                                     htmlFor={`option-${option}`}
                                     className={`text-gray-900 font-medium ${
-                                      selectedAnswers[currentQuestion?.id] === option.id
+                                      selectedAnswers[currentQuestion?.id] ===
+                                      option.id
                                         ? "text-amber-300"
                                         : ""
                                     }`}
@@ -213,7 +241,7 @@ export function AppSidebar({ title, topics, onSubTopicClick }) {
                             {isLastQuestion && (
                               <Button
                                 onClick={handleSubmit}
-                                className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
+                                className="w-full bg-gradient-to-br from-purple-900 to-red-800 text-white font-bold py-2 px-4 rounded cursor-pointer"
                               >
                                 SUBMIT
                               </Button>
