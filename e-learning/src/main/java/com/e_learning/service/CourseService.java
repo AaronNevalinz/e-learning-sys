@@ -9,7 +9,9 @@ import com.e_learning.repository.CourseRepository;
 import com.e_learning.repository.CourseVoteRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -28,22 +30,22 @@ public class CourseService {
         this.categoryRepository = categoryRepository;
     }
 
-//    public Course createCourse(Course course) {
-//        return courseRepository.save(course);
-//    }
-
     public Course createCourse(Course course) {
-        // Ensure the category exists and attach the full entity
-        if (course.getCategory() != null && course.getCategory().getId() != null) {
-            Category category = categoryRepository.findById(course.getCategory().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + course.getCategory().getId()));
-            course.setCategory(category);
-        } else {
-            throw new IllegalArgumentException("Category is required when creating a course.");
-        }
-
         return courseRepository.save(course);
     }
+
+//    public Course createCourse(Course course) {
+//        // Ensure the category exists and attach the full entity
+//        if (course.getCategory() != null && course.getCategory().getId() != null) {
+//            Category category = categoryRepository.findById(course.getCategory().getId())
+//                    .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + course.getCategory().getId()));
+//            course.setCategory(category);
+//        } else {
+//            throw new IllegalArgumentException("Category is required when creating a course.");
+//        }
+//
+//        return courseRepository.save(course);
+//    }
 
     public List<Course> getCoursesByCategoryId(Long categoryId) {
         return courseRepository.findByCategoryId(categoryId);
@@ -71,16 +73,30 @@ public class CourseService {
             dto.setCourseId(course.getId());
             dto.setCourseTitle(course.getTitle());
             dto.setCourseDescription(course.getDescription());
-            // dto.setCourseImg(course.getImage()); // Uncomment if applicable
+            //dto.setCreatedAt(course.getCreatedAt());
+            dto.setImageUrl(course.getImageUrl());
 
             dto.setCourseTopicCount(topicCount);
             dto.setCourseSubtopicCount(subtopicCount);
             dto.setCourseUpvoteCount(upvoteCount);
             dto.setCourseDownvoteCount(downvoteCount);
             dto.setCourseCommentCount(commentCount);  // ← Newly added line
+            dto.setPublished(course.isPublished());
+
 
             return dto;
         }).collect(Collectors.toList());
+    }
+
+
+    public Course togglePublishStatus(Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found with ID: " + courseId));
+
+        // Toggle the current published status
+        course.setPublished(!course.isPublished());
+
+        return courseRepository.save(course);
     }
 
 

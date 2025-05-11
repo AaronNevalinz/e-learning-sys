@@ -1,9 +1,12 @@
 package com.e_learning.dto;
 
+import java.time.LocalDateTime;
+
 public class CourseResponseDTO {
     private Long courseId;
-    private String courseImg;
+    private String imageUrl;
     private String courseTitle;
+    //private LocalDateTime createdAt;
     private String courseDescription;
 
     private int courseTopicCount;
@@ -12,23 +15,10 @@ public class CourseResponseDTO {
     private long courseUpvoteCount;
     private long courseDownvoteCount;
     private long courseCommentCount;
+    private boolean published;
 
 
 
-    public CourseResponseDTO() {
-    }
-
-    public CourseResponseDTO(Long courseId, String courseImg, String courseTitle, String courseDescription, int courseTopicCount, int courseSubtopicCount, long courseUpvoteCount, long courseDownvoteCount, long courseCommentCount) {
-        this.courseId = courseId;
-        this.courseImg = courseImg;
-        this.courseTitle = courseTitle;
-        this.courseDescription = courseDescription;
-        this.courseTopicCount = courseTopicCount;
-        this.courseSubtopicCount = courseSubtopicCount;
-        this.courseUpvoteCount = courseUpvoteCount;
-        this.courseDownvoteCount = courseDownvoteCount;
-        this.courseCommentCount = courseCommentCount;
-    }
 
     public Long getCourseId() {
         return courseId;
@@ -54,12 +44,12 @@ public class CourseResponseDTO {
         this.courseDescription = courseDescription;
     }
 
-    public String getCourseImg() {
-        return courseImg;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setCourseImg(String courseImg) {
-        this.courseImg = courseImg;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public int getCourseTopicCount() {
@@ -101,6 +91,22 @@ public class CourseResponseDTO {
     public void setCourseCommentCount(long courseCommentCount) {
         this.courseCommentCount = courseCommentCount;
     }
+
+    public boolean isPublished() {
+        return published;
+    }
+
+    public void setPublished(boolean published) {
+        this.published = published;
+    }
+
+//    public LocalDateTime getCreatedAt() {
+//        return createdAt;
+//    }
+//
+//    public void setCreatedAt(LocalDateTime createdAt) {
+//        this.createdAt = createdAt;
+//    }
 }
 
 

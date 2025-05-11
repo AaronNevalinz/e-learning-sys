@@ -1,5 +1,6 @@
 package com.e_learning.security;
 
+import com.e_learning.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -10,17 +11,22 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 @Service
 public class JwtUtil {
-
-    public String generateToken(UserDetails userDetails){
+    //public String generateToken(UserDetails userDetails)
+    public String generateToken(User userDetails){
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userDetails.getId()); // <-- Add userId here
         return Jwts
                 .builder()
+                .setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 *60 *40)) // 1000 milliseconds * 60 seconds * 24 = 1,440,000 milliseconds\==>(24minutes)
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
