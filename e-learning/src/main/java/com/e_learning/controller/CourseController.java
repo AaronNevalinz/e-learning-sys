@@ -40,49 +40,6 @@ public class CourseController {
         this.categoryService = categoryService;
     }
 
-
-    //    @PostMapping()
-//    public ResponseEntity<Map<String, Object>> createCourse(@RequestBody Course course) {
-//        try {
-//            Course createdCourse = courseService.createCourse(course);
-//            return responseService.createSuccessResponse(201, createdCourse, HttpStatus.CREATED);
-//        } catch (IllegalArgumentException | ResourceNotFoundException ex) {
-//            Map<String, String> error = Map.of("category", ex.getMessage());
-//            return responseService.createErrorResponse(400, error, HttpStatus.BAD_REQUEST);
-//        }
-//    }
-
-
-//    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    public ResponseEntity<Map<String, Object>> createCourse(
-//            @RequestParam("title") String title,
-//            @RequestParam("description") String description,
-//            @RequestParam("categoryId") Long categoryId,
-//            @RequestParam(value = "image", required = false) MultipartFile image
-//    ) throws IOException {
-//        try {
-//            Course course = new Course();
-//            course.setTitle(title);
-//            course.setDescription(description);
-//
-//            // If image is provided, upload and set the URL
-//            if (image != null && !image.isEmpty()) {
-//                String imageUrl = storageService.uploadFile(image); // make sure this returns a valid URL
-//                course.setImageUrl(imageUrl); // ensure this field exists in your Course entity
-//            }
-//
-//            Category category = categoryService.getCategoryById(categoryId);
-//            course.setCategory(category);
-//
-//            Course createdCourse = courseService.createCourse(course);
-//            return responseService.createSuccessResponse(201, createdCourse, HttpStatus.CREATED);
-//        } catch (IllegalArgumentException | ResourceNotFoundException ex) {
-//            Map<String, String> error = Map.of("error", ex.getMessage());
-//            return responseService.createErrorResponse(400, error, HttpStatus.BAD_REQUEST);
-//        }
-//    }
-
-
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, Object>> createCourse(
             @RequestPart("course") CourseFormData courseData,
