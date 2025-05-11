@@ -52,11 +52,11 @@ export default function CourseList() {
 
   return (
     <div className="flex">
-      <div className="fixed top-20 left-24 h-ful w-64 bg-gray-100 shadow-md">
+      <div className="lg:fixed hidden lg:block top-20 left-24 h-ful w-64 bg-gray-100 shadow-md">
         <SidebarComponent />
       </div>
-      <div className="ml-64 flex-1 p-8">
-        <div className="grid grid-cols-3 gap-8">
+      <div className="lg:ml-64 flex-1 p-8">
+        <div className="grid  md:grid-cols-2 lg:grid-cols-3 gap-8">
           {courses.length > 0 ? (
             courses.map((course, index) => (
               <div key={index}>

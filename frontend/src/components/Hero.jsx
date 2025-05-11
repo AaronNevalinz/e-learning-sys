@@ -1,6 +1,7 @@
-import { CheckCircle, PlayCircle, Users } from "lucide-react";
+import { CheckCircle, Users } from "lucide-react";
 import hero from '../assets/images/hero.png'
 import { Button } from "./ui/button";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
@@ -9,25 +10,23 @@ const Hero = () => {
         <section className="py-16 md:py-24 lg:py-20 px-6 md:px-10 lg:px-20 flex flex-col md:flex-row items-center justify-between gap-12">
           <div className="md:w-1/2">
             <h2 className="text-4xl md:text-5xl leading-18 lg:text-6xl font-medium text-gray-800 mb-4">
-              Unlock Your Potential with <span className="text-blue-600">Expert Guidance</span>
+              Unlock Your Potential with{" "}
+              <span className="text-blue-600">Expert Guidance</span>
             </h2>
             <p className="text-gray-600 mb-8">
-              Transform your career and achieve your goals with our comprehensive e-learning platform. Learn from industry leaders and gain skills that matter.
+              Transform your career and achieve your goals with our
+              comprehensive e-learning platform. Learn from industry leaders and
+              gain skills that matter.
             </p>
             <div className="flex items-center gap-4">
-              <Button
-                variant="default"
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                Enroll Now
-              </Button>
-              <Button
-                variant="outline"
-                className="text-blue-600 hover:bg-blue-50 hover:text-blue-700 border-blue-600/50 flex items-center gap-2"
-              >
-                <PlayCircle className="w-5 h-5" />
-                Watch Video
-              </Button>
+              <Link to={"/courses"}>
+                <Button
+                  variant="default"
+                  className="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white"
+                >
+                  Enroll Now
+                </Button>
+              </Link>
             </div>
             <div className="mt-8 text-gray-600">
               <Users className="inline-block w-5 h-5 mr-2 text-blue-500" />
@@ -50,26 +49,35 @@ const Hero = () => {
             Elevate Your Learning Experience
           </h2>
           <p className="text-gray-600 text-center mb-12 max-w-2xl">
-            Discover a world of opportunities with our expertly designed courses. Whether you're advancing your career or exploring new skills, we provide the tools and support you need to succeed.
+            Discover a world of opportunities with our expertly designed
+            courses. Whether you&apos;re advancing your career or exploring new
+            skills, we provide the tools and support you need to succeed.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="flex items-center gap-4">
             <CheckCircle className="w-8 h-8 text-green-500" />
-            <span className="text-gray-700 font-medium">Learn from Industry Experts</span>
+            <span className="text-gray-700 font-medium">
+              Learn from Industry Experts
+            </span>
           </div>
           <div className="flex items-center gap-4">
             <CheckCircle className="w-8 h-8 text-green-500" />
-            <span className="text-gray-700 font-medium">Achieve Outstanding Results</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <CheckCircle
-             className="w-8 h-8 text-green-500" />
-            <span className="text-gray-700 font-medium">Flexible Online Learning</span>
+            <span className="text-gray-700 font-medium">
+              Achieve Outstanding Results
+            </span>
           </div>
           <div className="flex items-center gap-4">
             <CheckCircle className="w-8 h-8 text-green-500" />
-            <span className="text-gray-700 font-medium">Unlimited Lifetime Access</span>
+            <span className="text-gray-700 font-medium">
+              Flexible Online Learning
+            </span>
+          </div>
+          <div className="flex items-center gap-4">
+            <CheckCircle className="w-8 h-8 text-green-500" />
+            <span className="text-gray-700 font-medium">
+              Unlimited Lifetime Access
+            </span>
           </div>
         </div>
         <div className="mt-16 flex justify-center">

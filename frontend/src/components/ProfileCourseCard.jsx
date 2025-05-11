@@ -31,7 +31,7 @@ export default function ProfileCourseCard({ course }) {
   const [comment, setComment] = useState({
     content: "",
   });
-    const [progress, setProgress] = useState(null);
+  const [progress, setProgress] = useState(null);
 
   const fetchAllCourseComments = async () => {
     var options = {
@@ -167,30 +167,32 @@ export default function ProfileCourseCard({ course }) {
       });
   };
 
-    const fetchCourseProgress = () => {
-      var options = {
-        method: "GET",
-        url: `${API_URL}/progress/courseId/${course.id || course.courseId}`,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      axios
-        .request(options)
-        .then(function (response) {
-          const data = response.data;
-          setProgress(data.result.progressPercentage);
-          console.log(progress);
-        })
-        .catch(function (error) {
-          console.error(error);
-        });
+  const fetchCourseProgress = () => {
+    var options = {
+      method: "GET",
+      url: `${API_URL}/progress/courseId/${course.id || course.courseId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     };
+
+    axios
+      .request(options)
+      .then(function (response) {
+        const data = response.data;
+        console.log(data);
+
+        setProgress(data.result.progressPercentage);
+        console.log(progress);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  };
 
   useEffect(() => {
     fetchAllCourseComments();
-    fetchCourseProgress()
+    fetchCourseProgress();
   }, [refetch]);
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">

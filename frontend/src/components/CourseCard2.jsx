@@ -193,7 +193,10 @@ export default function CourseCard2({ course }) {
 
       {/* Content Section */}
       <div className="p-4">
-        <h3 className="text-sm font-semibold text-blue-600">Designing</h3>
+        <h3 className="text-sm font-semibold text-blue-600">
+          {course.courseTopicCount || (course.topics && course?.topics.length)}{" "}
+          topics
+        </h3>
         <div className="flex items-center justify-between">
           <p className="text-xl font-bold text-gray-800 mt-1">
             {(course.courseTitle && course.courseTitle) || course?.title}
@@ -201,7 +204,7 @@ export default function CourseCard2({ course }) {
         </div>
         <p className="text-gray-600 mt-2">
           {(course.courseDescription &&
-            course.courseDescription.substring(0, 200)) ||
+            course.courseDescription.substring(0, 57)) ||
             (course.description && course.description.substring(0, 150))}
           ...
         </p>
@@ -238,7 +241,7 @@ export default function CourseCard2({ course }) {
             <Sheet>
               <SheetTrigger className="flex items-center gap-x-1 cursor-pointer">
                 <p className="flex gap-x-1 items-center">
-                  <FaRegComment  />
+                  <FaRegComment />
                   {course.courseCommentCount ||
                     (course.comments && course?.comments.length)}
                 </p>

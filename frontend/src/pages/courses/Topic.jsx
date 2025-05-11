@@ -16,7 +16,7 @@ export default function Topic() {
   const [content, setContent] = useState(null);
   const [title, setTitle] = useState("");
   const [progress, setProgress] = useState(null);
-const [currentTopicId, setCurrentTopicId] = useState(null);
+  const [currentTopicId, setCurrentTopicId] = useState(null);
 
   const fetchCourseDetails = async () => {
     const res = await fetch(`${API_URL}/courses/${course_id}`, {
@@ -54,10 +54,6 @@ const [currentTopicId, setCurrentTopicId] = useState(null);
     }
   };
 
-  
-
-
-
   const fetchCourseProgress = () => {
     var options = {
       method: "GET",
@@ -67,13 +63,17 @@ const [currentTopicId, setCurrentTopicId] = useState(null);
       },
     };
 
-
     axios
       .request(options)
       .then(function (response) {
         const data = response.data;
-        setProgress(data.result.progressPercentage);
-        console.log(progress);
+        if (data.result) {
+          setProgress(data.result.progressPercentage);
+          console.log(data);
+          console.log(data.result.progressPercentage);
+        } else {
+          console.error("Unexpected API response structure:", data);
+        }
       })
       .catch(function (error) {
         console.error(error);

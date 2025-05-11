@@ -32,13 +32,18 @@ import { AppContext } from "@/context/AppContext";
 import CourseProgressCard from "./CourseProgressCard";
 import { toast } from "sonner";
 
-export function AppSidebar({ progress, title, topics, onSubTopicClick, currentTopicId }) {
+export function AppSidebar({
+  progress,
+  title,
+  topics,
+  onSubTopicClick,
+  currentTopicId,
+}) {
   const { token, user } = useContext(AppContext);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [open, setOpen] = useState(false);
   const [quizData, setQuizData] = useState([]);
-  
 
   const fetchAllQuiz = (e, id) => {
     e.preventDefault();
@@ -55,7 +60,7 @@ export function AppSidebar({ progress, title, topics, onSubTopicClick, currentTo
       .then(function (response) {
         const data = response.data;
         setQuizData(data.result);
-        console.log(response.data);
+        // console.log(response.data);
       })
       .catch(function (error) {
         console.error(error);
@@ -88,6 +93,7 @@ export function AppSidebar({ progress, title, topics, onSubTopicClick, currentTo
       questionId: question.id,
       selectedAnswerId: selectedAnswers[question.id], // Use the selected answer's ID
     }));
+    console.log(progress);
 
     // Prepare the payload
     const payload = {
@@ -117,15 +123,15 @@ export function AppSidebar({ progress, title, topics, onSubTopicClick, currentTo
       const percentScore = (score / quizData.length) * 100;
       console.log(percentScore);
       // Check if the score is greater than 60
-      if (percentScore > 60) {
-        toast.success(
-          `Congratulations! You scored ${percentScore}%. You can proceed to the next topic.`
-        );
-        // Logic to navigate to the next topic
-        goToNextTopic();
-      } else {
-        toast.error(`Your score is ${percentScore}%. You need at least 60 to proceed.`);
-      }
+      // if (percentScore > 60) {
+      //   toast.success(
+      //     `Congratulations! You scored ${percentScore}%. You can proceed to the next topic.`
+      //   );
+      //   // Logic to navigate to the next topic
+      //   goToNextTopic();
+      // } else {
+      //   toast.error(`Your score is ${percentScore}%. You need at least 60 to proceed.`);
+      // }
 
       setOpen(false); // Close the dialog
     } catch (error) {
@@ -134,19 +140,19 @@ export function AppSidebar({ progress, title, topics, onSubTopicClick, currentTo
     }
   };
 
-  const goToNextTopic = () => {
-    const currentTopicIndex = topics.findIndex(
-      (topic) => topic.id === currentTopicId
-    );
-    const nextTopic = topics[currentTopicIndex + 1];
+  // const goToNextTopic = () => {
+  //   const currentTopicIndex = topics.findIndex(
+  //     (topic) => topic.id === currentTopicId
+  //   );
+  //   const nextTopic = topics[currentTopicIndex + 1];
 
-    if (nextTopic) {
-      // Navigate to the next topic
-      onSubTopicClick(nextTopic.id);
-    } else {
-      toast.info("You have completed all topics in this series!");
-    }
-  };
+  //   if (nextTopic) {
+  //     // Navigate to the next topic
+  //     onSubTopicClick(nextTopic.id);
+  //   } else {
+  //     toast.info("You have completed all topics in this series!");
+  //   }
+  // };
   return (
     <Sidebar className={""}>
       <SidebarContent className={"bg-slate-900 text-slate-200 "}>
