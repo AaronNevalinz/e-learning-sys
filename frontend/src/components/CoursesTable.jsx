@@ -127,18 +127,7 @@ const CoursesTable = ({ courses }) => {
               </Button>
             </TableHead>
             <TableHead className="font-bold uppercase">Status</TableHead>
-            <TableHead className="">
-              <Button
-                variant="ghost"
-                className="h-9 p-0 font-bold uppercase text-gray-900 dark:text-white"
-                onClick={() => requestSort("createdAt")}
-              >
-                Created At
-                {sortConfig?.key === "createdAt" && (
-                  <ArrowUpDown className="ml-2 h-4 w-4" />
-                )}
-              </Button>
-            </TableHead>
+            
             <TableHead className="uppercase font-bold">Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -173,15 +162,7 @@ const CoursesTable = ({ courses }) => {
                       {course.published ? "Published" : "In Progress"}
                     </Badge>
                     </TableCell>
-                    <TableCell className="text-gray-700 dark:text-gray-300">
-                    {course.createdAt
-                      ? new Date(course.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                      })
-                      : "N/A"}
-                    </TableCell>
+                   
                     <TableCell className="flex items-center gap-x-3">
                     {course.isPublished ? (
                       <Link to={`/courses/${course.courseId}`}>

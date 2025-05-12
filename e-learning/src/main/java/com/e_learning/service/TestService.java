@@ -1,15 +1,36 @@
 package com.e_learning.service;
 
-import com.e_learning.dto.*;
-import com.e_learning.exception.ResourceNotFoundException;
-import com.e_learning.model.*;
-import com.e_learning.repository.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.e_learning.dto.AnswerOptionDTO;
+import com.e_learning.dto.AnswerOptionResponseDTO;
+import com.e_learning.dto.BulkTestSubmissionDTO;
+import com.e_learning.dto.QuestionDTO;
+import com.e_learning.dto.QuestionResponseDTO;
+import com.e_learning.dto.TestAttemptDTO;
+import com.e_learning.dto.TestSubmissionDTO;
+import com.e_learning.exception.ResourceNotFoundException;
+import com.e_learning.model.AnswerOption;
+import com.e_learning.model.Question;
+import com.e_learning.model.TestAttempt;
+import com.e_learning.model.TestSubmission;
+import com.e_learning.model.Topic;
+import com.e_learning.model.User;
+import com.e_learning.model.UserTopicProgress;
+import com.e_learning.repository.AnswerOptionRepository;
+import com.e_learning.repository.QuestionRepository;
+import com.e_learning.repository.TestAttemptRepository;
+import com.e_learning.repository.TestSubmissionRepository;
+import com.e_learning.repository.TopicRepository;
+import com.e_learning.repository.UserAnswerRepository;
+import com.e_learning.repository.UserRepository;
+import com.e_learning.repository.UserTopicProgressRepository;
 
 @Service
 public class TestService {
@@ -148,7 +169,7 @@ public class TestService {
         }
 
         double percentage = (bulkDto.getSubmissions().size() == 0) ? 0 : (totalScore / bulkDto.getSubmissions().size()) * 100;
-        boolean passed = percentage >= 70.0;
+        boolean passed = percentage >= 50.0;
 
         attempt.setScore(totalScore);
         attempt.setPassed(passed);

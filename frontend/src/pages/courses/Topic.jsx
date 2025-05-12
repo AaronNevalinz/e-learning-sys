@@ -16,7 +16,7 @@ export default function Topic() {
   const [content, setContent] = useState(null);
   const [title, setTitle] = useState("");
   const [progress, setProgress] = useState(null);
-const [currentTopicId, setCurrentTopicId] = useState(null);
+  const [currentTopicId, setCurrentTopicId] = useState(null);
 
   const fetchCourseDetails = async () => {
     const res = await fetch(`${API_URL}/courses/${course_id}`, {
@@ -29,6 +29,7 @@ const [currentTopicId, setCurrentTopicId] = useState(null);
 
     if (data.status === 200) {
       setCourse(data.result);
+      // console.log(data);
     }
   };
 
@@ -54,10 +55,6 @@ const [currentTopicId, setCurrentTopicId] = useState(null);
     }
   };
 
-  
-
-
-
   const fetchCourseProgress = () => {
     var options = {
       method: "GET",
@@ -66,7 +63,6 @@ const [currentTopicId, setCurrentTopicId] = useState(null);
         Authorization: `Bearer ${token}`,
       },
     };
-
 
     axios
       .request(options)
@@ -93,14 +89,14 @@ const [currentTopicId, setCurrentTopicId] = useState(null);
         }}
       >
         <AppSidebar
-          progress={progress}
+          course_id={course_id}
           topics={course.topics}
           title={course.title}
           onSubTopicClick={handleSubtopicClick}
           currentTopicId={currentTopicId}
         />
-        <main className="w-full ">
-          <div className="">
+        <main className="w-full flex-1">
+          <div className="sticky top-0 z-50 bg-white shadow-md">
             <SideNavbar />
           </div>
 

@@ -18,7 +18,7 @@ const CourseProgressCard = ({progress, title}) => {
       <div className="mb-2">
         <Progress value={progress} className="h-2 bg-gray-700" />
         <div className="flex justify-between text-xs text-gray-400 mt-1">
-          <span>{progress}% completed</span>
+          <span>{Math.round(progress)}% completed</span>
           <span>100%</span>
         </div>
       </div>

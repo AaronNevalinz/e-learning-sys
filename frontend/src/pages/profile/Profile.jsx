@@ -6,19 +6,19 @@ import { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export default function Profile() {
-  const { user,fetchUserCourses, userCourses } = useContext(AppContext);
+  const { user, fetchUserCourses, userCourses } = useContext(AppContext);
 
 
-  
-  useEffect(()=>{
-    fetchUserCourses()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+
+  useEffect(() => {
+    fetchUserCourses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="min-h-screen text-black flex flex-col md:flex-row">
       {/* Left Sidebar */}
-      <div className="w-full md:w-1/4 bg-[#0F1629] text-white rounded-2xl p-6 self-start">
+      <div className="w-full md:w-1/4 bg-[#0F1629] text-white p-6 self-start">
         <div className="flex flex-col items-center">
           <Avatar className={"size-32 mb-10"}>
             <AvatarImage
@@ -53,13 +53,16 @@ export default function Profile() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8">
-
+      <div className="flex-1 px-8">
+        <div>
+          <h1>Your Badges</h1>
+          
+        </div>
         <h3 className="text-xl font-semibold mb-4">
           Courses Enrolled in ({userCourses?.length})
         </h3>
 
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid grid-cols-3 gap-5">
           {userCourses?.map((course) => {
             return (
               <ProfileCourseCard
