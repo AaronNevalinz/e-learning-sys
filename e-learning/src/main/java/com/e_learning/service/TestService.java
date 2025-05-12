@@ -83,23 +83,30 @@ public class TestService {
         }).collect(Collectors.toList());
     }
 
+
+    // The goal is to submit a test, calculate the score, save the attempt, and mark the user’s progress if they pass.
+    // A student (user) submits answers to a test. This method checks the answers, calculates the score, and saves the result. If they pass, it marks the topic as completed.
     @Transactional
     public double submitTestAnswers(BulkTestSubmissionDTO bulkDto) {
         User user = userRepository.findById(bulkDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // Safety check: If the user didn’t submit any answers, throw an error.
         if (bulkDto.getSubmissions().isEmpty()) {
             throw new IllegalArgumentException("No submissions found.");
         }
 
-        // Fetch the question and ensure the Topic is managed
+        // - Get the **first question** from the submitted answers.
+        //- We use it to figure out **which topic** this test is about.
         Question firstQuestion = questionRepository.findById(bulkDto.getSubmissions().get(0).getQuestionId())
                 .orElseThrow(() -> new RuntimeException("First question not found"));
 
         Topic topic = topicRepository.findById(firstQuestion.getTopic().getId())
                 .orElseThrow(() -> new RuntimeException("Topic not found")); // Fetching ensures the topic is managed
 
-        // Get or create attempt
+        // - Checks if the user already has an attempt for this topic.
+        //- If yes → reuse it.
+        //- If no → create a **new attempt** and associate it with the user and topic.
         TestAttempt attempt = testAttemptRepository.findByUserAndTopic(user, topic)
                 .orElseGet(() -> {
                     TestAttempt newAttempt = new TestAttempt();
@@ -107,10 +114,17 @@ public class TestService {
                     newAttempt.setTopic(topic); // now it's a managed Topic
                     return newAttempt;
                 });
-
+        // Record the timestamp when this test was submitted.
         attempt.setSubmittedAt(LocalDateTime.now());
 
         // Clear old submissions
+        // - If the attempt already has answers from a previous submission:
+        //  - **Disconnect** them (break the reference to `TestAttempt`)
+        //  - **Clear the list**, making room for new answers.
+        //- Else: initialize an empty list.
+        //
+        //Why?
+        //> We don’t want to mix **old answers** with the **new answers** being submitted now.
         if (attempt.getSubmissions() != null && !attempt.getSubmissions().isEmpty()) {
             for (TestSubmission submission : new ArrayList<>(attempt.getSubmissions())) {
                 submission.setTestAttempt(null);
@@ -122,7 +136,9 @@ public class TestService {
 
         double totalScore = 0;
 
+        // looping through each answer for every answer submitted by the user...
         for (TestSubmissionDTO dto : bulkDto.getSubmissions()) {
+            // - Load the actual question from the database.
             Question question = questionRepository.findById(dto.getQuestionId())
                     .orElseThrow(() -> new RuntimeException("Question not found"));
 
@@ -132,9 +148,13 @@ public class TestService {
                     .map(AnswerOption::getId)
                     .toList();
 
+            // - Check if the selected answer is **exactly** the correct one.
+            //- It assumes questions only have **one correct answer**.
             boolean isCorrect = correctAnswerIds.size() == 1 && correctAnswerIds.contains(selectedId);
+            // If the user got it right → give 1 point. Else → 0.
             double score = isCorrect ? 1.0 : 0.0;
 
+            // Create a new submission record with all the relevant info.
             TestSubmission submission = new TestSubmission();
             submission.setTestAttempt(attempt);
             submission.setQuestion(question);
