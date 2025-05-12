@@ -17,23 +17,18 @@ public class TestService {
     private final TopicRepository topicRepository;
     private final QuestionRepository questionRepository;
     private final AnswerOptionRepository answerOptionRepository;
-    private final UserAnswerRepository userAnswerRepository;
-    private final TestSubmissionRepository testSubmissionRepository;
     private final UserRepository userRepository;
     private final TestAttemptRepository testAttemptRepository;
     private final UserTopicProgressRepository userTopicProgressRepository;
 
     public TestService(TopicRepository topicRepository, QuestionRepository questionRepository,
-                       AnswerOptionRepository answerOptionRepository, UserAnswerRepository userAnswerRepository,
-                       TestSubmissionRepository testSubmissionRepository,
+                       AnswerOptionRepository answerOptionRepository,
                        UserRepository userRepository, TestAttemptRepository testAttemptRepository,
                        UserTopicProgressRepository userTopicProgressRepository) {
 
         this.topicRepository = topicRepository;
         this.questionRepository = questionRepository;
         this.answerOptionRepository = answerOptionRepository;
-        this.userAnswerRepository = userAnswerRepository;
-        this.testSubmissionRepository = testSubmissionRepository;
         this.userRepository = userRepository;
         this.testAttemptRepository = testAttemptRepository;
         this.userTopicProgressRepository = userTopicProgressRepository;
@@ -88,8 +83,7 @@ public class TestService {
         }).collect(Collectors.toList());
     }
 
-
-    @Transactional  // annotation ensures that all the operations inside the method are treated as a single database transaction.
+    @Transactional
     public double submitTestAnswers(BulkTestSubmissionDTO bulkDto) {
         User user = userRepository.findById(bulkDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -98,25 +92,30 @@ public class TestService {
             throw new IllegalArgumentException("No submissions found.");
         }
 
-        // Get topic from first question
+        // Fetch the question and ensure the Topic is managed
         Question firstQuestion = questionRepository.findById(bulkDto.getSubmissions().get(0).getQuestionId())
                 .orElseThrow(() -> new RuntimeException("First question not found"));
-        Topic topic = firstQuestion.getTopic();
+
+        Topic topic = topicRepository.findById(firstQuestion.getTopic().getId())
+                .orElseThrow(() -> new RuntimeException("Topic not found")); // Fetching ensures the topic is managed
 
         // Get or create attempt
         TestAttempt attempt = testAttemptRepository.findByUserAndTopic(user, topic)
                 .orElseGet(() -> {
                     TestAttempt newAttempt = new TestAttempt();
                     newAttempt.setUser(user);
-                    newAttempt.setTopic(topic);
+                    newAttempt.setTopic(topic); // now it's a managed Topic
                     return newAttempt;
                 });
 
         attempt.setSubmittedAt(LocalDateTime.now());
 
-        // Clear old submissions safely
-        if (attempt.getSubmissions() != null) {
-            attempt.getSubmissions().clear(); // triggers orphanRemoval
+        // Clear old submissions
+        if (attempt.getSubmissions() != null && !attempt.getSubmissions().isEmpty()) {
+            for (TestSubmission submission : new ArrayList<>(attempt.getSubmissions())) {
+                submission.setTestAttempt(null);
+            }
+            attempt.getSubmissions().clear();
         } else {
             attempt.setSubmissions(new ArrayList<>());
         }
@@ -143,17 +142,17 @@ public class TestService {
             submission.setCorrect(isCorrect);
             submission.setScore(score);
 
-            attempt.getSubmissions().add(submission); // Hibernate manages cascade save
+            attempt.getSubmissions().add(submission);
             totalScore += score;
         }
 
         double percentage = (bulkDto.getSubmissions().size() == 0) ? 0 : (totalScore / bulkDto.getSubmissions().size()) * 100;
-        boolean passed = percentage >= 70.0;
+        boolean passed = percentage >= 50.0;
 
         attempt.setScore(totalScore);
         attempt.setPassed(passed);
 
-        testAttemptRepository.save(attempt); // Save all in one go
+        testAttemptRepository.save(attempt);
 
         // Save progress if passed
         if (passed) {
@@ -162,7 +161,7 @@ public class TestService {
                     .orElseGet(() -> {
                         UserTopicProgress newProgress = new UserTopicProgress();
                         newProgress.setUser(user);
-                        newProgress.setTopic(topic);
+                        newProgress.setTopic(topic); // again, a managed topic
                         return newProgress;
                     });
 
@@ -191,8 +190,6 @@ public class TestService {
                 .toList();
     }
 
-
-
     public TestAttemptDTO getTestResultById(Long userId, Long resultId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
@@ -213,6 +210,26 @@ public class TestService {
                 attempt.getSubmittedAt()
         );
     }
+
+    public TestAttemptDTO getTestResultByTopic(Long userId, Long topicId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        Topic topic = topicRepository.findById(topicId)
+                .orElseThrow(() -> new ResourceNotFoundException("Topic not found with id: " + topicId));
+
+        TestAttempt attempt = testAttemptRepository.findByUserAndTopic(user, topic)
+                .orElseThrow(() -> new ResourceNotFoundException("No test attempt found for the given topic and user."));
+
+        return new TestAttemptDTO(
+                attempt.getId(),
+                attempt.getTopic().getTitle(),
+                attempt.getScore(),
+                attempt.isPassed(),
+                attempt.getSubmittedAt()
+        );
+    }
+
 
     @Transactional
     public Question updateQuestionWithAnswers(Long questionId, QuestionDTO dto) {
@@ -241,7 +258,6 @@ public class TestService {
                 existing.getAnswerOptions().add(option);
             }
         }
-
         return questionRepository.save(existing);
     }
 
