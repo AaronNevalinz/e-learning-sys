@@ -79,7 +79,19 @@ public class EnrollmentService {
 
         List<Course> enrolledCourses = enrollmentRepo.findByUser(user).stream()
                 .map(Enrollment::getCourse)
-                .collect(Collectors.toList());
+                .toList();
+
+        // === or ===
+
+//        List<Course> courses = new ArrayList<>();
+//        for (Enrollment enrollment : enrollmentRepo.findByUser(user)) {
+//            courses.add(enrollment.getCourse());
+//        }
+
+
+//        List<Course> enrolledCourses = enrollmentRepo.findByUser(user).stream()
+//                .map(Enrollment::getCourse)
+//                .collect(Collectors.toList());
 
         return enrolledCourses.stream().map(course -> {
             int topicCount = course.getTopics().size();

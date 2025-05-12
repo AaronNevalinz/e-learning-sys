@@ -163,18 +163,24 @@ public class TestService {
             submission.setScore(score);
 
             attempt.getSubmissions().add(submission);
+            // - Add this answer to the attempt.
+            //- Add this question’s score to the total.
             totalScore += score;
         }
 
+        // Calculate percentage + pass/fail:
+        // Compute how much the user scored as a percentage.
+        // Consider them passed if they got 50% or more.
         double percentage = (bulkDto.getSubmissions().size() == 0) ? 0 : (totalScore / bulkDto.getSubmissions().size()) * 100;
         boolean passed = percentage >= 50.0;
 
         attempt.setScore(totalScore);
         attempt.setPassed(passed);
 
-        testAttemptRepository.save(attempt);
+        testAttemptRepository.save(attempt);  // - Save the final result of the attempt.
 
         // Save progress if passed
+        // Mark topic as completed if passed:
         if (passed) {
             UserTopicProgress progress = userTopicProgressRepository
                     .findByUserAndTopic(user, topic)
@@ -188,6 +194,11 @@ public class TestService {
             progress.setCompleted(true);
             progress.setCompletedAt(LocalDateTime.now());
             userTopicProgressRepository.save(progress);
+
+            //If the user passed:
+               //Check if progress already exists → reuse or create.
+               //Mark the topic as completed.
+            //Save it.
         }
 
         return totalScore;
