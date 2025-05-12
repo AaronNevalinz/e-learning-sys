@@ -36,6 +36,7 @@ export default function AdminCourseList() {
   return (
     <div>
       <div className="mt-4">
+        <h1 className="text-3xl font-bold">List of all the courses</h1>
         <CoursesTable courses={courses} />
       </div>
     </div>

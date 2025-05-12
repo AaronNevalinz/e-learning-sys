@@ -7,17 +7,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  TableCaption,
 } from "@/components/ui/table";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
-import { ArrowUpDown, Edit, Eye, Trash } from "lucide-react";
+import { ArrowUpDown, Edit, Eye, Info, Trash } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { API_URL } from "@/config";
 import axios from "axios";
 import { AppContext } from "@/context/AppContext";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
 // eslint-disable-next-line react/prop-types
 const CoursesTable = ({ courses }) => {
@@ -81,15 +81,23 @@ const CoursesTable = ({ courses }) => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full mt-5 p-8 rounded-lg border border-gray-100 shadow-lg">
+      <div className="flex items-center gap-2 mb-4">
+        <h2 className="text-lg font-semibold">Courses</h2>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>List of all the courses</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
       <Table className="border rounded-xl shadow-lg">
-        {" "}
-        {/* Increased roundedness and shadow */}
-        <TableCaption className="text-gray-500 dark:text-gray-400 mt-4">
-          A list of your recent Courses.
-        </TableCaption>
         <TableHeader>
-          <TableRow>
+          <TableRow className={"text-lg uppercase font-bold"}>
             <TableHead className="w-[80px] text-left">
               <Button
                 variant="ghost"
@@ -127,18 +135,7 @@ const CoursesTable = ({ courses }) => {
               </Button>
             </TableHead>
             <TableHead className="font-bold uppercase">Status</TableHead>
-            <TableHead className="">
-              <Button
-                variant="ghost"
-                className="h-9 p-0 font-bold uppercase text-gray-900 dark:text-white"
-                onClick={() => requestSort("createdAt")}
-              >
-                Created At
-                {sortConfig?.key === "createdAt" && (
-                  <ArrowUpDown className="ml-2 h-4 w-4" />
-                )}
-              </Button>
-            </TableHead>
+            
             <TableHead className="uppercase font-bold">Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -167,29 +164,21 @@ const CoursesTable = ({ courses }) => {
                     "px-3 py-1.5 rounded-full text-xs font-semibold shadow-md", // Added shadow
                     course.published
                       ? "bg-green-500/20 text-green-400 border border-green-500/30" // Added border
-                        : "bg-orange-500/20 text-orange-400 border border-orange-500/30"
-                      )}
-                    >
-                      {course.published ? "Published" : "In Progress"}
-                    </Badge>
-                    </TableCell>
-                    <TableCell className="text-gray-700 dark:text-gray-300">
-                    {course.createdAt
-                      ? new Date(course.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                      })
-                      : "N/A"}
-                    </TableCell>
-                    <TableCell className="flex items-center gap-x-3">
-                    {course.isPublished ? (
-                      <Link to={`/courses/${course.courseId}`}>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        title="View Course"
-                        className="hover:bg-blue-500/20 text-blue-400" // Styled hover
+                      : "bg-orange-500/20 text-orange-400 border border-orange-500/30"
+                  )}
+                >
+                  {course.published ? "Published" : "In Progress"}
+                </Badge>
+              </TableCell>
+              
+              <TableCell className="flex items-center gap-x-3">
+                {course.isPublished ? (
+                  <Link to={`/courses/${course.courseId}`}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      title="View Course"
+                      className="hover:bg-blue-500/20 text-blue-400" // Styled hover
                     >
                       <Eye className="h-5 w-5" /> {/* Increased icon size */}
                     </Button>

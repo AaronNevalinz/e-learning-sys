@@ -23,7 +23,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Label } from "./ui/label";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import axios from "axios";
@@ -32,8 +32,8 @@ import { AppContext } from "@/context/AppContext";
 import CourseProgressCard from "./CourseProgressCard";
 import { toast } from "sonner";
 
-export function AppSidebar({
-  progress,
+export default function AppSidebar({
+  course_id,
   title,
   topics,
   onSubTopicClick,
@@ -44,6 +44,8 @@ export function AppSidebar({
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [open, setOpen] = useState(false);
   const [quizData, setQuizData] = useState([]);
+
+  const [progress, setProgress] = useState(null);
 
   const fetchAllQuiz = (e, id) => {
     e.preventDefault();
@@ -61,6 +63,32 @@ export function AppSidebar({
         const data = response.data;
         setQuizData(data.result);
         // console.log(response.data);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  };
+
+  const fetchCourseProgress = () => {
+    var options = {
+      method: "GET",
+      url: `${API_URL}/progress/courseId/${course_id}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    axios
+      .request(options)
+      .then(function (response) {
+        const data = response.data;
+        if (data.result) {
+          setProgress(data.result.progressPercentage);
+          console.log(data);
+          console.log(data.result.progressPercentage);
+        } else {
+          console.error("Unexpected API response structure:", data);
+        }
       })
       .catch(function (error) {
         console.error(error);
@@ -123,16 +151,17 @@ export function AppSidebar({
       const percentScore = (score / quizData.length) * 100;
       console.log(percentScore);
       // Check if the score is greater than 60
-      // if (percentScore > 60) {
-      //   toast.success(
-      //     `Congratulations! You scored ${percentScore}%. You can proceed to the next topic.`
-      //   );
+      if (percentScore >= 50) {
+        toast.success(
+          `Congratulations! You scored ${percentScore}%. You can proceed to the next topic.`
+        );
+      }
       //   // Logic to navigate to the next topic
       //   goToNextTopic();
       // } else {
       //   toast.error(`Your score is ${percentScore}%. You need at least 60 to proceed.`);
       // }
-
+      fetchCourseProgress();
       setOpen(false); // Close the dialog
     } catch (error) {
       console.error("Error submitting quiz:", error);
@@ -153,6 +182,10 @@ export function AppSidebar({
   //     toast.info("You have completed all topics in this series!");
   //   }
   // };
+
+  useEffect(() => {
+    fetchCourseProgress();
+  }, []);
   return (
     <Sidebar className={""}>
       <SidebarContent className={"bg-slate-900 text-slate-200 "}>

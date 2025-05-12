@@ -1,5 +1,4 @@
 import Hero from "@/components/Hero";
-import Footer from "@/components/Footer";
 
 
 export default function Home() {
@@ -9,7 +8,6 @@ export default function Home() {
       <main className="">
         <Hero />      
       </main>
-      <Footer />
     </>
   );
 }

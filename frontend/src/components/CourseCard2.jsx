@@ -170,16 +170,16 @@ export default function CourseCard2({ course }) {
     fetchAllCourseComments();
   }, [refetch]);
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+    <div className="bg-white rounded- shadow-lg overflow-hidden border border-gray-200">
       <div className="relative">
         <Link to={`/course/${course.courseId || course.id} `}>
           <img
             src={course.imageUrl}
             alt="Course"
-            className="w-full h-48 object-cover"
+            className="w-full h-40 object-cover"
           />
         </Link>
-        <div className="absolute bottom-4 right-4">
+        <div className="absolute bottom-2 right-2">
           <Link to={`/course/${course.courseId || course.id} `}>
             <Button
               variant="default"
@@ -192,19 +192,19 @@ export default function CourseCard2({ course }) {
       </div>
 
       {/* Content Section */}
-      <div className="p-4">
-        <h3 className="text-sm font-semibold text-blue-600">
+      <div className="p-2">
+        <h3 className="text-xs font- text-blue-600">
           {course.courseTopicCount || (course.topics && course?.topics.length)}{" "}
           topics
         </h3>
         <div className="flex items-center justify-between">
-          <p className="text-xl font-bold text-gray-800 mt-1">
+          <p className="text-sm font-bold text-gray-700 mt-1">
             {(course.courseTitle && course.courseTitle) || course?.title}
           </p>
         </div>
-        <p className="text-gray-600 mt-2">
+        <p className="text-gray-600 text-xs">
           {(course.courseDescription &&
-            course.courseDescription.substring(0, 57)) ||
+            course.courseDescription.substring(0, 40)) ||
             (course.description && course.description.substring(0, 150))}
           ...
         </p>
@@ -212,11 +212,7 @@ export default function CourseCard2({ course }) {
         {/* Stats Section */}
         <div className="flex items-center justify-between mt-4 text-gray-500 text-sm px-2">
           <div className="flex items-center gap-1">
-            <Users className="w-4 h-4" />
-            <span>9.7k</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <p className="flex gap-x-4 items-center">
+            <p className="flex gap-x-2 items-center">
               <form action="" onSubmit={handleUpvoteCourse}>
                 <button
                   className="cursor-pointer flex items-center gap-2"

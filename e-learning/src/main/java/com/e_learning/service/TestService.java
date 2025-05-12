@@ -148,7 +148,7 @@ public class TestService {
         }
 
         double percentage = (bulkDto.getSubmissions().size() == 0) ? 0 : (totalScore / bulkDto.getSubmissions().size()) * 100;
-        boolean passed = percentage >= 70.0;
+        boolean passed = percentage >= 50.0;
 
         attempt.setScore(totalScore);
         attempt.setPassed(passed);
