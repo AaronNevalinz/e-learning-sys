@@ -36,14 +36,14 @@ public class Topic {
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserTopicProgress> progressList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TestAttempt> testAttempts = new ArrayList<>();
+//    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<TestAttempt> testAttempts = new ArrayList<>();
 
     public Topic() {
     }
 
     public Topic(List<TestAttempt> testAttempts, List<UserTopicProgress> progressList, List<Question> questions, List<Subtopic> subtopics, Course course, int orderInCourse, String description, String title, Long id) {
-        this.testAttempts = testAttempts;
+        //this.testAttempts = testAttempts;
         this.progressList = progressList;
         this.questions = questions;
         this.subtopics = subtopics;
@@ -118,12 +118,12 @@ public class Topic {
         this.progressList = progressList;
     }
 
-    public List<TestAttempt> getTestAttempts() {
-        return testAttempts;
-    }
-
-    public void setTestAttempts(List<TestAttempt> testAttempts) {
-        this.testAttempts = testAttempts;
-    }
+//    public List<TestAttempt> getTestAttempts() {
+//        return testAttempts;
+//    }
+//
+//    public void setTestAttempts(List<TestAttempt> testAttempts) {
+//        this.testAttempts = testAttempts;
+//    }
 }
 
