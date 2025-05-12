@@ -12,7 +12,9 @@ import java.util.List;
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
     List<Course> findByCategoryId(Long categoryId);
-    Page<Course> findByTitleContainingIgnoreCase(String title, Pageable pageable);
+    List<Course> findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String titleKeyword, String descriptionKeyword);
+
+
 
 
 }

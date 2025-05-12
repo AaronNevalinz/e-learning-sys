@@ -89,41 +89,13 @@ public class CourseController {
         return responseService.createSuccessResponse(200, courses, HttpStatus.OK);
     }
 
-//    @GetMapping
-//    public ResponseEntity<Map<String, Object>> getAllCourses() {
-//        List<Course> courses = courseService.getAllCourses();
-//        return responseService.createSuccessResponse(200, courses, HttpStatus.OK);
-//    }
-
-//    @GetMapping
-//    public ResponseEntity<Map<String, Object>> getAllCourses() {
-//        List<CourseResponseDTO> courseStats = courseService.getAllCoursesWithStats();
-//        return responseService.createSuccessResponse(200, courseStats, HttpStatus.OK);
-//    }
-
-//    @GetMapping
-//    public ResponseEntity<Map<String, Object>> getAllCourses(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size
-//    ) {
-//        Page<CourseResponseDTO> coursePage = courseService.getAllCoursesWithStats(PageRequest.of(page, size));
-//
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("courses", coursePage.getContent());
-//        response.put("currentPage", coursePage.getNumber());
-//        response.put("totalItems", coursePage.getTotalElements());
-//        response.put("totalPages", coursePage.getTotalPages());
-//
-//        return responseService.createSuccessResponse(200, response, HttpStatus.OK);
-//    }
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllCourses(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String search
+            @RequestParam(defaultValue = "10") int size
     ) {
-        Page<CourseResponseDTO> coursePage = courseService.getAllCoursesWithStats(search, PageRequest.of(page, size));
+        Page<CourseResponseDTO> coursePage = courseService.getAllCoursesWithStats(PageRequest.of(page, size));
 
         Map<String, Object> response = new HashMap<>();
         response.put("courses", coursePage.getContent());
@@ -135,6 +107,15 @@ public class CourseController {
     }
 
 
+    @GetMapping("/search")
+    public ResponseEntity<Map<String, Object>> searchCourses(@RequestParam String keyword) {
+        List<CourseResponseDTO> results = courseService.searchCoursesByKeyword(keyword);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("results", results);
+
+        return responseService.createSuccessResponse(200, response, HttpStatus.OK);
+    }
 
 
     @GetMapping("/{courseId}")
