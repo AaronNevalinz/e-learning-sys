@@ -50,7 +50,7 @@ const RenderEditorContent = ({ data, title }) => {
           blockElement.className = "relative group"; // Make relative for absolute positioning
           const preElement = document.createElement("pre");
           preElement.className =
-            "w-full bg-slate-800 rounded-md text-slate-200 px-8 py-6 my-2 overflow-x-auto"; // Added overflow-x-auto
+            "w-full bg-black/90 rounded-md text-slate-200 px-8 py-6 my-2 overflow-x-auto"; // Added overflow-x-auto
           const codeElement = document.createElement("code");
           codeElement.textContent = block.data.code;
           preElement.appendChild(codeElement);
@@ -60,8 +60,8 @@ const RenderEditorContent = ({ data, title }) => {
           copyButton.className = `
             absolute top-2 right-2
             opacity-0 group-hover:opacity-100
-            bg-gray-800/50 hover:bg-gray-700
-            text-gray-300 rounded-md p-1 transition-opacity
+            bg-gray-200 hover:bg-gray-300
+            text-gray-900 rounded-md p-1 transition-opacity
             z-10 cursor-pointer 
           `; // Added z-index
           copyButton.title = "Copy code to clipboard";

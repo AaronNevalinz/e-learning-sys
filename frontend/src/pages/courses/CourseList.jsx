@@ -1,13 +1,13 @@
-import CourseCard from "@/components/CourseCard";
 import { API_URL } from "@/config";
 import { AppContext } from "@/context/AppContext";
 import { useContext, useEffect, useState } from "react";
 import notFound from "../../../public/monster-pixelized.svg";
 import CourseCard2 from "@/components/CourseCard2";
 import SidebarComponent from "@/components/SideBarComponent";
+import axios from "axios";
 
 export default function CourseList() {
-  const { token } = useContext(AppContext);
+  const { token, user } = useContext(AppContext);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -37,9 +37,28 @@ export default function CourseList() {
       setLoading(false);
     }
   };
+  const fetchCoursesByTagId = () => {
+    var options = {
+      method: "GET",
+      url: `${API_URL}/courses/category/2`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    axios
+      .request(options)
+      .then(function (response) {
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  };
 
   useEffect(() => {
     fetchAllCourses();
+    fetchCoursesByTagId();
   }, []);
 
   if (loading) {
@@ -51,16 +70,18 @@ export default function CourseList() {
   }
 
   return (
-    <div className="flex">
-      <div className="fixed top-20 left-24 h-ful w-64 bg-gray-100 shadow-md">
-        <SidebarComponent />
+    <>
+      <div>
+        <h1 className="text-2xl font-bold">
+          Welcome back, <span className="capitalize">{user.username}</span>
+        </h1>
+        <p className="mt-2">Let's start learning</p>
       </div>
-      <div className="ml-64 flex-1 p-8">
-        <div className="grid grid-cols-3 gap-8">
+      <div className="flex-1 p-8">
+        <div className="grid  md:grid-cols-3 lg:grid-cols-5 gap-5">
           {courses.length > 0 ? (
             courses.map((course, index) => (
               <div key={index}>
-                {/* <CourseCard course={course} key={index} /> */}
                 <CourseCard2 course={course} />
               </div>
             ))
@@ -78,40 +99,8 @@ export default function CourseList() {
               </div>
             </>
           )}
-          {/* <CourseCard2 course={1} />
-          <CourseCard2 />
-          <CourseCard2 />
-          <CourseCard2 />
-          <CourseCard2 />
-          <CourseCard2 />
-          <CourseCard2 />
-          <CourseCard2 /> */}
         </div>
-
-        {/* <div className="space-y-4 mt-8">
-          {courses.length > 0 ? (
-            courses.map((course, index) => (
-              <>
-                <CourseCard course={course} key={index} />
-                <CourseCard2 course={course} />
-              </>
-            ))
-          ) : (
-            <>
-              <div className="flex flex-col w-full h-screen justify-center items-center text-center">
-                <div>
-                  <p className="text-xl font-bold italic">
-                    {loading
-                      ? "Loading courses..."
-                      : "No published courses found 😩"}
-                  </p>
-                  {!loading && <img src={notFound} alt="" />}
-                </div>
-              </div>
-            </>
-          )}
-        </div> */}
       </div>
-    </div>
+    </>
   );
 }

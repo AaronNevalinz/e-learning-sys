@@ -26,6 +26,7 @@ import { API_URL } from "@/config";
 import { toast } from "sonner";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import axios from "axios";
+import RenderEditorContent from "@/RenderEditorContent";
 
 /**
  * The `CreateCourse` component is a React functional component that allows administrators
@@ -72,7 +73,6 @@ export default function CreateCourse() {
   const [question, setQuestion] = useState("");
   const [open, setOpen] = useState(false);
   console.log(newCourse);
-  
 
   /**
    * Fetches all topics associated with a specific course and updates the state with the retrieved topics.
@@ -111,7 +111,7 @@ export default function CreateCourse() {
   };
 
   console.log(topics);
-  
+
   //
   /**
    * Handles the addition of a new topic to the course.
@@ -152,7 +152,6 @@ export default function CreateCourse() {
   const submitQuestions = (e, id) => {
     e.preventDefault();
     console.log(id);
-    
 
     const options = {
       method: "POST",
@@ -164,10 +163,9 @@ export default function CreateCourse() {
         content: question,
         answerOptions: choices,
       },
-    };    
+    };
 
     console.log(id);
-    
 
     axios
       .request(options)
@@ -175,10 +173,9 @@ export default function CreateCourse() {
         const data = response.data;
         if (data.status == 200) {
           toast("Question test added successfully...");
-          setOpen(false);          
+          setOpen(false);
         }
         console.log(data);
-        
       })
       .catch(function (error) {
         console.error(error);
@@ -330,7 +327,22 @@ export default function CreateCourse() {
                               className="py-2 underline text-green-700 font-medium"
                               key={subtopic.id}
                             >
-                              {subtopic.title}
+                              <Dialog>
+                                <DialogTrigger className="cursor-pointer">
+                                  {subtopic.title}
+                                </DialogTrigger>
+                                <DialogContent className={"w-1/2"}>
+                                  {/* {subtopic.content} */}
+                                  <RenderEditorContent
+                                    data={
+                                      (subtopic && subtopic.content) ||
+                                      "<p>No content available</p>"
+                                    }
+                                    title={"Hello"}
+                                  />
+                                  {}
+                                </DialogContent>
+                              </Dialog>
                             </div>
                           );
                         })}
@@ -434,8 +446,7 @@ export default function CreateCourse() {
                       </form>
                     </DialogContent>
                   </Dialog>
-                  {console.log(topic)
-                  }
+                  {console.log(topic)}
                   <Link to={`topic/${topic.id}`}>
                     <p className="flex items-center px-2 py-0.5 gap-x-1 text-sm  text-black border border-gray-700">
                       <IoNewspaperOutline />

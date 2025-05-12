@@ -53,7 +53,7 @@ export default function Profile() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8">
+      <div className="flex-1 px-8">
 
         <h3 className="text-xl font-semibold mb-4">
           Courses Enrolled in ({userCourses?.length})
@@ -76,6 +76,7 @@ export default function Profile() {
           </button>
         </Link>
       </div>
+      
     </div>
   );
 }
