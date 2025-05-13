@@ -2,23 +2,31 @@ import ProfileCourseCard from "@/components/ProfileCourseCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AppContext } from "@/context/AppContext";
 
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Profile() {
-  const { user,fetchUserCourses, userCourses } = useContext(AppContext);
+  const { user, fetchUserCourses, userCourses } = useContext(AppContext);
+  const [userBadges, setUserBadges] = useState([]);
 
+  useEffect(() => {
+    if (userCourses) {
+      const badges = (userCourses || []).map((course) => course.badge);
+      setUserBadges(badges);
+      console.log(badges);
+      
+    }
+  }, [userCourses]);
 
-  
-  useEffect(()=>{
-    fetchUserCourses()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  useEffect(() => {
+    fetchUserCourses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="min-h-screen text-black flex flex-col md:flex-row">
       {/* Left Sidebar */}
-      <div className="w-full md:w-1/4 bg-[#0F1629] text-white rounded-2xl p-6 self-start">
+      <div className="w-full md:w-1/4 bg-[#0F1629] text-white p-6 self-start">
         <div className="flex flex-col items-center">
           <Avatar className={"size-32 mb-10"}>
             <AvatarImage
@@ -53,13 +61,30 @@ export default function Profile() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8">
-
-        <h3 className="text-xl font-semibold mb-4">
+      <div className="flex-1 px-8">
+        <div>
+          <div className="flex">
+            {userBadges.length > 0 ? (
+              (userBadges || [])?.map((badge) =>
+                badge ? (
+                  <p
+                    key={badge.id}
+                    className="text-4xl bg-gray-100 rounded-full p-2"
+                  >
+                    {badge.icon}
+                  </p>
+                ) : null
+              )
+            ) : (
+              <p className="">Work more on getting some badges</p>
+            )}
+          </div>
+        </div>
+        <h3 className="text-xl font-semibold mb-4 mt-6">
           Courses Enrolled in ({userCourses?.length})
         </h3>
 
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid grid-cols-3 gap-5">
           {userCourses?.map((course) => {
             return (
               <ProfileCourseCard

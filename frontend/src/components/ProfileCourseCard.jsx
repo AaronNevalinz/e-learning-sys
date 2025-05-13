@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { API_URL } from "@/config";
 import { AppContext } from "@/context/AppContext";
 import axios from "axios";
-import { Users } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
@@ -31,7 +30,7 @@ export default function ProfileCourseCard({ course }) {
   const [comment, setComment] = useState({
     content: "",
   });
-    const [progress, setProgress] = useState(null);
+  const [progress, setProgress] = useState(null);
 
   const fetchAllCourseComments = async () => {
     var options = {
@@ -167,33 +166,33 @@ export default function ProfileCourseCard({ course }) {
       });
   };
 
-    const fetchCourseProgress = () => {
-      var options = {
-        method: "GET",
-        url: `${API_URL}/progress/courseId/${course.id || course.courseId}`,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      axios
-        .request(options)
-        .then(function (response) {
-          const data = response.data;
-          setProgress(data.result.progressPercentage);
-          console.log(progress);
-        })
-        .catch(function (error) {
-          console.error(error);
-        });
+  const fetchCourseProgress = () => {
+    var options = {
+      method: "GET",
+      url: `${API_URL}/progress/courseId/${course.id || course.courseId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     };
+
+    axios
+      .request(options)
+      .then(function (response) {
+        const data = response.data;
+        setProgress(data.result.progressPercentage);
+        console.log(data);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  };
 
   useEffect(() => {
     fetchAllCourseComments();
-    fetchCourseProgress()
+    fetchCourseProgress();
   }, [refetch]);
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+    <div className="bg-white shadow-lg overflow-hidden border border-gray-200">
       <div className="relative">
         <Link to={`/course/${course.courseId || course.id} `}>
           <img
@@ -216,32 +215,30 @@ export default function ProfileCourseCard({ course }) {
 
       {/* Content Section */}
       <div className="p-4">
-        <h3 className="text-sm font-semibold text-blue-600">Designing</h3>
+        <h3 className="text-xs font-semibold text-blue-600">
+          {course.courseTopicCount} Topics
+        </h3>
         <div className="flex items-center justify-between">
-          <p className="text-xl font-bold text-gray-800 mt-1">
+          <p className="font-bold text-gray-800 mt-1 text-sm">
             {(course.courseTitle && course.courseTitle) || course?.title}
           </p>
         </div>
-        <p className="text-gray-600 mt-2">
+        <p className="text-gray-600 text-sm">
           {(course.courseDescription &&
-            course.courseDescription.substring(0, 200)) ||
+            course.courseDescription.substring(0, 32)) ||
             (course.description && course.description.substring(0, 150))}
           ...
         </p>
         <div className="my-4">
           <Progress value={progress} className="h-2 bg-gray-700" />
           <div className="flex justify-between text-xs text-gray-400 mt-1">
-            <span>{progress}% completed</span>
+            <span>{Math.round(progress)}% completed</span>
             <span>100%</span>
           </div>
         </div>
 
         {/* Stats Section */}
         <div className="flex items-center justify-between mt-4 text-gray-500 text-sm px-2">
-          <div className="flex items-center gap-1">
-            <Users className="w-4 h-4" />
-            <span>9.7k</span>
-          </div>
           <div className="flex items-center gap-1">
             <p className="flex gap-x-4 items-center">
               <form action="" onSubmit={handleUpvoteCourse}>

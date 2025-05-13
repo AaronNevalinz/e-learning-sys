@@ -1,22 +1,26 @@
 package com.e_learning.service;
 
-import com.e_learning.dto.CourseResponseDTO;
-import com.e_learning.dto.EnrolledUserDTO;
-import com.e_learning.dto.EnrollmentDTO;
-import com.e_learning.model.Course;
-import com.e_learning.model.Enrollment;
-import com.e_learning.model.User;
-import com.e_learning.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import com.e_learning.dto.CourseResponseDTO;
+import com.e_learning.dto.EnrolledUserDTO;
+import com.e_learning.dto.EnrollmentDTO;
+import com.e_learning.model.Badge;
+import com.e_learning.model.Course;
+import com.e_learning.model.Enrollment;
+import com.e_learning.model.User;
+import com.e_learning.model.UserBadge;
+import com.e_learning.repository.CourseRepository;
+import com.e_learning.repository.CourseVoteRepository;
+import com.e_learning.repository.EnrollmentRepository;
+import com.e_learning.repository.UserBadgeRepository;
+import com.e_learning.repository.UserRepository;
 
 @Service
 public class EnrollmentService {
@@ -26,14 +30,16 @@ public class EnrollmentService {
     private final CourseRepository courseRepo;
     private final CourseVoteRepository voteRepository;
     private final CourseCommentService commentService;;
+    private final UserBadgeRepository userBadgeRepo;
 
 
-    public EnrollmentService(EnrollmentRepository enrollmentRepo, UserRepository userRepo, CourseRepository courseRepo, CourseVoteRepository voteRepository, CourseCommentService commentService) {
+    public EnrollmentService(EnrollmentRepository enrollmentRepo, UserRepository userRepo, CourseRepository courseRepo, CourseVoteRepository voteRepository, CourseCommentService commentService, UserBadgeRepository userBadgeRepo) {
         this.enrollmentRepo = enrollmentRepo;
         this.userRepo = userRepo;
         this.courseRepo = courseRepo;
         this.voteRepository = voteRepository;
         this.commentService = commentService;
+        this.userBadgeRepo = userBadgeRepo;
     }
 
     public Enrollment enrollUser(Long userId, Long courseId) {
@@ -81,6 +87,15 @@ public class EnrollmentService {
                 .map(Enrollment::getCourse)
                 .collect(Collectors.toList());
 
+        List<Long> courseIds = enrolledCourses.stream().map(Course::getId).toList();
+
+        List<UserBadge> userBadges = userBadgeRepo.findByUserIdAndReferenceIdIn(user.getId(), courseIds);
+
+        Map<Long, Badge> badgeMap = userBadges.stream()
+                .collect(Collectors.toMap(UserBadge::getReferenceId, UserBadge::getBadge));
+
+
+
         return enrolledCourses.stream().map(course -> {
             int topicCount = course.getTopics().size();
             int subtopicCount = course.getTopics().stream()
@@ -103,10 +118,10 @@ public class EnrollmentService {
             dto.setCourseDownvoteCount(downvoteCount);
             dto.setCourseCommentCount(commentCount);
             dto.setPublished(course.isPublished());
+            dto.setBadge(badgeMap.get(course.getId()));
 
             return dto;
         }).collect(Collectors.toList());
     }
 
 }
-

@@ -186,10 +186,12 @@ export default function CourseCard({ course }) {
             </h1>
           </Link>
           <p className="text-slate-600 leading-7">
-            {(course.courseDescription &&
-              course.courseDescription.substring(0, 200)) ||
-              (course.description && course.description.substring(0, 150))}
-            ...
+            {(course.courseDescription && course.courseDescription.length > 200
+              ? `${course.courseDescription.slice(0, 200)}...`
+              : course.courseDescription) ||
+              (course.description && course.description.length > 150
+                ? `${course.description.substring(0, 150)}...`
+                : course.description)}
           </p>
           <div className="flex items-center justify-between">
             <div className="flex gap-x-3">

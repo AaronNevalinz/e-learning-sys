@@ -16,9 +16,10 @@ import { useContext } from "react";
 import { AppContext } from "./context/AppContext";
 import Profile from "./pages/profile/Profile";
 import AdminCourseList from "./pages/admin/AdminCourseList";
+import SearchReturnComponent from "./pages/courses/SearchReturnComponent";
 
 function App() {
-  const {token, userRole} = useContext(AppContext)
+  const { token, userRole } = useContext(AppContext);
   return (
     <>
       <BrowserRouter>
@@ -30,13 +31,19 @@ function App() {
             element={<Topic />}
           />
 
-          {token && userRole === 'ADMIN' ? (
+          {token && userRole === "ADMIN" ? (
             <Route path="/dashboard" element={<LayOut2 />}>
               <Route index element={<Dashboard />} />
-              <Route path="courses" element={<AdminCourseList/>} />
+              <Route path="courses" element={<AdminCourseList />} />
               <Route path="create-course" element={<CreateCourse />} />
-              <Route path="create-course/:topic_id" element={<CreateCourseContent />} />
-              <Route path="create-course/topic/:topic_id" element={<TopicQuestions />} />
+              <Route
+                path="create-course/:topic_id"
+                element={<CreateCourseContent />}
+              />
+              <Route
+                path="create-course/topic/:topic_id"
+                element={<TopicQuestions />}
+              />
             </Route>
           ) : (
             <Route path="/dashboard" element={<Login />} />
@@ -44,9 +51,10 @@ function App() {
 
           <Route path="/" element={<LayOut />}>
             <Route index element={<Home />} />
-            <Route path="profile" element={<Profile/>}/>
+            <Route path="profile" element={<Profile />} />
             <Route path="courses" element={<CourseList />} />
             <Route path="course/:id" element={<CourseDetail />} />
+            <Route path="/search" element={<SearchReturnComponent />} />
           </Route>
         </Routes>
       </BrowserRouter>

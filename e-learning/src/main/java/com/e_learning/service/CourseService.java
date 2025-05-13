@@ -7,6 +7,9 @@ import com.e_learning.model.Course;
 import com.e_learning.repository.CategoryRepository;
 import com.e_learning.repository.CourseRepository;
 import com.e_learning.repository.CourseVoteRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -87,6 +90,79 @@ public class CourseService {
             return dto;
         }).collect(Collectors.toList());
     }
+    public Page<CourseResponseDTO> getAllCoursesWithPagination(Pageable pageable) {
+        Page<Course> coursePage = courseRepository.findAll(pageable);
+
+        List<CourseResponseDTO> dtos = coursePage.getContent().stream().map(course -> {
+            int topicCount = course.getTopics().size();
+            int subtopicCount = course.getTopics().stream()
+                    .mapToInt(topic -> topic.getSubtopics().size())
+                    .sum();
+
+            long upvoteCount = voteRepository.countUpvotesByCourseId(course.getId());
+            long downvoteCount = voteRepository.countDownvotesByCourseId(course.getId());
+            long commentCount = commentService.getCommentCountByCourseId(course.getId());
+
+            CourseResponseDTO dto = new CourseResponseDTO();
+            dto.setCourseId(course.getId());
+            dto.setCourseTitle(course.getTitle());
+            dto.setCourseDescription(course.getDescription());
+            dto.setImageUrl(course.getImageUrl());
+
+            dto.setCourseTopicCount(topicCount);
+            dto.setCourseSubtopicCount(subtopicCount);
+            dto.setCourseUpvoteCount(upvoteCount);
+            dto.setCourseDownvoteCount(downvoteCount);
+            dto.setCourseCommentCount(commentCount);
+            dto.setPublished(course.isPublished());
+
+            return dto;
+        }).toList();
+
+        return new PageImpl<>(dtos, pageable, coursePage.getTotalElements());
+    }
+
+    public List<CourseResponseDTO> searchCoursesByKeyword(String keyword) {
+        List<Course> courses;
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            // Fallback: return all courses
+            courses = courseRepository.findAll();
+        } else {
+            // Search by title OR description
+            courses = courseRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword);
+        }
+
+        // Convert to CourseResponseDTO
+        return courses.stream().map(course -> {
+            int topicCount = course.getTopics().size();
+
+            int subtopicCount = course.getTopics().stream()
+                    .mapToInt(topic -> topic.getSubtopics().size())
+                    .sum();
+
+            long upvoteCount = voteRepository.countUpvotesByCourseId(course.getId());
+            long downvoteCount = voteRepository.countDownvotesByCourseId(course.getId());
+            long commentCount = commentService.getCommentCountByCourseId(course.getId());
+
+            CourseResponseDTO dto = new CourseResponseDTO();
+            dto.setCourseId(course.getId());
+            dto.setCourseTitle(course.getTitle());
+            dto.setCourseDescription(course.getDescription());
+            dto.setImageUrl(course.getImageUrl());
+            dto.setPublished(course.isPublished());
+
+            dto.setCourseTopicCount(topicCount);
+            dto.setCourseSubtopicCount(subtopicCount);
+            dto.setCourseUpvoteCount(upvoteCount);
+            dto.setCourseDownvoteCount(downvoteCount);
+            dto.setCourseCommentCount(commentCount);
+
+            return dto;
+        }).toList();
+    }
+
+
 
 
     public Course togglePublishStatus(Long courseId) {

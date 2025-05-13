@@ -71,7 +71,7 @@ export default function CreateCourse() {
   const [choices, setChoices] = useState([]);
   const [question, setQuestion] = useState("");
   const [open, setOpen] = useState(false);
-  console.log(newCourse);
+  console.log(newCourse.published);
   
 
   /**
@@ -284,8 +284,9 @@ export default function CreateCourse() {
                 type="submit"
                 className={" rounded-none cursor-pointer  mt-3"}
               >
-                <FaBookBookmark />
-                Upload Course
+                { newCourse?.published == false ?<>
+                  <FaBookBookmark />
+                  Upload Course</>:<p>Archieve Course</p>}
               </Button>
             </form>
           </div>

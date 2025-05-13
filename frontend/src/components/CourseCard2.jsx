@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { API_URL } from "@/config";
 import { AppContext } from "@/context/AppContext";
 import axios from "axios";
-import { Users, Eye, Star, User } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
@@ -170,16 +169,16 @@ export default function CourseCard2({ course }) {
     fetchAllCourseComments();
   }, [refetch]);
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+    <div className="bg-white shadow-lg overflow-hidden border border-gray-200">
       <div className="relative">
         <Link to={`/course/${course.courseId || course.id} `}>
           <img
             src={course.imageUrl}
             alt="Course"
-            className="w-full h-48 object-cover"
+            className="w-full h-40 object-cover"
           />
         </Link>
-        <div className="absolute bottom-4 right-4">
+        <div className="absolute bottom-2 right-2">
           <Link to={`/course/${course.courseId || course.id} `}>
             <Button
               variant="default"
@@ -192,16 +191,19 @@ export default function CourseCard2({ course }) {
       </div>
 
       {/* Content Section */}
+
       <div className="p-4">
-        <h3 className="text-sm font-semibold text-blue-600">Designing</h3>
+        <h3 className="text-sm font-semibold text-blue-600">
+          {course.courseTopicCount} Topics
+        </h3>
         <div className="flex items-center justify-between">
-          <p className="text-xl font-bold text-gray-800 mt-1">
+          <p className="font-bold text-gray-800 mt-1 text-sm">
             {(course.courseTitle && course.courseTitle) || course?.title}
           </p>
         </div>
-        <p className="text-gray-600 mt-2">
+        <p className="text-gray-600 text-sm">
           {(course.courseDescription &&
-            course.courseDescription.substring(0, 200)) ||
+            course.courseDescription.substring(0, 20)) ||
             (course.description && course.description.substring(0, 150))}
           ...
         </p>
@@ -209,11 +211,7 @@ export default function CourseCard2({ course }) {
         {/* Stats Section */}
         <div className="flex items-center justify-between mt-4 text-gray-500 text-sm px-2">
           <div className="flex items-center gap-1">
-            <Users className="w-4 h-4" />
-            <span>9.7k</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <p className="flex gap-x-4 items-center">
+            <p className="flex gap-x-2 items-center">
               <form action="" onSubmit={handleUpvoteCourse}>
                 <button
                   className="cursor-pointer flex items-center gap-2"
@@ -238,7 +236,7 @@ export default function CourseCard2({ course }) {
             <Sheet>
               <SheetTrigger className="flex items-center gap-x-1 cursor-pointer">
                 <p className="flex gap-x-1 items-center">
-                  <FaRegComment  />
+                  <FaRegComment />
                   {course.courseCommentCount ||
                     (course.comments && course?.comments.length)}
                 </p>

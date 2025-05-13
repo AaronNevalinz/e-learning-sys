@@ -10,6 +10,9 @@ import com.e_learning.service.CategoryService;
 import com.e_learning.service.CourseService;
 import com.e_learning.service.GoogleCloudStorageService;
 import com.e_learning.service.ResponseService;
+import org.springframework.data.domain.Page;
+
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/courses")
@@ -39,49 +39,6 @@ public class CourseController {
         this.storageService = storageService;
         this.categoryService = categoryService;
     }
-
-
-    //    @PostMapping()
-//    public ResponseEntity<Map<String, Object>> createCourse(@RequestBody Course course) {
-//        try {
-//            Course createdCourse = courseService.createCourse(course);
-//            return responseService.createSuccessResponse(201, createdCourse, HttpStatus.CREATED);
-//        } catch (IllegalArgumentException | ResourceNotFoundException ex) {
-//            Map<String, String> error = Map.of("category", ex.getMessage());
-//            return responseService.createErrorResponse(400, error, HttpStatus.BAD_REQUEST);
-//        }
-//    }
-
-
-//    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    public ResponseEntity<Map<String, Object>> createCourse(
-//            @RequestParam("title") String title,
-//            @RequestParam("description") String description,
-//            @RequestParam("categoryId") Long categoryId,
-//            @RequestParam(value = "image", required = false) MultipartFile image
-//    ) throws IOException {
-//        try {
-//            Course course = new Course();
-//            course.setTitle(title);
-//            course.setDescription(description);
-//
-//            // If image is provided, upload and set the URL
-//            if (image != null && !image.isEmpty()) {
-//                String imageUrl = storageService.uploadFile(image); // make sure this returns a valid URL
-//                course.setImageUrl(imageUrl); // ensure this field exists in your Course entity
-//            }
-//
-//            Category category = categoryService.getCategoryById(categoryId);
-//            course.setCategory(category);
-//
-//            Course createdCourse = courseService.createCourse(course);
-//            return responseService.createSuccessResponse(201, createdCourse, HttpStatus.CREATED);
-//        } catch (IllegalArgumentException | ResourceNotFoundException ex) {
-//            Map<String, String> error = Map.of("error", ex.getMessage());
-//            return responseService.createErrorResponse(400, error, HttpStatus.BAD_REQUEST);
-//        }
-//    }
-
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, Object>> createCourse(
@@ -133,16 +90,37 @@ public class CourseController {
         return responseService.createSuccessResponse(200, courses, HttpStatus.OK);
     }
 
-//    @GetMapping
-//    public ResponseEntity<Map<String, Object>> getAllCourses() {
-//        List<Course> courses = courseService.getAllCourses();
-//        return responseService.createSuccessResponse(200, courses, HttpStatus.OK);
-//    }
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllCourses() {
         List<CourseResponseDTO> courseStats = courseService.getAllCoursesWithStats();
         return responseService.createSuccessResponse(200, courseStats, HttpStatus.OK);
+    }
+
+    @GetMapping("/paginated")
+    public ResponseEntity<Map<String, Object>> getAllCoursesWithPagination(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<CourseResponseDTO> coursePage = courseService.getAllCoursesWithPagination(PageRequest.of(page, size));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("courses", coursePage.getContent());
+        response.put("currentPage", coursePage.getNumber());
+        response.put("totalItems", coursePage.getTotalElements());
+        response.put("totalPages", coursePage.getTotalPages());
+
+        return responseService.createSuccessResponse(200, response, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Map<String, Object>> searchCourses(@RequestParam String keyword) {
+        List<CourseResponseDTO> results = courseService.searchCoursesByKeyword(keyword);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("results", results);
+
+        return responseService.createSuccessResponse(200, response, HttpStatus.OK);
     }
 
 
@@ -166,4 +144,3 @@ public class CourseController {
 
 
 }
-
