@@ -10,6 +10,8 @@ import com.e_learning.service.CategoryService;
 import com.e_learning.service.CourseService;
 import com.e_learning.service.GoogleCloudStorageService;
 import com.e_learning.service.ResponseService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/courses")
@@ -90,16 +89,32 @@ public class CourseController {
         return responseService.createSuccessResponse(200, courses, HttpStatus.OK);
     }
 
-//    @GetMapping
-//    public ResponseEntity<Map<String, Object>> getAllCourses() {
-//        List<Course> courses = courseService.getAllCourses();
-//        return responseService.createSuccessResponse(200, courses, HttpStatus.OK);
-//    }
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getAllCourses() {
-        List<CourseResponseDTO> courseStats = courseService.getAllCoursesWithStats();
-        return responseService.createSuccessResponse(200, courseStats, HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> getAllCourses(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<CourseResponseDTO> coursePage = courseService.getAllCoursesWithStats(PageRequest.of(page, size));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("courses", coursePage.getContent());
+        response.put("currentPage", coursePage.getNumber());
+        response.put("totalItems", coursePage.getTotalElements());
+        response.put("totalPages", coursePage.getTotalPages());
+
+        return responseService.createSuccessResponse(200, response, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/search")
+    public ResponseEntity<Map<String, Object>> searchCourses(@RequestParam String keyword) {
+        List<CourseResponseDTO> results = courseService.searchCoursesByKeyword(keyword);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("results", results);
+
+        return responseService.createSuccessResponse(200, response, HttpStatus.OK);
     }
 
 

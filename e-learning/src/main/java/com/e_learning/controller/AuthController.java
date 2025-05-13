@@ -35,16 +35,20 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult bindingResult) {
 
         // Model validation errors
+        // BindingResult: Spring will fill this with any validation errors if the input is invalid.
         if (bindingResult.hasErrors()) {
+
+            //Creates a Map to collect the error messages.
+            //Key = field name (e.g., "email"),
+            //Value = error message (e.g., "Email is required").
             Map<String, String> errors = new LinkedHashMap<>();
 
             bindingResult.getFieldErrors().forEach(error -> {
-                errors.put(error.getField(), error.getDefaultMessage()); // ✅ Store as String, not String[]
+                errors.put(error.getField(), error.getDefaultMessage()); // Store as String, not String[]
             });
 
             return responseService.createErrorResponse(400, errors, HttpStatus.BAD_REQUEST);
         }
-
         // Response error
         try {
             return authService.register(user);
