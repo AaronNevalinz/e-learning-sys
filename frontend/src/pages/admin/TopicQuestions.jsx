@@ -14,7 +14,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
@@ -89,7 +88,7 @@ export default function TopicQuestions() {
 
   useEffect(() => {
     fetchAllTopicQuestions();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div className="w-full mt-10 p-8 rounded-lg border border-gray-100 shadow-lg">
@@ -138,11 +137,27 @@ export default function TopicQuestions() {
                     <IoMdEye size={26} className="cursor-pointer" />
                   </DialogTrigger>
                   <DialogContent>
-                    <div className="mt-3">
-                      <h1 className="uppercase text-sm font-bold">
-                        view question
-                      </h1>
-                      <Input value={"Hello"} />
+                    <div className="mt-10">
+                      <h1 className="uppercase">{question.content}</h1>
+                      <div className="space-y-4 mt-5">
+                        <div className="flex justify-between text-lg font-medium">
+                          <p>Answer</p>
+                          <p>Value</p>
+                        </div>
+                        {question?.answerOptions.map((answer, index) => (
+                          <div
+                            key={answer.id}
+                            className="flex justify-between "
+                          >
+                            {console.log(answer)}
+
+                            <p key={answer.id}>
+                              {index + 1}. {answer.answerText}
+                            </p>
+                            <p>{answer.correct ? "Correct" : "Incorrect"}</p>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </DialogContent>
                 </Dialog>

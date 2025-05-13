@@ -10,6 +10,26 @@ public class UserCourseProgressDTO {
     private double progressPercentage;
     private List<TopicProgressDTO> topics;
 
+    // Badge-related fields
+    private boolean badgeAwarded; // To indicate if the user earned a badge
+    private BadgeDTO badge;       // The badge details (name, icon, description)
+
+    public boolean isBadgeAwarded() {
+        return badgeAwarded;
+    }
+
+    public void setBadgeAwarded(boolean badgeAwarded) {
+        this.badgeAwarded = badgeAwarded;
+    }
+
+    public BadgeDTO getBadge() {
+        return badge;
+    }
+
+    public void setBadge(BadgeDTO badge) {
+        this.badge = badge;
+    }
+
     // Getters and Setters
     public Long getCourseId() {
         return courseId;

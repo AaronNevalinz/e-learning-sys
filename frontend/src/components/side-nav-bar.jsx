@@ -8,7 +8,7 @@ import { AiFillHome } from "react-icons/ai";
 
 export default function SideNavbar() {
   const navigate = useNavigate();
-  const { token, setToken } = useContext(AppContext);
+  const { setToken } = useContext(AppContext);
   const handleLogOut = (e) => {
     e.preventDefault();
     setToken(null);
@@ -16,20 +16,9 @@ export default function SideNavbar() {
     navigate("/login");
   };
   return (
-    <div className="flex justify-between h-12 py-1 items-center shadow px-2 ">
+    <div className="flex justify-between h-16 py-1 items-center shadow px-2 ">
       <SidebarTrigger className={"flex cursor-pointer"} />
       <div className="flex gap-x-4">
-        <form action="" onSubmit={handleLogOut}>
-          <Button
-            size={"sm"}
-            type="sumbit"
-            className={
-              "flex  justify-between cursor-pointer bg-blue-700 text-blue-100"
-            }
-          >
-            <IoLogOutSharp className="size-5 fill-blue-100" />
-          </Button>
-        </form>
         <Link to={"/courses"}>
           <Button
             size={"sm"}
@@ -41,6 +30,17 @@ export default function SideNavbar() {
             <AiFillHome className="size-5 fill-blue-100" />
           </Button>
         </Link>
+        <form action="" onSubmit={handleLogOut}>
+          <Button
+            size={"sm"}
+            type="sumbit"
+            className={
+              "flex  justify-between cursor-pointer bg-blue-700 text-blue-100"
+            }
+          >
+            <IoLogOutSharp className="size-5 fill-blue-100" />
+          </Button>
+        </form>
       </div>
     </div>
   );

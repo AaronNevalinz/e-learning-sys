@@ -1,5 +1,7 @@
 package com.e_learning.dto;
 
+import com.e_learning.model.Badge;
+
 import java.time.LocalDateTime;
 
 public class CourseResponseDTO {
@@ -12,13 +14,21 @@ public class CourseResponseDTO {
     private int courseTopicCount;
     private int courseSubtopicCount;
 
+    private Badge badge;
+
     private long courseUpvoteCount;
     private long courseDownvoteCount;
     private long courseCommentCount;
     private boolean published;
 
 
+    public Badge getBadge() {
+        return badge;
+    }
 
+    public void setBadge(Badge badge) {
+        this.badge = badge;
+    }
 
     public Long getCourseId() {
         return courseId;

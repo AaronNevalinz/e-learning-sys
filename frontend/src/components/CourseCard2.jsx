@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { API_URL } from "@/config";
 import { AppContext } from "@/context/AppContext";
 import axios from "axios";
-import { Users, Eye, Star, User } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
@@ -170,7 +169,8 @@ export default function CourseCard2({ course }) {
     fetchAllCourseComments();
   }, [refetch]);
   return (
-    <div className="bg-white rounded- shadow-lg overflow-hidden border border-gray-200">
+
+    <div className="bg-white shadow-lg overflow-hidden border border-gray-200">
       <div className="relative">
         <Link to={`/course/${course.courseId || course.id} `}>
           <img
@@ -192,19 +192,17 @@ export default function CourseCard2({ course }) {
       </div>
 
       {/* Content Section */}
-      <div className="p-2">
-        <h3 className="text-xs font- text-blue-600">
-          {course.courseTopicCount || (course.topics && course?.topics.length)}{" "}
-          topics
-        </h3>
+
+      <div className="p-4">
+        <h3 className="text-sm font-semibold text-blue-600">{course.courseTopicCount} Topics</h3>
         <div className="flex items-center justify-between">
-          <p className="text-sm font-bold text-gray-700 mt-1">
+          <p className="font-bold text-gray-800 mt-1 text-sm">
             {(course.courseTitle && course.courseTitle) || course?.title}
           </p>
         </div>
-        <p className="text-gray-600 text-xs">
+        <p className="text-gray-600 text-sm">
           {(course.courseDescription &&
-            course.courseDescription.substring(0, 40)) ||
+            course.courseDescription.substring(0, 20)) ||
             (course.description && course.description.substring(0, 150))}
           ...
         </p>
@@ -212,6 +210,8 @@ export default function CourseCard2({ course }) {
         {/* Stats Section */}
         <div className="flex items-center justify-between mt-4 text-gray-500 text-sm px-2">
           <div className="flex items-center gap-1">
+
+            <p className="flex gap-x-4 items-center">
             <p className="flex gap-x-2 items-center">
               <form action="" onSubmit={handleUpvoteCourse}>
                 <button

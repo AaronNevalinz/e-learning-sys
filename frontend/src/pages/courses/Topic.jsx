@@ -15,6 +15,8 @@ export default function Topic() {
   const [course, setCourse] = useState({});
   const [content, setContent] = useState(null);
   const [title, setTitle] = useState("");
+  const [progress, setProgress] = useState(null);
+
   const [currentTopicId, setCurrentTopicId] = useState(null);
 
   const fetchCourseDetails = async () => {
@@ -28,6 +30,7 @@ export default function Topic() {
 
     if (data.status === 200) {
       setCourse(data.result);
+      // console.log(data);
     }
   };
 
@@ -54,9 +57,29 @@ export default function Topic() {
     }
   };
 
-  
+  const fetchCourseProgress = () => {
+    var options = {
+      method: "GET",
+      url: `${API_URL}/progress/courseId/${course_id}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
 
-  useEffect(() => {    
+    axios
+      .request(options)
+      .then(function (response) {
+        const data = response.data;
+        setProgress(data.result.progressPercentage);
+        console.log(progress);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  };
+
+  useEffect(() => {
+    fetchCourseProgress();
     fetchCourseDetails();
   }, []);
   return (
@@ -74,8 +97,8 @@ export default function Topic() {
           onSubTopicClick={handleSubtopicClick}
           currentTopicId={currentTopicId}
         />
-        <main className="w-full ">
-          <div className="">
+        <main className="w-full flex-1">
+          <div className="sticky top-0 z-50 bg-white shadow-md">
             <SideNavbar />
           </div>
 

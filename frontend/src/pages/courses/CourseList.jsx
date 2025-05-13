@@ -3,8 +3,7 @@ import { AppContext } from "@/context/AppContext";
 import { useContext, useEffect, useState } from "react";
 import notFound from "../../../public/monster-pixelized.svg";
 import CourseCard2 from "@/components/CourseCard2";
-import SidebarComponent from "@/components/SideBarComponent";
-import axios from "axios";
+
 
 export default function CourseList() {
   const { token, user } = useContext(AppContext);
@@ -70,15 +69,11 @@ export default function CourseList() {
   }
 
   return (
-    <>
-      <div>
-        <h1 className="text-2xl font-bold">
-          Welcome back, <span className="capitalize">{user.username}</span>
-        </h1>
-        <p className="mt-2">Let's start learning</p>
-      </div>
-      <div className="flex-1 p-8">
-        <div className="grid  md:grid-cols-3 lg:grid-cols-5 gap-5">
+    <div className="flex">
+      <div className=" flex-1 p-4">
+        <h1 className="mb-5 text-lg font-semibold">All Courses...</h1>
+        <div className="grid grid-cols-5 gap-5">
+
           {courses.length > 0 ? (
             courses.map((course, index) => (
               <div key={index}>

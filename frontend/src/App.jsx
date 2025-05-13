@@ -16,6 +16,7 @@ import { useContext } from "react";
 import { AppContext } from "./context/AppContext";
 import Profile from "./pages/profile/Profile";
 import AdminCourseList from "./pages/admin/AdminCourseList";
+import SearchReturnComponent from "./pages/courses/SearchReturnComponent";
 
 function App() {
   const {token, userRole} = useContext(AppContext)
@@ -47,6 +48,7 @@ function App() {
             <Route path="profile" element={<Profile/>}/>
             <Route path="courses" element={<CourseList />} />
             <Route path="course/:id" element={<CourseDetail />} />
+            <Route path="/search" element={<SearchReturnComponent />} />
           </Route>
         </Routes>
       </BrowserRouter>

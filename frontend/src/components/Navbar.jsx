@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { FaBrain } from "react-icons/fa";
 import { Button } from "./ui/button";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AppContext } from "@/context/AppContext";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
@@ -15,9 +15,11 @@ import {
 } from "./ui/dropdown-menu";
 import { IoLogOutSharp, IoSettings, IoLibrarySharp } from "react-icons/io5";
 import { FaUserGraduate } from "react-icons/fa";
+import { Input } from "./ui/input";
 export default function Navbar() {
   const { token, setToken, userRole } = useContext(AppContext);
   const navigate = useNavigate()
+  const [query, setQuery] = useState("");
 
   const handleLogOut = (e)=>{
     e.preventDefault();
@@ -25,6 +27,14 @@ export default function Navbar() {
     localStorage.removeItem('token');
     navigate('/');
   }
+
+  const handleQuerySubmit = (e) => {
+    e.preventDefault();
+    if (query.trim()) {
+      navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+    }
+  };
+  
   return (
     <div className="shadow-xl h-16 fixed z-50 w-full bg-white">
       <nav className="flex justify-between items-center py-4 max-w-7xl mx-auto">
@@ -44,6 +54,16 @@ export default function Navbar() {
             <Link to={"/"}>Home</Link>
           </li>
           <li>
+            <form action="" onSubmit={handleQuerySubmit}>
+              <Input
+                type={"text"}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search..."
+              />
+            </form>
+          </li>
+          <li>
             <Link to={"/courses"}>Knowledge Base</Link>
           </li>
           <li>
@@ -56,7 +76,9 @@ export default function Navbar() {
             <Link to={"#"}>Contact us</Link>
           </li>
           <li>
-            {token && userRole === "ADMIN" && <Link to={"/dashboard"}>Dashboard</Link>}
+            {token && userRole === "ADMIN" && (
+              <Link to={"/dashboard"}>Dashboard</Link>
+            )}
           </li>
         </ul>
 
