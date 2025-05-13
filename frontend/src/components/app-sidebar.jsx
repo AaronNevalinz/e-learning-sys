@@ -88,7 +88,18 @@ export function AppSidebar({
       .request(options)
       .then(function (response) {
         const data = response.data;
-        if (data.result) {
+        if (data.status === 200) {
+          if(data && data.result.badgeAwarded){
+            console.log("yesir");            
+          }else{
+            // toast.info("No Badge attained...", {
+            //   duration: 7000,
+            //   position: "top-center",
+            //   style: { width: "700px" }, // Adjust the width as needed
+            // })
+            
+          }
+
           setProgress(data.result.progressPercentage);
           setUserTopics(data.result.topics);
           const completedIds = data.result.topics
@@ -156,6 +167,9 @@ export function AppSidebar({
       const percentScore = (score / quizData.length) * 100;
       console.log(percentScore);
 
+
+
+
       if (percentScore > 60) {
         toast.success(
           `Congratulations! You scored ${percentScore}%. Proceeding to the next topic.`,
@@ -185,6 +199,11 @@ export function AppSidebar({
           // <Accordion collapsible type="single" value={openAccordionId} onValueChange={setOpenAccordionId} className="space-y-4">
           onSubTopicClick(nextTopic.id); // navigate to the content
         }
+        toast.info("Congragulations; New Topic Unlocked...", {
+          duration:5000,
+          position:"top-center",
+          style:{width:"600px"}
+        })
       } else {
         toast.error(
           `Your score is ${percentScore}%. You need at least 60 to proceed.`
@@ -364,7 +383,7 @@ export function AppSidebar({
                                         id={`option-${option.id}`}
                                         className="h-5 w-5 rounded-full border border-gray-600 mr-3"
                                       >
-                                        <RadioGroup.Indicator className="flex items-center justify-center w-full h-full bg-gray-800 rounded-full" />
+                                        <RadioGroup.Indicator className="flex items-center justify-center w-full h-full bg-gray-800 rounded-full cursor-pointer" />
                                       </RadioGroup.Item>
                                       <Label
                                         htmlFor={`option-${option}`}

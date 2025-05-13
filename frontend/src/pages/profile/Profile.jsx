@@ -2,13 +2,19 @@ import ProfileCourseCard from "@/components/ProfileCourseCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AppContext } from "@/context/AppContext";
 
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Profile() {
   const { user, fetchUserCourses, userCourses } = useContext(AppContext);
+  const [userBadges, setUserBadges] = useState([])
 
-
+  useEffect(() => {
+    if (userCourses) {
+      const badges = (userCourses || []).map((course) => course.badge);
+      setUserBadges(badges);
+    }   
+  }, [userCourses]);
 
   useEffect(() => {
     fetchUserCourses();
@@ -55,10 +61,27 @@ export default function Profile() {
       {/* Main Content */}
       <div className="flex-1 px-8">
         <div>
-          <h1>Your Badges</h1>
-          
+        
+          <div className="flex">
+            {userBadges.length > 0 ? (
+              (userBadges || [])?.map((badge) =>
+                badge ? (
+                  <p
+                    key={badge.id}
+                    className="text-4xl bg-gray-100 rounded-full p-2"
+                  >
+                    {badge.icon}
+                  </p>
+                ) : null
+              )
+            ) : (
+              <p  className="">
+                Work more on getting some badges
+              </p>
+            )}
+          </div>
         </div>
-        <h3 className="text-xl font-semibold mb-4">
+        <h3 className="text-xl font-semibold mb-4 mt-6">
           Courses Enrolled in ({userCourses?.length})
         </h3>
 

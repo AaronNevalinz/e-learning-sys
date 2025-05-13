@@ -8,7 +8,7 @@ import { AiFillHome } from "react-icons/ai";
 
 export default function SideNavbar() {
   const navigate = useNavigate();
-  const { token, setToken } = useContext(AppContext);
+  const { setToken } = useContext(AppContext);
   const handleLogOut = (e) => {
     e.preventDefault();
     setToken(null);
