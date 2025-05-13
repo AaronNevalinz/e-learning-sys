@@ -94,6 +94,7 @@ public class EnrollmentService {
         Map<Long, Badge> badgeMap = userBadges.stream()
         .collect(Collectors.toMap(UserBadge::getReferenceId, UserBadge::getBadge));
 
+
  
         return enrolledCourses.stream().map(course -> {
             int topicCount = course.getTopics().size();

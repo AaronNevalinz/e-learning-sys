@@ -82,6 +82,7 @@ export default function Profile() {
           </div>
         </div>
         <h3 className="text-xl font-semibold mb-4 mt-6">
+
           Courses Enrolled in ({userCourses?.length})
         </h3>
 
@@ -102,6 +103,7 @@ export default function Profile() {
           </button>
         </Link>
       </div>
+      
     </div>
   );
 }

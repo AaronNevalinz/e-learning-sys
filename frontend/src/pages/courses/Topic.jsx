@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import { AppSidebar } from "@/components/app-sidebar";
+import  AppSidebar  from "@/components/app-sidebar";
 import SideNavbar from "@/components/side-nav-bar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { API_URL } from "@/config";
@@ -16,6 +16,7 @@ export default function Topic() {
   const [content, setContent] = useState(null);
   const [title, setTitle] = useState("");
   const [progress, setProgress] = useState(null);
+
   const [currentTopicId, setCurrentTopicId] = useState(null);
 
   const fetchCourseDetails = async () => {
@@ -32,6 +33,7 @@ export default function Topic() {
       // console.log(data);
     }
   };
+
 
   const handleSubtopicClick = async (subtopicId) => {
     const res = await fetch(`${API_URL}/subtopics/${subtopicId}`, {

@@ -72,8 +72,8 @@ export default function CourseDetail() {
 
   return (
     <>
-      <div className="grid grid-cols-6 gap-x-6">
-        <div className="col-span-2 w-full h-72">
+      <div className="lg:grid md:grid-cols-6 gap-x-6 px-4 md:px-8">
+        <div className="col-span-2 w-full mb-5 h-44 lg:h-72">
           <img
             src={course.imageUrl}
             alt=""
@@ -122,7 +122,7 @@ export default function CourseDetail() {
             <div className="space-y-4 mt-4">
               {(course.topics || []).map((topic, index) => (
                 <div
-                  className="bg-gray-100 shadow-sm grid grid-cols-12 items-center gap-x-1 p-2"
+                  className="bg-gray-100 shadow-sm md:grid grid-cols-12 items-center gap-x-1 p-2"
                   key={topic.id}
                 >
                   <div className="col-span-1 w-full justify-center">

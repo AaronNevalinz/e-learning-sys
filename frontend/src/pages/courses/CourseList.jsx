@@ -4,8 +4,9 @@ import { useContext, useEffect, useState } from "react";
 import notFound from "../../../public/monster-pixelized.svg";
 import CourseCard2 from "@/components/CourseCard2";
 
+
 export default function CourseList() {
-  const { token } = useContext(AppContext);
+  const { token, user } = useContext(AppContext);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,9 +36,28 @@ export default function CourseList() {
       setLoading(false);
     }
   };
+  const fetchCoursesByTagId = () => {
+    var options = {
+      method: "GET",
+      url: `${API_URL}/courses/category/2`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    axios
+      .request(options)
+      .then(function (response) {
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  };
 
   useEffect(() => {
     fetchAllCourses();
+    fetchCoursesByTagId();
   }, []);
 
   if (loading) {
@@ -53,10 +73,10 @@ export default function CourseList() {
       <div className=" flex-1 p-4">
         <h1 className="mb-5 text-lg font-semibold">All Courses...</h1>
         <div className="grid grid-cols-5 gap-5">
+
           {courses.length > 0 ? (
             courses.map((course, index) => (
               <div key={index}>
-                {/* <CourseCard course={course} key={index} /> */}
                 <CourseCard2 course={course} />
               </div>
             ))
@@ -76,6 +96,6 @@ export default function CourseList() {
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 }

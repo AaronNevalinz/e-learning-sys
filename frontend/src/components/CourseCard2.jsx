@@ -169,16 +169,17 @@ export default function CourseCard2({ course }) {
     fetchAllCourseComments();
   }, [refetch]);
   return (
+
     <div className="bg-white shadow-lg overflow-hidden border border-gray-200">
       <div className="relative">
         <Link to={`/course/${course.courseId || course.id} `}>
           <img
             src={course.imageUrl}
             alt="Course"
-            className="w-full h-48 object-cover"
+            className="w-full h-40 object-cover"
           />
         </Link>
-        <div className="absolute bottom-4 right-4">
+        <div className="absolute bottom-2 right-2">
           <Link to={`/course/${course.courseId || course.id} `}>
             <Button
               variant="default"
@@ -191,6 +192,7 @@ export default function CourseCard2({ course }) {
       </div>
 
       {/* Content Section */}
+
       <div className="p-4">
         <h3 className="text-sm font-semibold text-blue-600">{course.courseTopicCount} Topics</h3>
         <div className="flex items-center justify-between">
@@ -208,7 +210,9 @@ export default function CourseCard2({ course }) {
         {/* Stats Section */}
         <div className="flex items-center justify-between mt-4 text-gray-500 text-sm px-2">
           <div className="flex items-center gap-1">
+
             <p className="flex gap-x-4 items-center">
+            <p className="flex gap-x-2 items-center">
               <form action="" onSubmit={handleUpvoteCourse}>
                 <button
                   className="cursor-pointer flex items-center gap-2"
@@ -233,7 +237,7 @@ export default function CourseCard2({ course }) {
             <Sheet>
               <SheetTrigger className="flex items-center gap-x-1 cursor-pointer">
                 <p className="flex gap-x-1 items-center">
-                  <FaRegComment  />
+                  <FaRegComment />
                   {course.courseCommentCount ||
                     (course.comments && course?.comments.length)}
                 </p>

@@ -181,6 +181,7 @@ export default function ProfileCourseCard({ course }) {
         const data = response.data;
         setProgress(data.result.progressPercentage);
         console.log(data);
+
       })
       .catch(function (error) {
         console.error(error);

@@ -17,8 +17,13 @@ public class Question {
 
     private boolean multipleAnswersAllowed = false;
 
+//    @JsonIgnore
+//    @ManyToOne(optional = false)
+//    private Topic topic;
+
     @JsonIgnore
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
 
     @JsonIgnore

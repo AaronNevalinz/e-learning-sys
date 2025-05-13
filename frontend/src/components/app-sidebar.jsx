@@ -34,6 +34,7 @@ import CourseProgressCard from "./CourseProgressCard";
 import { toast } from "sonner";
 
 export function AppSidebar({
+
   course_id,
   title,
   topics,
@@ -48,6 +49,7 @@ export function AppSidebar({
   const [progress, setProgress] = useState(null);
   const [userTopics, setUserTopics] = useState([]);
   const [completedTopicIds, setCompletedTopicIds] = useState([]);
+
 
   const fetchAllQuiz = (e, id) => {
     e.preventDefault();
@@ -68,6 +70,7 @@ export function AppSidebar({
         setOpen(true); // Open the dialog when quiz data is fetched
         setCurrentQuestionIndex(0); // Reset question index
         setSelectedAnswers({}); // Clear previous answers
+
       })
       .catch(function (error) {
         console.error(error);
@@ -141,6 +144,7 @@ export function AppSidebar({
       questionId: question.id,
       selectedAnswerId: selectedAnswers[question.id],
     }));
+    console.log(progress);
 
     const payload = {
       userId: user.id,
@@ -167,10 +171,8 @@ export function AppSidebar({
       const percentScore = (score / quizData.length) * 100;
       console.log(percentScore);
 
-
-
-
       if (percentScore > 60) {
+
         toast.success(
           `Congratulations! You scored ${percentScore}%. Proceeding to the next topic.`,
           {
@@ -216,7 +218,6 @@ export function AppSidebar({
       );
     }
   };
-
   const mergedTopics =
     topics &&
     topics.map((topic, index) => {

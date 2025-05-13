@@ -45,11 +45,11 @@ public class Course {
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Topic> topics = new ArrayList<>();
 
-    // ✅ ADD THIS: Link to course votes
+
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseVote> votes = new ArrayList<>();
 
-    // Add this to link comments with the course
+
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseComment> comments = new ArrayList<>();
 
@@ -83,7 +83,7 @@ public class Course {
         return description;
     }
 
-    public Course(Long id, String title, String description, boolean published, LocalDateTime createdAt, Set<User> users, Set<Enrollment> enrollments, List<Topic> topics, List<CourseVote> votes, List<CourseComment> comments, String imageUrl, Category category) {
+    public Course(Long id, String title, String description, boolean published, Set<User> users, Set<Enrollment> enrollments, List<Topic> topics, List<CourseVote> votes, List<CourseComment> comments, String imageUrl, Category category) {
         this.id = id;
         this.title = title;
         this.description = description;

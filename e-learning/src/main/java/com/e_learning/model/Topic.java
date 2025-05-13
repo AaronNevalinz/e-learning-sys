@@ -33,18 +33,25 @@ public class Topic {
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserTopicProgress> progressList = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<TestAttempt> testAttempts = new ArrayList<>();
 
     public Topic() {
     }
 
-    public Topic(Long id, String title, String description, int orderInCourse, Course course, List<Subtopic> subtopics, List<Question> questions) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.orderInCourse = orderInCourse;
-        this.course = course;
-        this.subtopics = subtopics;
+    public Topic(List<TestAttempt> testAttempts, List<UserTopicProgress> progressList, List<Question> questions, List<Subtopic> subtopics, Course course, int orderInCourse, String description, String title, Long id) {
+        //this.testAttempts = testAttempts;
+        this.progressList = progressList;
         this.questions = questions;
+        this.subtopics = subtopics;
+        this.course = course;
+        this.orderInCourse = orderInCourse;
+        this.description = description;
+        this.title = title;
+        this.id = id;
     }
 
     public Long getId() {
@@ -102,5 +109,21 @@ public class Topic {
     public void setOrderInCourse(int orderInCourse) {
         this.orderInCourse = orderInCourse;
     }
+
+    public List<UserTopicProgress> getProgressList() {
+        return progressList;
+    }
+
+    public void setProgressList(List<UserTopicProgress> progressList) {
+        this.progressList = progressList;
+    }
+
+//    public List<TestAttempt> getTestAttempts() {
+//        return testAttempts;
+//    }
+//
+//    public void setTestAttempts(List<TestAttempt> testAttempts) {
+//        this.testAttempts = testAttempts;
+//    }
 }
 
