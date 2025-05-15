@@ -1,8 +1,6 @@
 package com.e_learning.service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationEventPublisher;
@@ -113,17 +111,32 @@ public class UserCourseProgressService {
                 user.getId(), "course_complete", course.getId()
         );
 
+        List<UserCourseProgressDTO.TopicProgressDTO> topicProgressList = new ArrayList<>();
 
+        for (Topic topic : allTopics) {
+            UserCourseProgressDTO.TopicProgressDTO topicProgress = new UserCourseProgressDTO.TopicProgressDTO();
+            topicProgress.setTopicId(topic.getId());
+            topicProgress.setTopicTitle(topic.getTitle());
+            boolean isCompleted = completedTopicIds.contains(topic.getId());
+            topicProgress.setCompleted(isCompleted);
 
+            // Find the user's latest test attempt for this topic, if any
+            Optional<TestAttempt> attemptOpt = attempts.stream()
+                    .filter(a -> a.getTopic().getId().equals(topic.getId()))
+                    .max(Comparator.comparing(TestAttempt::getSubmittedAt)); // Assuming attemptDate field
 
+            //attemptOpt.ifPresent(attempt -> topicProgress.setScore(attempt.getScore()));
+            attemptOpt.ifPresent(attempt -> {
+                double rawScore = attempt.getScore();
+                int totalQuestions = topic.getQuestions().size(); // Get total from Topic
 
-        List<UserCourseProgressDTO.TopicProgressDTO> topicDTOs = allTopics.stream().map(topic -> {
-            UserCourseProgressDTO.TopicProgressDTO dto = new UserCourseProgressDTO.TopicProgressDTO();
-            dto.setTopicId(topic.getId());
-            dto.setTopicTitle(topic.getTitle());
-            dto.setCompleted(completedTopicIds.contains(topic.getId()));
-            return dto;
-        }).toList();
+                double percentage = totalQuestions > 0 ? (rawScore / totalQuestions) * 100.0 : 0.0;
+                topicProgress.setScore(percentage);
+            });
+
+            topicProgressList.add(topicProgress);
+        }
+
 
         UserCourseProgressDTO dto = new UserCourseProgressDTO();
         userBadge.ifPresent(badge->{
@@ -135,7 +148,7 @@ public class UserCourseProgressService {
         dto.setTotalTopics(total);
         dto.setCompletedTopics(completed);
         dto.setProgressPercentage(progressPercentage);
-        dto.setTopics(topicDTOs);
+        dto.setTopics(topicProgressList);
 
         return dto;
     }
