@@ -84,6 +84,7 @@ public class UserCourseProgressDTO {
         private Long topicId;
         private String topicTitle;
         private boolean completed;
+        private Double score;
 
         // Getters and Setters
         public Long getTopicId() {
@@ -108,6 +109,14 @@ public class UserCourseProgressDTO {
 
         public void setCompleted(boolean completed) {
             this.completed = completed;
+        }
+
+        public Double getScore() {
+            return score;
+        }
+
+        public void setScore(Double score) {
+            this.score = score;
         }
     }
 }
