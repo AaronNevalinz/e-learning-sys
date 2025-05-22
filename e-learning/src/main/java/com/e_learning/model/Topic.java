@@ -33,11 +33,14 @@ public class Topic {
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TestAttempt> testAttempts = new ArrayList<>();
+
 
     public Topic() {
     }
 
-    public Topic(Long id, String title, String description, int orderInCourse, Course course, List<Subtopic> subtopics, List<Question> questions) {
+    public Topic(Long id, String title, String description, int orderInCourse, Course course, List<Subtopic> subtopics, List<Question> questions, List<TestAttempt> testAttempts) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -45,6 +48,7 @@ public class Topic {
         this.course = course;
         this.subtopics = subtopics;
         this.questions = questions;
+        this.testAttempts = testAttempts;
     }
 
     public Long getId() {
@@ -101,6 +105,14 @@ public class Topic {
 
     public void setOrderInCourse(int orderInCourse) {
         this.orderInCourse = orderInCourse;
+    }
+
+    public List<TestAttempt> getTestAttempts() {
+        return testAttempts;
+    }
+
+    public void setTestAttempts(List<TestAttempt> testAttempts) {
+        this.testAttempts = testAttempts;
     }
 }
 

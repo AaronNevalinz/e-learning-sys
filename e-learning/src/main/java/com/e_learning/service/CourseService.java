@@ -121,7 +121,6 @@ public class CourseService {
 
         return new PageImpl<>(dtos, pageable, coursePage.getTotalElements());
     }
-
     public List<CourseResponseDTO> searchCoursesByKeyword(String keyword) {
         List<Course> courses;
 
@@ -209,7 +208,6 @@ public class CourseService {
         }
         return courseRepository.save(existing);
     }
-
 
     public void deleteCourse(Long id) {
         Course course = courseRepository.findById(id)
