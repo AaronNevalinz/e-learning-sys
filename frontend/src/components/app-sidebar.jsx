@@ -38,7 +38,7 @@ export default function AppSidebar({
   title,
   topics,
   onSubTopicClick,
-  currentTopicId,
+  // currentTopicId,
 }) {
   const { token, user } = useContext(AppContext);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -48,6 +48,7 @@ export default function AppSidebar({
   const [progress, setProgress] = useState(null);
   const [userTopics, setUserTopics] = useState([]);
   const [completedTopicIds, setCompletedTopicIds] = useState([]);
+  const [scores, setScores] = useState([]);
 
   const fetchAllQuiz = (e, id) => {
     e.preventDefault();
@@ -87,6 +88,8 @@ export default function AppSidebar({
     axios
       .request(options)
       .then(function (response) {
+        console.log("Progress result:", response.data);
+
         const data = response.data;
         if (data.status === 200) {
           if (data && data.result.badgeAwarded) {
@@ -104,6 +107,14 @@ export default function AppSidebar({
           const completedIds = data.result.topics
             .filter((ut) => ut.completed)
             .map((ut) => ut.topicId);
+
+          // Extract scores for each topic into an array
+          const topicScores = data.result.topics.map((ut) => ({
+            topicId: ut.topicId,
+            score: ut.score,
+          }));
+          setScores(topicScores);
+          console.log("Topic Scores:", topicScores);
           setCompletedTopicIds(completedIds);
           console.log("User Topics:", userTopics);
           console.log("Completed Topic IDs:", completedTopicIds);
@@ -219,32 +230,38 @@ export default function AppSidebar({
       const isCompleted = completedTopicIds.includes(topic.id);
       const isNextAvailable =
         index === 0 || completedTopicIds.includes(topics[index - 1]?.id);
+
+      // Find the score for this topic from the scores array
+      const topicScoreObj = scores.find((s) => s.topicId === topic.id);
+      const score = topicScoreObj ? topicScoreObj.score : null;
+
       return {
         ...topic,
         completed: isCompleted,
         isNextAvailable: isNextAvailable,
+        score: score,
       };
     });
 
   console.log("Merged Topics with Availability:", mergedTopics);
 
-  const goToNextTopic = () => {
-    const currentTopicIndex = topics.findIndex(
-      (topic) => topic.id === currentTopicId
-    );
-    const nextTopic = topics[currentTopicIndex + 1];
+  // const goToNextTopic = () => {
+  //   const currentTopicIndex = topics.findIndex(
+  //     (topic) => topic.id === currentTopicId
+  //   );
+  //   const nextTopic = topics[currentTopicIndex + 1];
 
-    if (
-      nextTopic &&
-      completedTopicIds.includes(topics[currentTopicIndex]?.id)
-    ) {
-      onSubTopicClick(nextTopic.id);
-    } else if (!nextTopic) {
-      toast.info("You have completed all topics in this series!");
-    } else {
-      toast.info("Please complete the current topic to unlock the next one.");
-    }
-  };
+  //   if (
+  //     nextTopic &&
+  //     completedTopicIds.includes(topics[currentTopicIndex]?.id)
+  //   ) {
+  //     onSubTopicClick(nextTopic.id);
+  //   } else if (!nextTopic) {
+  //     toast.info("You have completed all topics in this series!");
+  //   } else {
+  //     toast.info("Please complete the current topic to unlock the next one.");
+  //   }
+  // };
 
   useEffect(() => {
     fetchCourseProgress();
@@ -279,7 +296,12 @@ export default function AppSidebar({
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        {topic.title}
+                        <span>{topic.title}</span>
+                        {topic.score && (
+                          <span className="text-xs bg-orange-500 text-black px-1 rounded-xs">
+                            {topic.score}%
+                          </span>
+                        )}
                         {!topic.isNextAvailable && (
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -317,16 +339,22 @@ export default function AppSidebar({
                             onSubmit={(e) => fetchAllQuiz(e, topic.id)}
                           >
                             {topic.completed ? (
-                              <Button
-                                variant="outline"
-                                size={"sm"}
-                                className={
-                                  "cursor-pointer bg-gradient-to-br from-green-900 to-green-800 border border-gray-700"
-                                }
-                                disabled={!topic.isNextAvailable}
-                              >
-                                Done
-                              </Button>
+                              <>
+                                <Button
+                                  variant="outline"
+                                  size={"sm"}
+                                  className={
+                                    "cursor-pointer bg-gradient-to-br from-green-900 to-green-800 border border-gray-700"
+                                  }
+                                  disabled={!topic.isNextAvailable}
+                                >
+                                  Done
+                                </Button>
+                                <span className="text-xs bg-orange-500 ml-4 text-black px-1 rounded-xs">
+                                  Score:
+                                  {topic.score}%
+                                </span>
+                              </>
                             ) : (
                               <Button
                                 variant="outline"

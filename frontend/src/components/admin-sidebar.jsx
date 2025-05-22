@@ -8,7 +8,6 @@ import {
 } from "./ui/sidebar";
 import { MdSpaceDashboard } from "react-icons/md";
 import { IoSchool } from "react-icons/io5";
-import { FaBoxArchive } from "react-icons/fa6";
 import { MdManageAccounts } from "react-icons/md";
 
 export default function AdminSidebar() {
@@ -17,7 +16,7 @@ export default function AdminSidebar() {
       <Sidebar className={""}>
         <SidebarContent className={"bg-slate-900 text-white "}>
           <SidebarHeader>
-            <h1 className="mt-4">Learning Content</h1>
+            <h1 className="mt-4 uppercase">Welcome to Admin Panel</h1>
           </SidebarHeader>
           <SidebarGroup>
             <SidebarGroupContent
@@ -35,13 +34,13 @@ export default function AdminSidebar() {
                   <IoSchool size={26} />
                   <p className="text-lg">All Courses</p>
                 </Link>
-                <Link
+                {/* <Link
                   to={"/dashboard/archieved-courses"}
                   className="flex items-center gap-x-2 text-sm"
                 >
                   <FaBoxArchive size={26} />
                   <p className="text-lg">Archived courses</p>
-                </Link>
+                </Link> */}
                 <Link
                   to={"/dashboard/account"}
                   className="flex items-center gap-x-2 text-sm"

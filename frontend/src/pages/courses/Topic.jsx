@@ -18,6 +18,7 @@ export default function Topic() {
   const [progress, setProgress] = useState(null);
 
   const [currentTopicId, setCurrentTopicId] = useState(null);
+  const [currentSubtopicId, setCurrentSubtopicId] = useState(null);
 
   const fetchCourseDetails = async () => {
     const res = await fetch(`${API_URL}/courses/${course_id}`, {
@@ -45,6 +46,7 @@ export default function Topic() {
 
     setTitle(data.result.title);
     setContent(JSON.parse(data.result.content)); // Update the content state with the fetched data
+    setCurrentSubtopicId(subtopicId)
 
     // Find the topic that contains the clicked subtopic
     const topic = course.topics.find((topic) =>
@@ -76,6 +78,8 @@ export default function Topic() {
         console.error(error);
       });
   };
+  const currentTopic = course.topics?.find(t => t.id === currentTopicId);
+  const currentSubtopics = currentTopic?.subtopics || [];
 
   useEffect(() => {
     fetchCourseProgress();
@@ -98,7 +102,11 @@ export default function Topic() {
         />
         <main className="w-full flex-1">
           <div className="sticky top-0 z-50 bg-white shadow-md">
-            <SideNavbar />
+            <SideNavbar
+              subtopics={currentSubtopics}
+              currentSubtopicId={currentSubtopicId}
+              onSubTopicClick={handleSubtopicClick}
+            />
           </div>
 
           <div className="p-8 max-w-6xl mx-auto leading-7">

@@ -72,7 +72,7 @@ export default function CourseDetail() {
 
   return (
     <>
-      <div className="grid grid-cols-6 gap-x-6">
+      <div className="grid grid-cols-6 gap-x-6 px-16">
         <div className="col-span-2 w-full h-72">
           <img
             src={course.imageUrl}
@@ -136,7 +136,7 @@ export default function CourseDetail() {
                     <div className="flex justify-end">
                       <p className="flex items-center px-2 py-0.5 gap-x-1 text-sm bg-orange-600 text-gray-100">
                         <IoNewspaperOutline />
-                        <span className="text-xs">Take Exam</span>
+                        {/* <span className="text-xs">Take Exam</span> */}
                       </p>
                     </div>
                   </div>

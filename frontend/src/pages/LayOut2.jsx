@@ -18,7 +18,7 @@ export default function LayOut2() {
           <AdminDashboardNavbar />
         </div>
 
-        <div className=" mt-5 max-w-5xl mx-auto font-montserrat">
+        <div className=" mt-5 max-w-6xl mx-auto font-montserrat">
           <Outlet />
         </div>
       </main>

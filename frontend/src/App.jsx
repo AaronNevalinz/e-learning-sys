@@ -17,6 +17,7 @@ import { AppContext } from "./context/AppContext";
 import Profile from "./pages/profile/Profile";
 import AdminCourseList from "./pages/admin/AdminCourseList";
 import SearchReturnComponent from "./pages/courses/SearchReturnComponent";
+import LoginToContinue from "./pages/auth/LoginToContinue";
 
 function App() {
   const { token, userRole } = useContext(AppContext);
@@ -52,7 +53,7 @@ function App() {
           <Route path="/" element={<LayOut />}>
             <Route index element={<Home />} />
             <Route path="profile" element={<Profile />} />
-            <Route path="courses" element={<CourseList />} />
+            <Route path="courses" element={token ?<CourseList />:<LoginToContinue/>} />
             <Route path="course/:id" element={<CourseDetail />} />
             <Route path="/search" element={<SearchReturnComponent />} />
           </Route>

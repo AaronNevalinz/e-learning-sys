@@ -28,7 +28,7 @@ import {
 const CoursesTable = ({ courses }) => {
   const { token } = useContext(AppContext);
   const [sortConfig, setSortConfig] = useState(null);
-  const [open, setOpen] = useState(false);
+  const [openDialogCourseId, setOpenDialogCourseId] = useState(null);
 
   const requestSort = (key) => {
     let direction = "ascending";
@@ -63,6 +63,8 @@ const CoursesTable = ({ courses }) => {
 
   const handleDeleteCourse = (e, id) => {
     e.preventDefault();
+    console.log(id);
+    
     var options = {
       method: "DELETE",
       url: `${API_URL}/courses/delete/course/${id}`,
@@ -74,7 +76,7 @@ const CoursesTable = ({ courses }) => {
     axios
       .request(options)
       .then(function (response) {
-        setOpen(false); // Close dialog after submit
+        setOpenDialogCourseId(null); // Close dialog after submit
         const data = response.data;
         if (data.status == 200) {
           toast.success("Course deleted successfully");
@@ -205,8 +207,13 @@ const CoursesTable = ({ courses }) => {
                   </Link>
                 )}
 
-                <Dialog open={open} onOpenChange={setOpen}>
-                  <DialogTrigger>
+                <Dialog
+                  open={openDialogCourseId === course.courseId}
+                  onOpenChange={(isOpen) =>
+                    setOpenDialogCourseId(isOpen ? course.courseId : null)
+                  }
+                >
+                  <DialogTrigger asChild>
                     <Button
                       variant="ghost"
                       size="icon"
@@ -221,14 +228,17 @@ const CoursesTable = ({ courses }) => {
                       <p>Mind you there is no going back</p>
                     </div>
                     <div className="flex justify-center gap-x-4">
-                      <DialogClose>
+                      <DialogClose asChild>
                         <Button size={"sm"} className={"cursor-pointer"}>
                           Cancel
                         </Button>
                       </DialogClose>
                       <form
                         action=""
-                        onSubmit={(e) => handleDeleteCourse(e, course.courseId)}
+                        onSubmit={(e) => {
+                          handleDeleteCourse(e, course.courseId);
+                          setOpenDialogCourseId(null);
+                        }}
                       >
                         <Button
                           size={"sm"}

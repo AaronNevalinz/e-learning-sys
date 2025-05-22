@@ -24,7 +24,7 @@ export default function Profile() {
   }, []);
 
   return (
-    <div className="min-h-screen text-black flex flex-col md:flex-row">
+    <div className="min-h-screen text-black flex flex-col md:flex-row px-10">
       {/* Left Sidebar */}
       <div className="w-full md:w-1/4 bg-[#0F1629] text-white p-6 self-start">
         <div className="flex flex-col items-center">

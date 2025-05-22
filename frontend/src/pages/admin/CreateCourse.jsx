@@ -152,6 +152,19 @@ export default function CreateCourse() {
   const submitQuestions = (e, id) => {
     e.preventDefault();
     console.log(id);
+    if (!question || question.trim() === "") {
+      toast("Wacha wewe, please enter the question", {
+        position: "top-center",
+      });
+      return;
+    }
+
+    if (choices.length < 2) {
+      toast.error("At least two answer options are required.", {
+        position: "top-center",
+      });
+      return;
+    }
     
 
     const options = {

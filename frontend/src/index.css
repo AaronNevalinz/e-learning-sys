@@ -4,6 +4,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+#editorjs .ce-block__content,
+#editorjs .ce-toolbar__content {
+  max-width: 100%;
+  margin-left: 0;
+  padding-left: 0;
+  /* margin-top: 25px; */
+}
+
 .editor-wrapper h1 {
   @apply text-4xl font-extrabold;
 }

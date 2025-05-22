@@ -5,6 +5,8 @@ import { AppContext } from "@/context/AppContext";
 import { EditorContext } from "@/context/EditorContext";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "sonner";
+import { NavLink } from "react-router-dom";
 
 export default function CreateCourseContent() {
   const { topic_id } = useParams();
@@ -18,6 +20,13 @@ export default function CreateCourseContent() {
     
     try {
       const data = await editorInstanceRef.current.save();
+
+      if (!title || title.trim() === "") {
+        toast("Title field is required", {
+          position: "top-center",
+        });
+        return;
+      }
       
       const payload = {
         title: title,
@@ -56,6 +65,16 @@ export default function CreateCourseContent() {
   }, []);
   return (
     <div>
+      <NavLink
+        to={-1}
+        className="inline-block mb-4 text-blue-600 hover:underline"
+        onClick={(e) => {
+          e.preventDefault();
+          window.history.back();
+        }}
+      >
+        &larr; Back
+      </NavLink>
       <h1 className="text-xl font-bold capitalize mb-4">
         {"// Create Sub-topic Content >>"}{" "}
       </h1>

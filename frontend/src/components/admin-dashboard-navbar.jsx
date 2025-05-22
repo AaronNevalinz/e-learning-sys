@@ -76,7 +76,6 @@ export default function AdminDashboardNavbar() {
     <div>
       <nav className="flex justify-between gap-x-30 bg-white items-center mx-auto py-4 px-4 shadow-md">
         <SidebarTrigger className={"cursor-pointer"} />
-        <Input className={"py-1"} placeholder="search courses here..." />
         {token ? (
           <div className="flex items-center gap-x-3 text-sm">
             <div>
