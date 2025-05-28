@@ -7,7 +7,7 @@ export default function LayOut() {
     <div>
       <Navbar />
       <div className="">
-        <main className="max-w-7xl mx-auto pt-24 ">
+        <main className="max-w-8xl mx-auto pt-24 ">
           <Outlet />
         </main>
         <Footer/>
